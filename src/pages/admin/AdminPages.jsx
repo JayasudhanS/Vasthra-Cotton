@@ -347,8 +347,8 @@ export function AdminSettings() {
     emailNotifications: true,
     maintenanceMode: false,
     commissionRate: '0',
-    platformName: 'SareeVault Luxury Marketplace',
-    supportEmail: 'concierge@sareevault.com'
+    platformName: 'Vasthra Cotton Luxury Marketplace',
+    supportEmail: 'concierge@vasthracotton.com'
   });
 
   const handleSave = (e) => {

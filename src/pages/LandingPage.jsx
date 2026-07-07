@@ -263,7 +263,7 @@ function WhyChooseUs() {
   ];
   return (
     <section className="py-20 max-w-7xl mx-auto px-4 lg:px-8 w-full overflow-hidden">
-      <h2 className="section-title">Why Choose SareeVault</h2>
+      <h2 className="section-title">Why Choose Vasthra Cotton</h2>
       <p className="section-subtitle">What makes us India's most trusted luxury saree destination</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
@@ -350,7 +350,7 @@ function Newsletter() {
               Subscribe to receive insider access to new weaver drops, bridal collections, and <span className="text-[#D4AF37] font-semibold">₹1,000 off</span> your first order.
             </p>
 
-            <form onSubmit={e => { e.preventDefault(); if (email.trim()) { alert('Welcome to SareeVault! Check your email for your welcome discount.'); setEmail(''); } }}
+            <form onSubmit={e => { e.preventDefault(); if (email.trim()) { alert('Welcome to Vasthra Cotton! Check your email for your welcome discount.'); setEmail(''); } }}
               className="flex flex-col sm:flex-row gap-3.5 max-w-lg mx-auto">
               <input
                 type="email"

@@ -24,10 +24,10 @@ export default function Footer() {
           <div className="lg:col-span-2 pr-0 lg:pr-6">
             <Link to="/" className="flex items-center gap-2.5 no-underline mb-5 group w-fit">
               <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#D4AF37] to-[#E8C94A] flex items-center justify-center text-[#4A2C2A] font-bold text-xl shadow-md group-hover:scale-105 transition-transform" style={{ fontFamily: 'Playfair Display' }}>
-                S
+                V
               </div>
               <span className="text-2xl font-bold text-white tracking-tight" style={{ fontFamily: 'Playfair Display' }}>
-                Saree<span className="text-[#D4AF37]">Vault</span>
+                Vasthra <span className="text-[#D4AF37]">Cotton</span>
               </span>
             </Link>
             <p className="text-sm leading-relaxed text-white/70 mb-6 max-w-sm">
@@ -95,7 +95,7 @@ export default function Footer() {
               {[
                 { icon: <FiMapPin size={16} className="text-[#D4AF37] flex-shrink-0 mt-0.5" />, text: 'Silk Weavers Hub, T. Nagar, Chennai - 600017, Tamil Nadu' },
                 { icon: <FiPhone size={16} className="text-[#D4AF37] flex-shrink-0" />, text: '+91 98765 43210 (Mon-Sat, 10am-7pm)' },
-                { icon: <FiMail size={16} className="text-[#D4AF37] flex-shrink-0" />, text: 'support@sareevault.com' },
+                { icon: <FiMail size={16} className="text-[#D4AF37] flex-shrink-0" />, text: 'support@vasthracotton.com' },
               ].map((c, i) => (
                 <div key={i} className="flex items-start gap-3 text-sm text-white/70 leading-snug">
                   {c.icon}
@@ -112,7 +112,7 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="border-t border-white/15 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/50">
-          <p className="m-0">© 2026 SareeVault Marketplace Pvt. Ltd. All rights reserved.</p>
+          <p className="m-0">© 2026 Vasthra Cotton Marketplace Pvt. Ltd. All rights reserved.</p>
           <div className="flex gap-6">
             <Link to="/about" className="text-white/50 hover:text-[#D4AF37] no-underline">Privacy Policy</Link>
             <Link to="/about" className="text-white/50 hover:text-[#D4AF37] no-underline">Terms of Service</Link>

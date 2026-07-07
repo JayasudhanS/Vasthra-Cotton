@@ -37,7 +37,7 @@ export default function ContactPage() {
               {[
                 { icon: <FiMapPin size={18} />, title: 'Heritage Weaving Lounge', text: '12, Silk Street, Mylapore, Chennai, Tamil Nadu - 600004' },
                 { icon: <FiPhone size={18} />, title: 'Bridal Helpline & WhatsApp', text: '+91 98765 43210 (Mon-Sat, 9am - 8pm)' },
-                { icon: <FiMail size={18} />, title: 'Concierge Email Support', text: 'concierge@sareevault.com' },
+                { icon: <FiMail size={18} />, title: 'Concierge Email Support', text: 'concierge@vasthracotton.com' },
                 { icon: <FiClock size={18} />, title: 'Artisan Support Hours', text: 'Monday to Saturday: 9:00 AM – 8:00 PM IST' }
               ].map((c, i) => (
                 <div key={i} className="flex items-start gap-3.5 p-3.5 rounded-xl bg-[#FFF8F0]/60 border border-[#D4AF37]/15 hover:bg-[#FFF8F0] hover:border-[#D4AF37]/30 transition-all">
@@ -65,7 +65,7 @@ export default function ContactPage() {
                 </div>
                 <h3 className="text-2xl font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>Message Received!</h3>
                 <p className="text-sm text-[#6B4A48] max-w-md mx-auto m-0 leading-relaxed font-light">
-                  Thank you for reaching out to SareeVault. A dedicated textile stylist from our Chennai concierge will respond to your inquiry within 4 working hours.
+                  Thank you for reaching out to Vasthra Cotton. A dedicated textile stylist from our Chennai concierge will respond to your inquiry within 4 working hours.
                 </p>
                 <div className="pt-4">
                   <button onClick={() => { setSent(false); setForm({ name: '', email: '', subject: '', message: '' }); }} className="btn-golden !py-2.5 !px-8 !text-xs cursor-pointer">

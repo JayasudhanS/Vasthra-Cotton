@@ -16,7 +16,7 @@ export default function RegisterPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    login({ email: form.email || 'newuser@sareevault.com', name: form.name || 'New Member' }, role);
+    login({ email: form.email || 'newuser@vasthracotton.com', name: form.name || 'New Member' }, role);
     navigate(isShopkeeper ? '/shopkeeper/dashboard' : '/user/dashboard');
   };
 

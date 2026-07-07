@@ -13,7 +13,7 @@ export default function AboutPage() {
           Weaving Traditions into Modern Luxury
         </h1>
         <p className="text-base sm:text-lg text-[#6B4A48] leading-relaxed font-light m-0">
-          SareeVault is India's premier multi-vendor saree marketplace, bridging the gap between centuries-old weaving clusters in Kanchipuram, Banaras, and Chanderi with discerning saree connoisseurs across the globe.
+          Vasthra Cotton is India's premier multi-vendor saree marketplace, bridging the gap between centuries-old weaving clusters in Kanchipuram, Banaras, and Chanderi with discerning saree connoisseurs across the globe.
         </p>
       </motion.div>
 
@@ -37,7 +37,7 @@ export default function AboutPage() {
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>Our Vision for Heritage</h2>
           <p className="text-sm sm:text-base text-[#6B4A48] leading-relaxed font-light m-0">
-            To become the world's most trusted digital vault for authentic Indian sarees—where every drape comes with a verifiable story of its weave, motif inspiration, and the hands that tirelessly wove it over weeks of dedication.
+            To become the world's most trusted digital destination for authentic Indian sarees—where every drape comes with a verifiable story of its weave, motif inspiration, and the hands that tirelessly wove it over weeks of dedication.
           </p>
         </motion.div>
       </div>

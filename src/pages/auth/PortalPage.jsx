@@ -14,7 +14,7 @@ export default function PortalPage() {
       <div className="max-w-6xl mx-auto text-center w-full">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
           <span className="inline-block text-xs uppercase font-bold tracking-widest text-[#D4AF37] mb-2 bg-[#7B1E3A]/5 px-4 py-1.5 rounded-full border border-[#D4AF37]/30">
-            ✦ Welcome to SareeVault Ecosystem
+            ✦ Welcome to Vasthra Cotton Ecosystem
           </span>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#7B1E3A] mb-4" style={{ fontFamily: 'Playfair Display' }}>
             Select Your Access Portal

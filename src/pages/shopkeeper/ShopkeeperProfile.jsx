@@ -31,7 +31,7 @@ export default function ShopkeeperProfile() {
             { icon: <FiMail />, label: 'Official Business Email', value: 'contact@lakshmisilks.com' },
             { icon: <FiPhone />, label: 'Artisan Helpline', value: '+91 98765 43210' },
             { icon: <FiMapPin />, label: 'Loom Cluster Location', value: 'North Mada Street, Kanchipuram, Tamil Nadu - 631501' },
-            { icon: <FiPackage />, label: 'Live Masterpieces in Vault', value: '45 Handwoven Sarees Active' },
+            { icon: <FiPackage />, label: 'Live Masterpieces in Vasthra Cotton', value: '45 Handwoven Sarees Active' },
             { icon: <FiStar />, label: 'Connoisseur Rating', value: '4.8 ★ (Based on 142 Verified Orders)' }
           ].map((f, i) => (
             <div key={i} className="flex items-start gap-4 p-4 bg-[#FFF8F0]/60 rounded-xl border border-[#D4AF37]/15">

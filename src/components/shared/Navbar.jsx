@@ -83,10 +83,10 @@ export default function Navbar() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 no-underline group">
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#7B1E3A] to-[#D4AF37] flex items-center justify-center text-white font-bold text-lg shadow-sm group-hover:scale-105 transition-transform" style={{ fontFamily: 'Playfair Display' }}>
-              S
+              V
             </div>
             <span className="text-xl lg:text-2xl font-bold text-[#7B1E3A] tracking-tight" style={{ fontFamily: 'Playfair Display' }}>
-              Saree<span className="text-[#D4AF37]">Vault</span>
+              Vasthra <span className="text-[#D4AF37]">Cotton</span>
             </span>
           </Link>
 

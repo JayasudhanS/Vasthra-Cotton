@@ -20,7 +20,7 @@ export default function LoginPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    login({ email: form.email || 'user@sareevault.com', name: role === 'admin' ? 'Master Admin' : role === 'shopkeeper' ? 'Kanjivaram Weaves' : 'Ananya Sharma' }, role);
+    login({ email: form.email || 'user@vasthracotton.com', name: role === 'admin' ? 'Master Admin' : role === 'shopkeeper' ? 'Kanjivaram Weaves' : 'Ananya Sharma' }, role);
     if (role === 'admin') navigate('/admin/dashboard');
     else if (role === 'shopkeeper') navigate('/shopkeeper/dashboard');
     else navigate('/user/dashboard');
