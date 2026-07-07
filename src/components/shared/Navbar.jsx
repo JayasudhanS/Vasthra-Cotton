@@ -211,6 +211,8 @@ export default function Navbar() {
             {navLinks.map(link => {
               if (link.isDropdown) {
                 const active = location.pathname.startsWith('/login');
+                const activeChild = link.children?.find(c => location.pathname === c.path);
+                const displayLabel = activeChild ? activeChild.name : link.name;
                 return (
                   <div
                     key={link.name}
@@ -221,11 +223,11 @@ export default function Navbar() {
                     <button
                       type="button"
                       onClick={() => setLoginDropdownOpen(!loginDropdownOpen)}
-                      className={`text-sm font-medium transition-colors relative group flex items-center gap-1 bg-transparent border-none cursor-pointer p-0 font-body ${
-                        active ? 'text-[#7B1E3A] font-semibold' : 'text-[#4A2C2A] hover:text-[#7B1E3A]'
+                      className={`text-sm font-medium transition-colors relative group flex items-center gap-1 border-none cursor-pointer p-0 font-body ${
+                        active ? 'bg-transparent text-[#7B1E3A] font-semibold' : 'bg-transparent text-[#4A2C2A] hover:text-[#7B1E3A]'
                       }`}
                     >
-                      <span>{link.name}</span>
+                      <span>{displayLabel}</span>
                       <FiChevronDown
                         size={15}
                         className={`transition-transform duration-300 ${loginDropdownOpen ? 'rotate-180 text-[#D4AF37]' : 'text-[#6B4A48]'}`}
@@ -471,19 +473,21 @@ export default function Navbar() {
                 {navLinks.map(link => {
                   if (link.isDropdown) {
                     const active = location.pathname.startsWith('/login');
+                    const activeChild = link.children?.find(c => location.pathname === c.path);
+                    const displayLabel = activeChild ? activeChild.name : link.name;
                     return (
                       <div key={link.name} className="flex flex-col">
                         <button
                           type="button"
                           onClick={() => setMobileLoginOpen(!mobileLoginOpen)}
-                          className={`py-3 px-4 rounded-xl transition-all text-sm font-medium flex items-center justify-between w-full border-none bg-transparent cursor-pointer font-body ${
+                          className={`py-3 px-4 rounded-xl transition-all text-sm font-medium flex items-center justify-between w-full border-none cursor-pointer font-body ${
                             active
-                              ? 'bg-[#7B1E3A] text-white font-semibold shadow-sm'
-                              : 'text-[#4A2C2A] hover:bg-[#FFF8F0] hover:text-[#7B1E3A]'
+                              ? 'bg-[#7B1E3A] !text-white font-semibold shadow-md'
+                              : 'bg-transparent text-[#4A2C2A] hover:bg-[#FFF8F0] hover:text-[#7B1E3A]'
                           }`}
                         >
                           <span className="flex items-center gap-2">
-                            {link.name}
+                            {displayLabel}
                           </span>
                           <FiChevronDown
                             size={18}
@@ -538,7 +542,7 @@ export default function Navbar() {
                       key={link.name}
                       to={link.path}
                       onClick={() => setMobileOpen(false)}
-                      className={`py-3 px-4 rounded-xl transition-all text-sm font-medium no-underline flex items-center justify-between ${active ? 'bg-[#7B1E3A] text-white font-semibold shadow-sm' : 'text-[#4A2C2A] hover:bg-[#FFF8F0] hover:text-[#7B1E3A]'}`}
+                      className={`py-3 px-4 rounded-xl transition-all text-sm font-medium no-underline flex items-center justify-between ${active ? 'bg-[#7B1E3A] !text-white font-semibold shadow-sm' : 'text-[#4A2C2A] hover:bg-[#FFF8F0] hover:text-[#7B1E3A]'}`}
                     >
                       {link.name}
                       {active && <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]" />}
