@@ -455,21 +455,21 @@ export default function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'tween', duration: 0.25, ease: 'easeOut' }}
-              className="fixed top-0 right-0 w-72 h-full bg-white z-50 shadow-2xl lg:hidden flex flex-col"
+              className="fixed top-0 right-0 w-80 h-full bg-white z-50 shadow-2xl lg:hidden flex flex-col"
             >
               <div className="flex items-center justify-between p-5 border-b border-[#D4AF37]/20 bg-[#FFF8F0]">
-                <span className="text-lg font-bold text-[#7B1E3A]" style={{ fontFamily: 'Playfair Display' }}>
+                <span className="text-xl font-bold text-[#7B1E3A]" style={{ fontFamily: 'Playfair Display' }}>
                   Navigation
                 </span>
                 <button
                   onClick={() => setMobileOpen(false)}
-                  className="w-8 h-8 rounded-full bg-white flex items-center justify-center cursor-pointer border border-[#D4AF37]/20 text-[#4A2C2A]"
+                  className="w-9 h-9 rounded-full bg-white flex items-center justify-center cursor-pointer border border-[#D4AF37]/20 text-[#4A2C2A] shadow-xs"
                 >
-                  <FiX size={18} />
+                  <FiX size={20} />
                 </button>
               </div>
 
-              <div className="flex flex-col p-4 gap-1 overflow-y-auto flex-1">
+              <div className="flex flex-col p-5 gap-2 overflow-y-auto flex-1">
                 {navLinks.map(link => {
                   if (link.isDropdown) {
                     const active = location.pathname.startsWith('/login');
@@ -480,17 +480,17 @@ export default function Navbar() {
                         <button
                           type="button"
                           onClick={() => setMobileLoginOpen(!mobileLoginOpen)}
-                          className={`py-3 px-4 rounded-xl transition-all text-sm font-medium flex items-center justify-between w-full border-none cursor-pointer font-body ${
+                          className={`py-3.5 px-5 rounded-xl transition-all text-base font-semibold flex items-center justify-between w-full border-none cursor-pointer font-body ${
                             active
                               ? 'bg-[#7B1E3A] !text-white font-semibold shadow-md'
                               : 'bg-transparent text-[#4A2C2A] hover:bg-[#FFF8F0] hover:text-[#7B1E3A]'
                           }`}
                         >
-                          <span className="flex items-center gap-2">
+                          <span className="flex items-center gap-2.5">
                             {displayLabel}
                           </span>
                           <FiChevronDown
-                            size={18}
+                            size={20}
                             className={`transition-transform duration-300 ${mobileLoginOpen ? 'rotate-180' : ''}`}
                           />
                         </button>
@@ -502,7 +502,7 @@ export default function Navbar() {
                               animate={{ height: 'auto', opacity: 1 }}
                               exit={{ height: 0, opacity: 0 }}
                               transition={{ duration: 0.2, ease: 'easeInOut' }}
-                              className="overflow-hidden pl-3 pr-1 pt-1 space-y-1"
+                              className="overflow-hidden pl-3 pr-1 pt-1.5 space-y-1.5"
                             >
                               {link.children.map((child) => {
                                 const Icon = child.icon;
@@ -515,17 +515,17 @@ export default function Navbar() {
                                       setMobileOpen(false);
                                       setMobileLoginOpen(false);
                                     }}
-                                    className={`py-2.5 px-3 rounded-xl transition-all text-xs font-medium no-underline flex items-center gap-3 border border-transparent ${
+                                    className={`py-3 px-4 rounded-xl transition-all text-sm font-medium no-underline flex items-center gap-3.5 border border-transparent ${
                                       isChildActive
                                         ? 'bg-[#7B1E3A]/10 text-[#7B1E3A] font-bold border-[#D4AF37]/30'
                                         : 'text-[#6B4A48] hover:bg-[#FFF8F0] hover:text-[#7B1E3A]'
                                     }`}
                                   >
-                                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 ${isChildActive ? 'bg-[#7B1E3A] text-[#D4AF37]' : 'bg-[#FFF8F0] text-[#7B1E3A]'}`}>
-                                      <Icon size={14} />
+                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${isChildActive ? 'bg-[#7B1E3A] text-[#D4AF37]' : 'bg-[#FFF8F0] text-[#7B1E3A]'}`}>
+                                      <Icon size={16} />
                                     </div>
                                     <span className="flex-1">{child.name}</span>
-                                    {isChildActive && <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]" />}
+                                    {isChildActive && <span className="w-2 h-2 rounded-full bg-[#D4AF37]" />}
                                   </Link>
                                 );
                               })}
@@ -542,10 +542,10 @@ export default function Navbar() {
                       key={link.name}
                       to={link.path}
                       onClick={() => setMobileOpen(false)}
-                      className={`py-3 px-4 rounded-xl transition-all text-sm font-medium no-underline flex items-center justify-between ${active ? 'bg-[#7B1E3A] !text-white font-semibold shadow-sm' : 'text-[#4A2C2A] hover:bg-[#FFF8F0] hover:text-[#7B1E3A]'}`}
+                      className={`py-3.5 px-5 rounded-xl transition-all text-base font-semibold no-underline flex items-center justify-between ${active ? 'bg-[#7B1E3A] !text-white font-semibold shadow-sm' : 'text-[#4A2C2A] hover:bg-[#FFF8F0] hover:text-[#7B1E3A]'}`}
                     >
                       {link.name}
-                      {active && <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]" />}
+                      {active && <span className="w-2 h-2 rounded-full bg-[#D4AF37]" />}
                     </Link>
                   );
                 })}
@@ -556,17 +556,17 @@ export default function Navbar() {
                   <Link
                     to={getDashboardPath()}
                     onClick={() => setMobileOpen(false)}
-                    className="btn-golden w-full justify-center no-underline shadow-md"
+                    className="btn-golden w-full justify-center !py-3.5 !text-sm no-underline shadow-md"
                   >
-                    <FiGrid size={16} /> Dashboard ({role})
+                    <FiGrid size={18} /> Dashboard ({role})
                   </Link>
                 ) : (
                   <Link
                     to="/portal"
                     onClick={() => setMobileOpen(false)}
-                    className="btn-golden w-full justify-center no-underline shadow-md"
+                    className="btn-golden w-full justify-center !py-3.5 !text-sm no-underline shadow-md"
                   >
-                    <FiUser size={16} /> Login / Register
+                    <FiUser size={18} /> Login / Register
                   </Link>
                 )}
               </div>
