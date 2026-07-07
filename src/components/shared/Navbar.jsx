@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiSearch, FiHeart, FiMenu, FiX, FiUser, FiGrid, FiClock } from 'react-icons/fi';
+import { FiSearch, FiHeart, FiMenu, FiX, FiUser, FiGrid, FiClock, FiChevronDown, FiShield, FiShoppingBag } from 'react-icons/fi';
 import { useWishlist } from '../../context/WishlistContext';
 import { useAuth } from '../../context/AuthContext';
 
@@ -10,7 +10,15 @@ const navLinks = [
   { name: 'Categories', path: '/categories' },
   { name: 'Featured', path: '/products?filter=featured' },
   { name: 'Shops', path: '/shops' },
-  { name: 'About', path: '/about' },
+  {
+    name: 'Login',
+    isDropdown: true,
+    children: [
+      { name: 'User Login', path: '/login/user', icon: FiUser, desc: 'Saree Connoisseur & Shopper' },
+      { name: 'Shop Owner Login', path: '/login/shopkeeper', icon: FiShoppingBag, desc: 'Weaver & Store Partner' },
+      { name: 'Admin Login', path: '/login/admin', icon: FiShield, desc: 'Platform Management' },
+    ]
+  },
   { name: 'Contact', path: '/contact' },
 ];
 
@@ -18,6 +26,8 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [loginDropdownOpen, setLoginDropdownOpen] = useState(false);
+  const [mobileLoginOpen, setMobileLoginOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeIdx, setActiveIdx] = useState(-1);
   const { wishlist } = useWishlist();
@@ -199,6 +209,86 @@ export default function Navbar() {
           {/* Desktop Nav Links */}
           <div className="hidden lg:flex items-center gap-5 xl:gap-7">
             {navLinks.map(link => {
+              if (link.isDropdown) {
+                const active = location.pathname.startsWith('/login');
+                return (
+                  <div
+                    key={link.name}
+                    className="relative py-1"
+                    onMouseEnter={() => setLoginDropdownOpen(true)}
+                    onMouseLeave={() => setLoginDropdownOpen(false)}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setLoginDropdownOpen(!loginDropdownOpen)}
+                      className={`text-sm font-medium transition-colors relative group flex items-center gap-1 bg-transparent border-none cursor-pointer p-0 font-body ${
+                        active ? 'text-[#7B1E3A] font-semibold' : 'text-[#4A2C2A] hover:text-[#7B1E3A]'
+                      }`}
+                    >
+                      <span>{link.name}</span>
+                      <FiChevronDown
+                        size={15}
+                        className={`transition-transform duration-300 ${loginDropdownOpen ? 'rotate-180 text-[#D4AF37]' : 'text-[#6B4A48]'}`}
+                      />
+                      <span
+                        className={`absolute -bottom-1 left-0 h-0.5 bg-[#D4AF37] transition-all duration-300 rounded-full ${
+                          active ? 'w-full' : 'w-0 group-hover:w-full'
+                        }`}
+                      />
+                    </button>
+
+                    <AnimatePresence>
+                      {loginDropdownOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 12, scale: 0.96 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 8, scale: 0.96 }}
+                          transition={{ duration: 0.2, ease: 'easeOut' }}
+                          className="absolute top-full left-1/2 -translate-x-1/2 pt-3 w-64 z-50"
+                        >
+                          <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-xl border border-[#D4AF37]/30 p-2 overflow-hidden">
+                            <div className="bg-[#FFF8F0]/80 rounded-xl p-1.5 space-y-1">
+                              {link.children.map((child) => {
+                                const Icon = child.icon;
+                                const isChildActive = location.pathname === child.path;
+                                return (
+                                  <Link
+                                    key={child.name}
+                                    to={child.path}
+                                    onClick={() => setLoginDropdownOpen(false)}
+                                    className={`flex items-center gap-3 p-2.5 rounded-lg transition-all no-underline group/item ${
+                                      isChildActive
+                                        ? 'bg-[#7B1E3A] text-white font-semibold shadow-sm'
+                                        : 'text-[#4A2C2A] hover:bg-white hover:text-[#7B1E3A] hover:shadow-2xs'
+                                    }`}
+                                  >
+                                    <div
+                                      className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-transform group-hover/item:scale-105 ${
+                                        isChildActive
+                                          ? 'bg-white/20 text-[#D4AF37]'
+                                          : 'bg-[#7B1E3A]/10 text-[#7B1E3A] group-hover/item:bg-[#7B1E3A] group-hover/item:text-[#D4AF37]'
+                                      }`}
+                                    >
+                                      <Icon size={15} />
+                                    </div>
+                                    <div className="min-w-0 flex-1">
+                                      <span className="text-xs font-bold block leading-snug">{child.name}</span>
+                                      <span className={`text-[10px] block truncate ${isChildActive ? 'text-white/80' : 'text-[#6B4A48]'}`}>
+                                        {child.desc}
+                                      </span>
+                                    </div>
+                                  </Link>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              }
+
               const active = location.pathname === link.path || (link.path !== '/' && location.pathname.startsWith(link.path.split('?')[0]) && link.path !== '/');
               return (
                 <Link
@@ -379,6 +469,69 @@ export default function Navbar() {
 
               <div className="flex flex-col p-4 gap-1 overflow-y-auto flex-1">
                 {navLinks.map(link => {
+                  if (link.isDropdown) {
+                    const active = location.pathname.startsWith('/login');
+                    return (
+                      <div key={link.name} className="flex flex-col">
+                        <button
+                          type="button"
+                          onClick={() => setMobileLoginOpen(!mobileLoginOpen)}
+                          className={`py-3 px-4 rounded-xl transition-all text-sm font-medium flex items-center justify-between w-full border-none bg-transparent cursor-pointer font-body ${
+                            active
+                              ? 'bg-[#7B1E3A] text-white font-semibold shadow-sm'
+                              : 'text-[#4A2C2A] hover:bg-[#FFF8F0] hover:text-[#7B1E3A]'
+                          }`}
+                        >
+                          <span className="flex items-center gap-2">
+                            {link.name}
+                          </span>
+                          <FiChevronDown
+                            size={18}
+                            className={`transition-transform duration-300 ${mobileLoginOpen ? 'rotate-180' : ''}`}
+                          />
+                        </button>
+
+                        <AnimatePresence>
+                          {mobileLoginOpen && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.2, ease: 'easeInOut' }}
+                              className="overflow-hidden pl-3 pr-1 pt-1 space-y-1"
+                            >
+                              {link.children.map((child) => {
+                                const Icon = child.icon;
+                                const isChildActive = location.pathname === child.path;
+                                return (
+                                  <Link
+                                    key={child.name}
+                                    to={child.path}
+                                    onClick={() => {
+                                      setMobileOpen(false);
+                                      setMobileLoginOpen(false);
+                                    }}
+                                    className={`py-2.5 px-3 rounded-xl transition-all text-xs font-medium no-underline flex items-center gap-3 border border-transparent ${
+                                      isChildActive
+                                        ? 'bg-[#7B1E3A]/10 text-[#7B1E3A] font-bold border-[#D4AF37]/30'
+                                        : 'text-[#6B4A48] hover:bg-[#FFF8F0] hover:text-[#7B1E3A]'
+                                    }`}
+                                  >
+                                    <div className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 ${isChildActive ? 'bg-[#7B1E3A] text-[#D4AF37]' : 'bg-[#FFF8F0] text-[#7B1E3A]'}`}>
+                                      <Icon size={14} />
+                                    </div>
+                                    <span className="flex-1">{child.name}</span>
+                                    {isChildActive && <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]" />}
+                                  </Link>
+                                );
+                              })}
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    );
+                  }
+
                   const active = location.pathname === link.path;
                   return (
                     <Link
