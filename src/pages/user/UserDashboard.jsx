@@ -10,60 +10,51 @@ export default function UserDashboard() {
   const recommended = products.filter(p => p.featured).slice(0, 4);
 
   return (
-    <div className="space-y-12">
-      {/* Welcome banner */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-        className="rounded-3xl bg-gradient-to-r from-[#7B1E3A] via-[#6B1A32] to-[#4A1020] p-8 sm:p-12 md:p-14 mb-12 text-white relative overflow-hidden shadow-xl border border-[#D4AF37]/30">
-        <div className="absolute inset-0 opacity-15" style={{ backgroundImage: 'url("https://images.pexels.com/photos/2814808/pexels-photo-2814808.jpeg?auto=compress&cs=tinysrgb&w=800")', backgroundSize: 'cover', backgroundPosition: 'center' }} />
-        <div className="relative z-10 max-w-2xl">
-          <span className="inline-block text-xs uppercase font-bold tracking-widest text-[#D4AF37] bg-black/40 backdrop-blur-xs px-4 py-2 rounded-full mb-4 border border-[#D4AF37]/30">
-            ✦ Saree Connoisseur Club
-          </span>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-white leading-tight" style={{ fontFamily: 'Playfair Display' }}>
-            Welcome back, Ananya! ✨
+    <div className="space-y-6 sm:space-y-8">
+      {/* Welcome banner - Simplified */}
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="rounded-3xl bg-gradient-to-r from-[#7B1E3A] via-[#6B1A32] to-[#4A1020] py-6 sm:py-8 px-6 sm:px-10 text-white relative overflow-hidden shadow-md border border-[#D4AF37]/30 flex items-center min-h-[90px] sm:min-h-[110px]"
+      >
+        <div
+          className="absolute inset-0 opacity-20 bg-black/30"
+          style={{ backgroundImage: 'url("https://images.pexels.com/photos/2814808/pexels-photo-2814808.jpeg?auto=compress&cs=tinysrgb&w=800")', backgroundSize: 'cover', backgroundPosition: 'center' }}
+        />
+        <div className="relative z-10 w-full flex items-center">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white m-0 leading-tight" style={{ fontFamily: 'Playfair Display' }}>
+            Welcome back, Ananya!
           </h1>
-          <p className="text-white/85 text-sm sm:text-base md:text-lg mb-8 font-light leading-relaxed max-w-xl">
-            Discover exquisite handloom drops, Kanjivaram bridals, and festive zari weaves curated exclusively for your wardrobe.
-          </p>
-          <div className="flex flex-wrap items-center gap-4">
-            <Link to="/products" className="btn-golden !py-3 sm:!py-3.5 !px-7 !h-[48px] !text-xs sm:!text-sm !font-semibold !rounded-xl no-underline shadow-lg inline-flex items-center justify-center gap-2">
-              Explore New Drops <FiArrowRight />
-            </Link>
-            <Link to="/wishlist" className="btn-outline-gold !py-3 sm:!py-3.5 !px-7 !h-[48px] !text-xs sm:!text-sm !font-semibold !rounded-xl no-underline bg-black/20 backdrop-blur-xs text-white border-white/30 hover:bg-white hover:text-[#7B1E3A] inline-flex items-center justify-center gap-2">
-              <FiHeart /> View Wishlist
-            </Link>
-          </div>
         </div>
       </motion.div>
 
-      {/* Quick Perks */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 mb-14">
-        <div className="card-base p-6 sm:p-7 bg-white border border-[#D4AF37]/25 flex items-start sm:items-center gap-5 shadow-sm rounded-2xl">
-          <div className="w-14 h-14 rounded-2xl bg-[#7B1E3A]/10 text-[#7B1E3A] flex items-center justify-center text-2xl flex-shrink-0 shadow-2xs">
-            <FiShoppingBag />
+      {/* Quick Perks - Flipkart Style Horizontal Feature Row */}
+      <div className="flex items-stretch justify-between gap-3 sm:gap-5 lg:gap-6 overflow-x-auto pb-2 scrollbar-hidden w-full">
+        <div className="flex-1 min-w-[110px] sm:min-w-[160px] bg-white border border-[#D4AF37]/30 rounded-2xl p-4 sm:p-5 flex flex-col items-center justify-center gap-2.5 sm:gap-3 text-center shadow-xs hover:shadow-md transition-all">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#FFF8F0] text-[#7B1E3A] flex items-center justify-center text-xl sm:text-2xl shadow-2xs border border-[#D4AF37]/25 flex-shrink-0">
+            <FiShoppingBag className="w-6 h-6 sm:w-7 sm:h-7" />
           </div>
-          <div>
-            <p className="font-bold text-[#7B1E3A] text-base sm:text-lg m-0 mb-1">Express Priority Shipping</p>
-            <p className="text-xs sm:text-sm text-[#6B4A48] m-0 font-light leading-relaxed">Free delivery on all silk weaves</p>
-          </div>
+          <span className="text-xs sm:text-sm font-bold text-[#7B1E3A] tracking-tight m-0">
+            Free Shipping
+          </span>
         </div>
-        <div className="card-base p-6 sm:p-7 bg-white border border-[#D4AF37]/25 flex items-start sm:items-center gap-5 shadow-sm rounded-2xl">
-          <div className="w-14 h-14 rounded-2xl bg-[#D4AF37]/10 text-[#D4AF37] flex items-center justify-center text-2xl flex-shrink-0 shadow-2xs">
-            <FiAward />
+
+        <div className="flex-1 min-w-[110px] sm:min-w-[160px] bg-white border border-[#D4AF37]/30 rounded-2xl p-4 sm:p-5 flex flex-col items-center justify-center gap-2.5 sm:gap-3 text-center shadow-xs hover:shadow-md transition-all">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#FFF8F0] text-[#D4AF37] flex items-center justify-center text-xl sm:text-2xl shadow-2xs border border-[#D4AF37]/25 flex-shrink-0">
+            <FiAward className="w-6 h-6 sm:w-7 sm:h-7" />
           </div>
-          <div>
-            <p className="font-bold text-[#7B1E3A] text-base sm:text-lg m-0 mb-1">100% Silk Mark Certified</p>
-            <p className="text-xs sm:text-sm text-[#6B4A48] m-0 font-light leading-relaxed">Verified regional handloom quality</p>
-          </div>
+          <span className="text-xs sm:text-sm font-bold text-[#7B1E3A] tracking-tight m-0">
+            Silk Mark Certified
+          </span>
         </div>
-        <div className="card-base p-6 sm:p-7 bg-white border border-[#D4AF37]/25 flex items-start sm:items-center gap-5 shadow-sm rounded-2xl">
-          <div className="w-14 h-14 rounded-2xl bg-[#2D8F5E]/10 text-[#2D8F5E] flex items-center justify-center text-2xl flex-shrink-0 shadow-2xs">
-            <FiHeart />
+
+        <div className="flex-1 min-w-[110px] sm:min-w-[160px] bg-white border border-[#D4AF37]/30 rounded-2xl p-4 sm:p-5 flex flex-col items-center justify-center gap-2.5 sm:gap-3 text-center shadow-xs hover:shadow-md transition-all">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#FFF8F0] text-[#7B1E3A] flex items-center justify-center text-xl sm:text-2xl shadow-2xs border border-[#D4AF37]/25 flex-shrink-0">
+            <FiHeart className="w-6 h-6 sm:w-7 sm:h-7" />
           </div>
-          <div>
-            <p className="font-bold text-[#7B1E3A] text-base sm:text-lg m-0 mb-1">Personalized Wardrobe</p>
-            <p className="text-xs sm:text-sm text-[#6B4A48] m-0 font-light leading-relaxed">Tailored weave recommendations</p>
-          </div>
+          <span className="text-xs sm:text-sm font-bold text-[#7B1E3A] tracking-tight m-0">
+            Wishlist
+          </span>
         </div>
       </div>
 
