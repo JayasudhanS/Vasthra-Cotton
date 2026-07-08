@@ -28,7 +28,7 @@ export default function ContactPage() {
       <div className="grid md:grid-cols-12 gap-10 items-start">
         {/* Contact Information */}
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="md:col-span-5 space-y-6">
-          <div className="card-base p-6 sm:p-8 bg-white border border-[#D4AF37]/30 shadow-md relative overflow-hidden">
+          <div className="card-base p-6 sm:p-8 pt-8 sm:pt-10 bg-white border border-[#D4AF37]/30 shadow-md relative overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#7B1E3A] via-[#D4AF37] to-[#7B1E3A]" />
             <h2 className="text-xl sm:text-2xl font-bold text-[#7B1E3A] m-0 border-b border-[#D4AF37]/15 pb-3 mb-6" style={{ fontFamily: 'Playfair Display' }}>
               Headquarters & Concierge
@@ -56,7 +56,7 @@ export default function ContactPage() {
 
         {/* Form Section */}
         <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="md:col-span-7">
-          <div className="card-base p-6 sm:p-10 bg-white border border-[#D4AF37]/30 shadow-md relative overflow-hidden">
+          <div className="card-base p-6 sm:p-10 pt-8 sm:pt-12 bg-white border border-[#D4AF37]/30 shadow-md relative overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#D4AF37] via-[#7B1E3A] to-[#D4AF37]" />
             {sent ? (
               <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-12 space-y-4">

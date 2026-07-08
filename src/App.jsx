@@ -42,7 +42,7 @@ export default function App() {
     <>
       <ScrollToTop />
       <Navbar />
-      <main className="min-h-screen w-full max-w-full overflow-x-hidden flex flex-col flex-1 pt-28 sm:pt-32">
+      <main className="min-h-screen w-full max-w-full overflow-x-hidden flex flex-col flex-1">
         <Routes>
           {/* Public */}
           <Route path="/" element={<LandingPage />} />

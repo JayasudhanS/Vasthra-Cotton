@@ -85,7 +85,7 @@ function Hero() {
 /* ─── Statistics Section ─── */
 function StatisticsSection() {
   return (
-    <section className="bg-[#FFF8F0] pt-6 sm:pt-10 pb-12 sm:pb-16 px-4 sm:px-6 lg:px-8 border-b border-[#D4AF37]/20 w-full relative z-20">
+    <section className="bg-[#FFF8F0] pt-8 sm:pt-12 pb-14 sm:pb-18 px-4 sm:px-6 lg:px-8 border-b border-[#D4AF37]/15 w-full relative z-20">
       <div className="max-w-5xl mx-auto grid grid-cols-3 gap-2 sm:gap-8 items-center">
         {[
           { n: '5,000+', l: 'Authentic Sarees', icon: FiAward },
@@ -111,7 +111,7 @@ function StatisticsSection() {
 /* ─── Featured Categories ─── */
 function FeaturedCategories() {
   return (
-    <section className="py-12 sm:py-20 max-w-7xl mx-auto px-4 lg:px-8 w-full overflow-hidden bg-[#FFF8F0]">
+    <section className="py-14 sm:py-20 max-w-7xl mx-auto px-4 lg:px-8 w-full overflow-hidden bg-[#FFF8F0]">
       <div className="flex items-center justify-between mb-2 sm:mb-3">
         <span className="text-xs sm:text-sm font-bold uppercase tracking-widest text-[#D4AF37] flex items-center gap-1.5">
           ✦ TRENDING WEAVES & COLLECTIONS
@@ -147,12 +147,12 @@ function FeaturedCategories() {
 /* ─── Featured Products ─── */
 function FeaturedProducts() {
   return (
-    <section className="py-20 bg-white border-y border-[#D4AF37]/15 w-full overflow-hidden">
+    <section className="py-16 sm:py-24 bg-white border-y border-[#D4AF37]/10 w-full overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 lg:px-8">
         <h2 className="section-title">Featured Sarees</h2>
         <p className="section-subtitle">Handpicked selections representing India's finest craftsmanship</p>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
           {products.filter(p => p.featured).slice(0, 8).map((p, i) => (
             <ProductCard key={p.id} product={p} index={i} />
           ))}
@@ -171,7 +171,7 @@ function FeaturedProducts() {
 /* ─── Trending Shops ─── */
 function TrendingShops() {
   return (
-    <section className="py-20 max-w-7xl mx-auto px-4 lg:px-8 w-full overflow-hidden">
+    <section className="py-16 sm:py-24 max-w-7xl mx-auto px-4 lg:px-8 w-full overflow-hidden">
       <h2 className="section-title">Trending Weavers & Shops</h2>
       <p className="section-subtitle">Connect directly with verified artisans and heritage silk houses</p>
 
@@ -218,7 +218,7 @@ function TrendingShops() {
 /* ─── Festival Banners ─── */
 function FestivalCollections() {
   return (
-    <section className="py-20 bg-[#FFF8F0] border-y border-[#D4AF37]/15 w-full overflow-hidden">
+    <section className="py-16 sm:py-24 bg-[#FFF8F0] border-y border-[#D4AF37]/10 w-full overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 lg:px-8">
         <h2 className="section-title">Festival & Bridal Specials</h2>
         <p className="section-subtitle">Celebrate auspicious beginnings with our exclusive celebratory drapes</p>
@@ -262,7 +262,7 @@ function WhyChooseUs() {
     { icon: <FiCheckCircle size={26} />, title: 'Easy Returns', desc: 'Hassle-free 7-day return policy with instant refund guarantee.' },
   ];
   return (
-    <section className="py-20 max-w-7xl mx-auto px-4 lg:px-8 w-full overflow-hidden">
+    <section className="py-16 sm:py-24 max-w-7xl mx-auto px-4 lg:px-8 w-full overflow-hidden">
       <h2 className="section-title">Why Choose Vasthra Cotton</h2>
       <p className="section-subtitle">What makes us India's most trusted luxury saree destination</p>
 
@@ -289,7 +289,7 @@ function WhyChooseUs() {
 /* ─── Testimonials ─── */
 function Testimonials() {
   return (
-    <section className="py-20 bg-gradient-to-br from-[#7B1E3A] via-[#5A1028] to-[#4A2C2A] text-white w-full overflow-hidden relative">
+    <section className="py-16 sm:py-24 bg-gradient-to-br from-[#7B1E3A] via-[#5A1028] to-[#4A2C2A] text-white w-full overflow-hidden relative">
       <div className="max-w-7xl mx-auto px-4 lg:px-8 relative z-10">
         <h2 className="section-title !text-white">Voices of Tradition</h2>
         <p className="section-subtitle !text-white/80">Real experiences from saree connoisseurs and brides across India</p>
@@ -332,9 +332,9 @@ function Testimonials() {
 function Newsletter() {
   const [email, setEmail] = useState('');
   return (
-    <section className="py-20 bg-gradient-to-b from-[#FFF8F0] via-white to-[#FFF8F0] w-full overflow-hidden flex justify-center items-center border-t border-[#D4AF37]/20">
+    <section className="py-16 sm:py-24 bg-gradient-to-b from-[#FFF8F0] via-white to-[#FFF8F0] w-full overflow-hidden flex justify-center items-center border-t border-[#D4AF37]/15">
       <div className="w-full max-w-4xl mx-auto px-4 lg:px-8 text-center">
-        <div className="card-base bg-gradient-to-br from-[#7B1E3A] via-[#5A1028] to-[#4A2C2A] text-white p-8 sm:p-14 lg:p-16 border-2 border-[#D4AF37]/50 shadow-2xl rounded-3xl w-full relative overflow-hidden">
+        <div className="bg-gradient-to-br from-[#7B1E3A] via-[#5A1028] to-[#4A2C2A] text-white p-8 sm:p-14 lg:p-16 border-2 border-[#D4AF37]/50 shadow-2xl rounded-3xl w-full relative overflow-hidden">
           {/* Decorative Background Glow */}
           <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-[#D4AF37]/15 blur-3xl pointer-events-none" />
           <div className="absolute -bottom-24 -left-24 w-64 h-64 rounded-full bg-[#D4AF37]/15 blur-3xl pointer-events-none" />

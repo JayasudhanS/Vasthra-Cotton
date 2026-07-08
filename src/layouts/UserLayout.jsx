@@ -17,7 +17,7 @@ export default function UserLayout() {
   return (
     <div className="max-w-7xl mx-auto px-4 lg:px-8 py-8">
       {/* Top nav for user */}
-      <div className="flex items-center gap-2.5 mb-8 overflow-x-auto pb-2 scrollbar-hidden">
+      <div className="flex items-center gap-2.5 mb-10 overflow-x-auto pb-3 scrollbar-hidden border-b border-[#D4AF37]/15">
         {links.map(l => (
           <Link key={l.name} to={l.path}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-xs sm:text-sm font-semibold whitespace-nowrap transition-all no-underline shadow-xs border ${pathname === l.path ? 'bg-[#7B1E3A] text-white border-[#7B1E3A] shadow-md' : 'bg-white text-[#4A2C2A] hover:bg-[#FFF8F0] border-[#D4AF37]/25 hover:border-[#D4AF37]'}`}>

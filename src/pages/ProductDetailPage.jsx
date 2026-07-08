@@ -27,7 +27,7 @@ export default function ProductDetailPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 lg:px-8 py-10">
+    <div className="max-w-7xl mx-auto px-4 lg:px-8 py-10 sm:py-12">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-xs text-[#6B4A48] mb-8 overflow-x-auto pb-2">
         <Link to="/" className="text-[#6B4A48] hover:text-[#7B1E3A] no-underline">Home</Link>
@@ -39,9 +39,9 @@ export default function ProductDetailPage() {
         <span className="text-[#7B1E3A] font-semibold truncate">{product.name}</span>
       </nav>
 
-      <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 mb-16 items-start">
+      <div className="grid lg:grid-cols-12 gap-8 lg:gap-14 mb-16 items-start">
         {/* Gallery - 6 Columns */}
-        <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} className="lg:col-span-6 lg:sticky lg:top-24">
+        <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} className="lg:col-span-6 lg:sticky lg:top-[110px]">
           <div className="rounded-2xl overflow-hidden mb-4 aspect-[4/5] bg-[#F5EDE0] shadow-md border border-[#D4AF37]/20 relative group">
             <img src={product.images[selectedImg] || product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" />
             {discount > 0 && (
@@ -181,7 +181,7 @@ export default function ProductDetailPage() {
 
       {/* Related products */}
       {related.length > 0 && (
-        <section className="pt-12 border-t border-[#D4AF37]/20 mt-12">
+        <section className="pt-14 border-t border-[#D4AF37]/15 mt-14">
           <div className="flex items-center justify-between mb-8">
             <div>
               <span className="text-xs uppercase tracking-widest text-[#D4AF37] font-bold block mb-1">✦ Complete Your Wardrobe</span>

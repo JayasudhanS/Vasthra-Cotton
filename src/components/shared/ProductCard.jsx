@@ -30,12 +30,12 @@ export default function ProductCard({ product, index = 0 }) {
       className="group card-base h-full relative"
     >
       {/* Image Container with Fixed 4:5 Aspect Ratio */}
-      <div className="relative overflow-hidden aspect-[4/5] bg-[#F5EDE0] w-full">
+      <div className="relative overflow-hidden aspect-[4/5] bg-[#F5EDE0] w-full" style={{ minHeight: '200px' }}>
         <img
           src={product.image}
           alt={product.name}
           loading="lazy"
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+          className="w-full h-full object-cover group-hover:scale-[1.06] transition-transform duration-600 ease-out"
         />
 
         {/* Discount badge */}
@@ -72,7 +72,7 @@ export default function ProductCard({ product, index = 0 }) {
       </div>
 
       {/* Info Section - Flex-1 with space-between ensures uniform price alignment at bottom */}
-      <div className="flex flex-col flex-1 p-4 justify-between bg-white">
+      <div className="flex flex-col flex-1 p-4 sm:p-5 justify-between bg-white gap-1">
         <div>
           <div className="flex items-center justify-between gap-2 mb-1">
             <span className="text-[10px] uppercase tracking-wider text-[#D4AF37] font-bold truncate">
@@ -89,7 +89,7 @@ export default function ProductCard({ product, index = 0 }) {
             </h3>
           </Link>
 
-          <div className="flex items-center gap-1.5 mb-3">
+          <div className="flex items-center gap-1.5 mb-2">
             <StarRating rating={product.rating} size={12} />
             <span className="text-[11px] text-[#6B4A48] font-medium">({product.reviews})</span>
           </div>

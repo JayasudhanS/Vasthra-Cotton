@@ -18,7 +18,7 @@ export default function AdminLayout() {
 
   return (
     <div className="flex min-h-[calc(100vh-80px)]">
-      <aside className="hidden lg:flex flex-col w-64 bg-gradient-to-b from-[#4A2C2A] to-[#2D1A19] p-4 sticky top-[72px] h-[calc(100vh-72px)] overflow-y-auto">
+      <aside className="hidden lg:flex flex-col w-[260px] bg-gradient-to-b from-[#4A2C2A] to-[#2D1A19] p-5 sticky top-[100px] h-[calc(100vh-100px)] overflow-y-auto">
         <div className="mb-6 px-3">
           <p className="text-xs uppercase tracking-wider text-[#D4AF37] font-semibold">Admin Panel</p>
         </div>
@@ -35,7 +35,7 @@ export default function AdminLayout() {
         </button>
       </aside>
 
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-[#4A2C2A] z-40 flex overflow-x-auto px-2 py-2 gap-1">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-[#4A2C2A] z-40 flex overflow-x-auto px-2 py-2.5 gap-1.5 shadow-[0_-4px_20px_rgba(0,0,0,0.15)]">
         {links.slice(0, 5).map(l => (
           <Link key={l.name} to={l.path}
             className={`flex flex-col items-center px-3 py-1.5 rounded-lg text-[10px] font-medium transition-all no-underline flex-shrink-0 ${pathname === l.path ? 'text-[#D4AF37]' : 'text-white/60'}`}>
@@ -44,7 +44,7 @@ export default function AdminLayout() {
         ))}
       </div>
 
-      <main className="flex-1 p-6 lg:p-8 pb-20 lg:pb-8 bg-[#FFF8F0]">
+      <main className="flex-1 p-5 sm:p-6 lg:p-10 pb-24 lg:pb-10 bg-[#FFF8F0]">
         <Outlet />
       </main>
     </div>

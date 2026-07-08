@@ -7,7 +7,7 @@ import { FiCheckCircle, FiMapPin } from 'react-icons/fi';
 export default function ShopsPage() {
   const approvedShops = shops.filter(s => s.status === 'approved');
   return (
-    <div className="max-w-7xl mx-auto px-4 lg:px-8 py-10">
+    <div className="max-w-7xl mx-auto px-4 lg:px-8 py-10 sm:py-14">
       <div className="text-center max-w-2xl mx-auto mb-12">
         <span className="text-xs uppercase font-bold tracking-widest text-[#D4AF37] block mb-2 bg-[#7B1E3A]/5 px-4 py-1.5 rounded-full border border-[#D4AF37]/30 w-fit mx-auto">
           ✦ Silk Mark Certified Sellers

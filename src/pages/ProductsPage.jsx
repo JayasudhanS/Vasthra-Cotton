@@ -38,7 +38,7 @@ export default function ProductsPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 lg:px-8 py-10">
+    <div className="max-w-7xl mx-auto px-4 lg:px-8 py-10 sm:py-12">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-[#D4AF37]/20">
         <div>
@@ -63,7 +63,7 @@ export default function ProductsPage() {
         </div>
       </div>
 
-      <div className="flex gap-8 items-start">
+      <div className="flex gap-8 lg:gap-10 items-start">
         {/* Mobile Filter Drawer Overlay */}
         <AnimatePresence>
           {showFilter && (
@@ -88,7 +88,7 @@ export default function ProductsPage() {
             </button>
           </div>
 
-          <div className="space-y-6 card-base p-6 lg:sticky lg:top-24 shadow-sm bg-white">
+          <div className="space-y-6 card-base p-6 lg:sticky lg:top-[110px] shadow-sm bg-white">
             <div className="flex items-center justify-between border-b border-[#D4AF37]/15 pb-3">
               <span className="text-sm font-bold text-[#7B1E3A] uppercase tracking-wider">Filters</span>
               <button
@@ -181,7 +181,7 @@ export default function ProductsPage() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-5 sm:gap-6">
               {filtered.map((p, i) => (
                 <ProductCard key={p.id} product={p} index={i} />
               ))}

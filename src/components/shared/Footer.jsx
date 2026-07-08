@@ -19,7 +19,7 @@ export default function Footer() {
   return (
     <footer className="bg-gradient-to-b from-[#4A2C2A] to-[#2A1716] text-white/80 border-t-4 border-[#D4AF37] w-full overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 lg:px-8 pt-16 pb-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8 mb-14">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-10 mb-14">
           {/* Brand - Takes 2 Columns on Large Screens */}
           <div className="lg:col-span-2 pr-0 lg:pr-6">
             <Link to="/" className="flex items-center gap-2.5 no-underline mb-5 group w-fit">
@@ -111,7 +111,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t border-white/15 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-white/50">
+        <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-5 text-xs text-white/50">
           <p className="m-0">© 2026 Vasthra Cotton Marketplace Pvt. Ltd. All rights reserved.</p>
           <div className="flex gap-6">
             <Link to="/about" className="text-white/50 hover:text-[#D4AF37] no-underline">Privacy Policy</Link>

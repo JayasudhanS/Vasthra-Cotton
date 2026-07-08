@@ -83,13 +83,13 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/95 backdrop-blur-md shadow-md py-2' : 'bg-white/85 backdrop-blur-sm py-2.5'}`}>
+      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/97 backdrop-blur-lg shadow-lg' : 'bg-white/90 backdrop-blur-sm shadow-sm'}`}>
         {/* Top announcement strip */}
-        <div className="bg-gradient-to-r from-[#7B1E3A] via-[#5A1028] to-[#7B1E3A] text-white text-center py-1.5 text-xs tracking-wider font-light hidden md:block border-b border-[#D4AF37]/20">
-          ✨ Free Shipping on orders above ₹2,999 | Use code <span className="font-semibold text-[#D4AF37] px-1 bg-white/10 rounded">SAREE10</span> for 10% off ✨
+        <div className="bg-gradient-to-r from-[#7B1E3A] via-[#5A1028] to-[#7B1E3A] text-white text-center py-2 text-[11px] sm:text-xs tracking-wider font-light hidden md:block border-b border-[#D4AF37]/20">
+          ✨ Free Shipping on orders above ₹2,999 | Use code <span className="font-semibold text-[#D4AF37] px-1.5 py-0.5 bg-white/10 rounded-md">SAREE10</span> for 10% off ✨
         </div>
 
-        <div className="w-full max-w-7xl mx-auto px-4 lg:px-8 flex items-center justify-between h-16">
+        <div className="w-full max-w-7xl mx-auto px-4 lg:px-8 flex items-center justify-between h-[68px]">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5 no-underline group">
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#7B1E3A] to-[#D4AF37] flex items-center justify-center text-white font-bold text-lg shadow-sm group-hover:scale-105 transition-transform" style={{ fontFamily: 'Playfair Display' }}>
@@ -101,8 +101,8 @@ export default function Navbar() {
           </Link>
 
           {/* Flipkart / Myntra Style Search Box (Desktop) */}
-          <div className="hidden lg:flex items-center flex-1 max-w-md xl:max-w-xl mx-6 relative self-center">
-            <form onSubmit={handleSearch} className="w-full h-11 bg-[#FFF8F0] hover:bg-[#FFF2E5] focus-within:bg-white focus-within:border-[#7B1E3A] focus-within:ring-2 focus-within:ring-[#7B1E3A]/15 rounded-full border border-[#D4AF37]/40 flex items-center p-1 shadow-inner transition-all duration-200 relative">
+          <div className="hidden lg:flex items-center flex-1 max-w-sm xl:max-w-md mx-6 relative self-center">
+            <form onSubmit={handleSearch} className="w-full h-[44px] bg-[#FFF8F0] hover:bg-[#FFF2E5] focus-within:bg-white focus-within:border-[#7B1E3A] focus-within:ring-2 focus-within:ring-[#7B1E3A]/12 rounded-full border border-[#D4AF37]/35 flex items-center p-1 shadow-inner transition-all duration-200 relative">
               <div className="flex items-center justify-center text-[#6B4A48]/70 pl-3 pr-2 flex-shrink-0">
                 <FiSearch size={18} />
               </div>
@@ -207,7 +207,7 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Nav Links */}
-          <div className="hidden lg:flex items-center gap-5 xl:gap-7">
+          <div className="hidden lg:flex items-center gap-6 xl:gap-8">
             {navLinks.map(link => {
               if (link.isDropdown) {
                 const active = location.pathname.startsWith('/login');
@@ -576,7 +576,7 @@ export default function Navbar() {
       </AnimatePresence>
 
       {/* Spacer for fixed nav */}
-      <div className="h-16 lg:h-18 md:mt-7" />
+      <div className="h-[68px] md:h-[100px]" />
     </>
   );
 }
