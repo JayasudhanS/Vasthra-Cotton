@@ -104,13 +104,15 @@ h4,
 h5,
 h6 {
   font-family: var(--font-heading);
-  line-height: 1.25;
+  line-height: 1.35;
   word-break: break-word;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.015em;
+  margin-bottom: 0.65rem;
 }
 
 p {
-  line-height: 1.65;
+  line-height: 1.75;
+  letter-spacing: 0.005em;
 }
 
 /* ─── Scrollbar ─── */
@@ -410,9 +412,9 @@ p {
   font-weight: 700;
   color: var(--color-maroon);
   text-align: center;
-  margin-bottom: 0.5rem;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
+  margin-bottom: 0.75rem;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
 }
 
 @media (min-width: 640px) {
@@ -432,12 +434,13 @@ p {
   font-size: 0.9375rem;
   color: var(--color-brown-light);
   text-align: center;
-  margin-bottom: 2.5rem;
-  max-width: 600px;
+  margin-bottom: 3rem;
+  max-width: 650px;
   margin-left: auto;
   margin-right: auto;
-  line-height: 1.6;
+  line-height: 1.75;
   font-weight: 300;
+  letter-spacing: 0.005em;
 }
 
 @media (min-width: 768px) {

@@ -87,13 +87,15 @@ export default function Navbar() {
           ✨ Free Shipping on orders above ₹2,999 | Use code <span className="font-semibold text-[#D4AF37] px-1.5 py-0.5 bg-white/10 rounded-md">SAREE10</span> for 10% off ✨
         </div>
 
-        <div className="w-full max-w-7xl mx-auto px-4 lg:px-8 flex items-center justify-between h-[68px]">
+        <div className="w-full max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 flex items-center justify-between h-[76px] sm:h-[84px]">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2.5 no-underline group">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#7B1E3A] to-[#D4AF37] flex items-center justify-center text-white font-bold text-lg shadow-sm group-hover:scale-105 transition-transform" style={{ fontFamily: 'Playfair Display' }}>
-              V
-            </div>
-            <span className="text-xl lg:text-2xl font-bold text-[#7B1E3A] tracking-tight" style={{ fontFamily: 'Playfair Display' }}>
+          <Link to="/" className="flex items-center gap-2 sm:gap-3.5 no-underline group flex-shrink-0 min-w-0 mr-1 sm:mr-2">
+            <img
+              src="/images/logo_vas.png"
+              alt="Vasthra Cotton Logo"
+              className="w-9 h-9 sm:w-12 sm:h-12 lg:w-14 lg:h-14 object-contain flex-shrink-0 group-hover:scale-105 transition-transform"
+            />
+            <span className="text-xl sm:text-4xl lg:text-5xl font-bold text-[#7B1E3A] tracking-tight whitespace-nowrap" style={{ fontFamily: 'Playfair Display' }}>
               Vasthra <span className="text-[#D4AF37]">Cotton</span>
             </span>
           </Link>
@@ -144,11 +146,10 @@ export default function Navbar() {
                               key={idx}
                               type="button"
                               onClick={() => { setSearchQuery(term); setSearchOpen(false); setActiveIdx(-1); navigate(`/search?q=${encodeURIComponent(term)}`); }}
-                              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium border transition-all duration-200 cursor-pointer shadow-2xs leading-normal whitespace-nowrap flex-shrink-0 ${
-                                isSelected
+                              className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium border transition-all duration-200 cursor-pointer shadow-2xs leading-normal whitespace-nowrap flex-shrink-0 ${isSelected
                                   ? 'bg-[#7B1E3A] text-white border-[#7B1E3A] shadow-md scale-[1.02]'
                                   : 'bg-[#FFF8F0] hover:bg-[#E8C94A] hover:text-[#4A2C2A] text-[#7B1E3A] border-[#D4AF37]/30 hover:border-[#D4AF37]'
-                              }`}
+                                }`}
                             >
                               <FiSearch size={13} className={isSelected ? 'text-[#D4AF37]' : 'opacity-70'} />
                               <span>{term}</span>
@@ -180,11 +181,10 @@ export default function Navbar() {
                             <div
                               key={idx}
                               onClick={() => { setSearchQuery(recent); setSearchOpen(false); setActiveIdx(-1); navigate(`/search?q=${encodeURIComponent(recent)}`); }}
-                              className={`flex items-center justify-between px-4 py-3 rounded-xl text-xs cursor-pointer transition-all border group/item ${
-                                isSelected
+                              className={`flex items-center justify-between px-4 py-3 rounded-xl text-xs cursor-pointer transition-all border group/item ${isSelected
                                   ? 'bg-[#FFF8F0] text-[#7B1E3A] font-bold border-[#D4AF37]/40 shadow-xs'
                                   : 'text-[#4A2C2A] hover:bg-[#FFF8F0] hover:text-[#7B1E3A] border-transparent hover:border-[#D4AF37]/20'
-                              }`}
+                                }`}
                             >
                               <span className="flex items-center gap-2.5 font-medium min-w-0 truncate pr-2">
                                 <span className="w-6 h-6 rounded-full bg-[#FFF8F0] group-hover/item:bg-white text-[#D4AF37] flex items-center justify-center flex-shrink-0 text-xs shadow-2xs">🕒</span>
@@ -221,9 +221,8 @@ export default function Navbar() {
                     <button
                       type="button"
                       onClick={() => setLoginDropdownOpen(!loginDropdownOpen)}
-                      className={`text-sm font-medium transition-colors relative group flex items-center gap-1 border-none cursor-pointer p-0 font-body ${
-                        active ? 'bg-transparent text-[#7B1E3A] font-semibold' : 'bg-transparent text-[#4A2C2A] hover:text-[#7B1E3A]'
-                      }`}
+                      className={`text-sm font-medium transition-colors relative group flex items-center gap-1 border-none cursor-pointer p-0 font-body ${active ? 'bg-transparent text-[#7B1E3A] font-semibold' : 'bg-transparent text-[#4A2C2A] hover:text-[#7B1E3A]'
+                        }`}
                     >
                       <span>{displayLabel}</span>
                       <FiChevronDown
@@ -231,9 +230,8 @@ export default function Navbar() {
                         className={`transition-transform duration-300 ${loginDropdownOpen ? 'rotate-180 text-[#D4AF37]' : 'text-[#6B4A48]'}`}
                       />
                       <span
-                        className={`absolute -bottom-1 left-0 h-0.5 bg-[#D4AF37] transition-all duration-300 rounded-full ${
-                          active ? 'w-full' : 'w-0 group-hover:w-full'
-                        }`}
+                        className={`absolute -bottom-1 left-0 h-0.5 bg-[#D4AF37] transition-all duration-300 rounded-full ${active ? 'w-full' : 'w-0 group-hover:w-full'
+                          }`}
                       />
                     </button>
 
@@ -256,18 +254,16 @@ export default function Navbar() {
                                     key={child.name}
                                     to={child.path}
                                     onClick={() => setLoginDropdownOpen(false)}
-                                    className={`flex items-center gap-3 p-2.5 rounded-lg transition-all no-underline group/item ${
-                                      isChildActive
+                                    className={`flex items-center gap-3 p-2.5 rounded-lg transition-all no-underline group/item ${isChildActive
                                         ? 'bg-[#7B1E3A] text-white font-semibold shadow-sm'
                                         : 'text-[#4A2C2A] hover:bg-white hover:text-[#7B1E3A] hover:shadow-2xs'
-                                    }`}
+                                      }`}
                                   >
                                     <div
-                                      className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-transform group-hover/item:scale-105 ${
-                                        isChildActive
+                                      className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-transform group-hover/item:scale-105 ${isChildActive
                                           ? 'bg-white/20 text-[#D4AF37]'
                                           : 'bg-[#7B1E3A]/10 text-[#7B1E3A] group-hover/item:bg-[#7B1E3A] group-hover/item:text-[#D4AF37]'
-                                      }`}
+                                        }`}
                                     >
                                       <Icon size={15} />
                                     </div>
@@ -319,23 +315,23 @@ export default function Navbar() {
           </div>
 
           {/* Right actions */}
-          <div className="flex items-center gap-2 lg:gap-3">
+          <div className="flex items-center gap-1 sm:gap-2 lg:gap-3 flex-shrink-0 ml-auto">
             {/* Search toggle (Mobile only) */}
             <button
               onClick={() => setSearchOpen(!searchOpen)}
               aria-label="Toggle search bar"
-              className="lg:hidden w-10 h-10 rounded-full flex items-center justify-center hover:bg-[#FFF8F0] transition-colors text-[#4A2C2A] cursor-pointer bg-transparent border-none"
+              className="lg:hidden w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center hover:bg-[#FFF8F0] transition-colors text-[#4A2C2A] cursor-pointer bg-transparent border-none flex-shrink-0"
             >
-              <FiSearch size={19} />
+              <FiSearch size={18} />
             </button>
 
             {/* Wishlist */}
             <Link
               to="/wishlist"
               aria-label="Wishlist"
-              className="relative w-10 h-10 rounded-full flex items-center justify-center hover:bg-[#FFF8F0] transition-colors text-[#4A2C2A] no-underline"
+              className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center hover:bg-[#FFF8F0] transition-colors text-[#4A2C2A] no-underline flex-shrink-0"
             >
-              <FiHeart size={19} />
+              <FiHeart size={18} />
               {wishlist.length > 0 && (
                 <span className="absolute top-1 right-1 w-4 h-4 bg-[#7B1E3A] text-white text-[10px] rounded-full flex items-center justify-center font-bold shadow-sm">
                   {wishlist.length > 9 ? '9+' : wishlist.length}
@@ -345,27 +341,20 @@ export default function Navbar() {
 
             {/* Login / Profile */}
             {user ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-shrink-0">
                 <Link
                   to={getDashboardPath()}
-                  className="btn-golden !py-2 !px-3.5 !min-h-[38px] !text-xs hidden sm:inline-flex no-underline shadow-sm items-center gap-1.5"
+                  className="btn-golden !py-1 sm:!py-2 !px-2 sm:!px-4 !min-h-[30px] sm:!min-h-[40px] !text-[11px] sm:!text-sm inline-flex no-underline shadow-sm items-center gap-1 sm:gap-2 rounded-lg sm:rounded-xl font-semibold flex-shrink-0 whitespace-nowrap"
                 >
-                  <FiGrid size={15} /> <span className="max-w-[100px] truncate">{user.name?.split(' ')[0] || 'Dashboard'}</span>
+                  <FiGrid size={15} /> <span className="max-w-[80px] sm:max-w-[120px] truncate">{user.name?.split(' ')[0] || 'Dashboard'}</span>
                 </Link>
-                <button
-                  onClick={() => { logout(); navigate('/'); }}
-                  title="Log Out"
-                  className="btn-outline-maroon !py-2 !px-3.5 !min-h-[38px] !text-xs hidden sm:inline-flex shadow-sm cursor-pointer border-[#7B1E3A] text-[#7B1E3A] hover:bg-[#7B1E3A] hover:text-white transition-all items-center gap-1.5 rounded-xl font-bold"
-                >
-                  <FiLogOut size={15} /> <span>Log Out</span>
-                </button>
               </div>
             ) : (
               <Link
                 to="/portal"
-                className="btn-golden !py-2 !px-5 !min-h-[38px] !text-xs hidden sm:inline-flex no-underline shadow-sm"
+                className="btn-golden !py-1 sm:!py-2 !px-2 sm:!px-5 !min-h-[30px] sm:!min-h-[40px] !text-[11px] sm:!text-sm inline-flex no-underline shadow-sm items-center gap-1 sm:gap-2 rounded-lg sm:rounded-xl font-semibold flex-shrink-0 whitespace-nowrap"
               >
-                <FiUser size={15} /> Login
+                <FiUser size={15} /> <span>Login</span>
               </Link>
             )}
 
@@ -373,9 +362,9 @@ export default function Navbar() {
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label="Toggle navigation menu"
-              className="lg:hidden w-10 h-10 rounded-full flex items-center justify-center hover:bg-[#FFF8F0] transition-colors text-[#4A2C2A] cursor-pointer bg-transparent border-none"
+              className="lg:hidden w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center hover:bg-[#FFF8F0] transition-colors text-[#4A2C2A] cursor-pointer bg-transparent border-none flex-shrink-0"
             >
-              {mobileOpen ? <FiX size={22} /> : <FiMenu size={22} />}
+              {mobileOpen ? <FiX size={20} /> : <FiMenu size={20} />}
             </button>
           </div>
         </div>
@@ -502,11 +491,10 @@ export default function Navbar() {
                         <button
                           type="button"
                           onClick={() => setMobileLoginOpen(!mobileLoginOpen)}
-                          className={`py-3.5 px-5 rounded-xl transition-all text-base font-semibold flex items-center justify-between w-full border-none cursor-pointer font-body ${
-                            active
+                          className={`py-3.5 px-5 rounded-xl transition-all text-base font-semibold flex items-center justify-between w-full border-none cursor-pointer font-body ${active
                               ? 'bg-[#7B1E3A] !text-white font-semibold shadow-md'
                               : 'bg-transparent text-[#4A2C2A] hover:bg-[#FFF8F0] hover:text-[#7B1E3A]'
-                          }`}
+                            }`}
                         >
                           <span className="flex items-center gap-2.5">
                             {displayLabel}
@@ -537,11 +525,10 @@ export default function Navbar() {
                                       setMobileOpen(false);
                                       setMobileLoginOpen(false);
                                     }}
-                                    className={`py-3 px-4 rounded-xl transition-all text-sm font-medium no-underline flex items-center gap-3.5 border border-transparent ${
-                                      isChildActive
+                                    className={`py-3 px-4 rounded-xl transition-all text-sm font-medium no-underline flex items-center gap-3.5 border border-transparent ${isChildActive
                                         ? 'bg-[#7B1E3A]/10 text-[#7B1E3A] font-bold border-[#D4AF37]/30'
                                         : 'text-[#6B4A48] hover:bg-[#FFF8F0] hover:text-[#7B1E3A]'
-                                    }`}
+                                      }`}
                                   >
                                     <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${isChildActive ? 'bg-[#7B1E3A] text-[#D4AF37]' : 'bg-[#FFF8F0] text-[#7B1E3A]'}`}>
                                       <Icon size={16} />
@@ -581,11 +568,10 @@ export default function Navbar() {
                       key={link.name}
                       to={link.path}
                       onClick={() => setMobileOpen(false)}
-                      className={`py-3.5 px-4 rounded-xl font-body transition-all text-base font-semibold no-underline flex items-center justify-between border border-transparent ${
-                        active
+                      className={`py-3.5 px-4 rounded-xl font-body transition-all text-base font-semibold no-underline flex items-center justify-between border border-transparent ${active
                           ? 'bg-[#7B1E3A] text-white shadow-md'
                           : 'text-[#4A2C2A] hover:bg-[#FFF8F0] hover:text-[#7B1E3A]'
-                      }`}
+                        }`}
                     >
                       {link.name}
                       {active && <span className="w-2 h-2 rounded-full bg-[#D4AF37]" />}
@@ -631,7 +617,7 @@ export default function Navbar() {
       </AnimatePresence>
 
       {/* Spacer for fixed nav */}
-      <div className="h-[68px] md:h-[100px]" />
+      <div className="h-[72px] md:h-[104px]" />
     </>
   );
 }

@@ -32,13 +32,23 @@ export default function LoginPage() {
         className="w-full max-w-md card-base p-8 sm:p-10 border-2 border-[#D4AF37]/30 shadow-2xl bg-white">
         
         <div className="text-center mb-8">
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <img
+              src="/images/logo_vas.png"
+              alt="Vasthra Cotton Logo"
+              className="w-14 h-14 sm:w-16 sm:h-16 object-contain flex-shrink-0"
+            />
+            <span className="text-4xl sm:text-5xl font-bold text-[#7B1E3A] tracking-tight whitespace-nowrap" style={{ fontFamily: 'Playfair Display' }}>
+              Vasthra <span className="text-[#D4AF37]">Cotton</span>
+            </span>
+          </div>
           <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${config.gradient} flex items-center justify-center mx-auto mb-4 text-3xl shadow-md`}>
             {config.emoji}
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#7B1E3A] m-0 mb-1" style={{ fontFamily: 'Playfair Display' }}>
             {config.title}
           </h1>
-          <p className="text-xs sm:text-sm text-[#6B4A48] mt-1.5 m-0 leading-relaxed font-light">
+          <p className="text-xs sm:text-sm text-[#6B4A48] m-0 leading-relaxed font-light">
             {config.desc}
           </p>
         </div>

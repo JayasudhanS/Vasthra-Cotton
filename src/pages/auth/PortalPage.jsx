@@ -12,12 +12,22 @@ export default function PortalPage() {
   return (
     <section className="min-h-[80vh] flex items-center justify-center py-16 px-4 bg-gradient-to-br from-[#FFF8F0] via-white to-[#FFF8F0]">
       <div className="max-w-3xl mx-auto text-center w-full">
-        <motion.div initial={{ opacity: 0, y: -15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-          <h1 className="text-3xl sm:text-4xl font-bold text-[#7B1E3A] mb-2" style={{ fontFamily: 'Playfair Display' }}>
-            Login to Vasthra Cotton
+        <motion.div initial={{ opacity: 0, y: -15 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="mb-12">
+          <div className="flex items-center justify-center gap-3.5 mb-6">
+            <img
+              src="/images/logo_vas.png"
+              alt="Vasthra Cotton Logo"
+              className="w-14 h-14 sm:w-16 sm:h-16 object-contain flex-shrink-0"
+            />
+            <span className="text-5xl sm:text-6xl font-bold text-[#7B1E3A] tracking-tight whitespace-nowrap" style={{ fontFamily: 'Playfair Display' }}>
+              Vasthra <span className="text-[#D4AF37]">Cotton</span>
+            </span>
+          </div>
+          <h1 className="text-3xl sm:text-4xl font-bold text-[#7B1E3A] mb-3" style={{ fontFamily: 'Playfair Display' }}>
+            Choose Access Portal
           </h1>
-          <p className="text-sm text-[#6B4A48] mb-12 font-light">
-            Choose your account type to continue.
+          <p className="text-sm sm:text-base text-[#6B4A48] font-light leading-relaxed">
+            Select your account type below to continue to your dashboard.
           </p>
         </motion.div>
 

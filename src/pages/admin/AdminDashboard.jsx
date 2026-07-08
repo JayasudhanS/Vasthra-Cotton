@@ -36,20 +36,20 @@ export default function AdminDashboard() {
       </div>
 
       {/* Stat Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-12">
         {stats.map((s, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
-            className="card-base p-6 flex flex-col justify-between bg-white border border-[#D4AF37]/20 shadow-sm hover:shadow-md transition-all">
-            <div className="flex items-start justify-between mb-4">
+            className="card-base p-6 sm:p-7 flex flex-col justify-between bg-white border border-[#D4AF37]/25 shadow-sm hover:shadow-md transition-all rounded-2xl">
+            <div className="flex items-start justify-between mb-5 gap-4">
               <div>
-                <p className="text-3xl font-bold text-[#7B1E3A] font-mono tracking-tight m-0">{s.value}</p>
-                <p className="text-xs font-bold text-[#6B4A48] uppercase tracking-wider mt-1 m-0">{s.title}</p>
+                <p className="text-3xl sm:text-4xl font-bold text-[#7B1E3A] font-mono tracking-tight m-0 mb-1">{s.value}</p>
+                <p className="text-xs font-bold text-[#6B4A48] uppercase tracking-wider m-0">{s.title}</p>
               </div>
-              <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${s.color} text-white flex items-center justify-center shadow-md flex-shrink-0`}>
+              <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${s.color} text-white flex items-center justify-center shadow-md flex-shrink-0`}>
                 {s.icon}
               </div>
             </div>
-            <div className="pt-3 border-t border-[#D4AF37]/10 flex items-center justify-between text-[11px] text-[#6B4A48]/80 font-semibold">
+            <div className="pt-3.5 border-t border-[#D4AF37]/15 flex items-center justify-between text-xs text-[#6B4A48]/90 font-semibold">
               <span>Status</span>
               <span className="text-[#D4AF37] font-bold">{s.badge}</span>
             </div>

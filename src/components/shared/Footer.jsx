@@ -22,11 +22,13 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-10 mb-14">
           {/* Brand - Takes 2 Columns on Large Screens */}
           <div className="lg:col-span-2 pr-0 lg:pr-6">
-            <Link to="/" className="flex items-center gap-2.5 no-underline mb-5 group w-fit">
-              <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#D4AF37] to-[#E8C94A] flex items-center justify-center text-[#4A2C2A] font-bold text-xl shadow-md group-hover:scale-105 transition-transform" style={{ fontFamily: 'Playfair Display' }}>
-                V
-              </div>
-              <span className="text-2xl font-bold text-white tracking-tight" style={{ fontFamily: 'Playfair Display' }}>
+            <Link to="/" className="flex items-center gap-3 sm:gap-4 no-underline mb-6 group w-fit">
+              <img
+                src="/images/logo_vas.png"
+                alt="Vasthra Cotton Logo"
+                className="w-14 h-14 sm:w-16 sm:h-16 object-contain flex-shrink-0 group-hover:scale-105 transition-transform"
+              />
+              <span className="text-5xl sm:text-6xl font-bold text-white tracking-tight" style={{ fontFamily: 'Playfair Display' }}>
                 Vasthra <span className="text-[#D4AF37]">Cotton</span>
               </span>
             </Link>

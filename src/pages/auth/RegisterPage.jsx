@@ -39,13 +39,23 @@ export default function RegisterPage() {
         className="w-full max-w-xl card-base p-8 sm:p-10 border-2 border-[#D4AF37]/30 shadow-2xl bg-white">
         
         <div className="text-center mb-8">
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <img
+              src="/images/logo_vas.png"
+              alt="Vasthra Cotton Logo"
+              className="w-14 h-14 sm:w-16 sm:h-16 object-contain flex-shrink-0"
+            />
+            <span className="text-4xl sm:text-5xl font-bold text-[#7B1E3A] tracking-tight whitespace-nowrap" style={{ fontFamily: 'Playfair Display' }}>
+              Vasthra <span className="text-[#D4AF37]">Cotton</span>
+            </span>
+          </div>
           <span className="text-xs font-bold uppercase tracking-widest text-[#D4AF37] block mb-1">
             ✦ Join India's Heritage Network
           </span>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#7B1E3A] m-0 mb-1.5" style={{ fontFamily: 'Playfair Display' }}>
             {isShopkeeper ? '🏪 Partner as a Weaver / Shop' : '👤 Create Saree Connoisseur Account'}
           </h1>
-          <p className="text-xs sm:text-sm text-[#6B4A48] mt-1.5 m-0 leading-relaxed font-light">
+          <p className="text-xs sm:text-sm text-[#6B4A48] m-0 leading-relaxed font-light">
             {isShopkeeper ? 'List your authentic sarees to buyers worldwide with 0% onboarding fee.' : 'Unlock exclusive access to silk drops, wishlist tracking & member discounts.'}
           </p>
         </div>
