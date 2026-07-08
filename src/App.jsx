@@ -13,6 +13,8 @@ import SearchPage from './pages/SearchPage';
 import ShopsPage from './pages/ShopsPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
+import OrderSummaryPage from './pages/OrderSummaryPage';
+import OrderConfirmationPage from './pages/OrderConfirmationPage';
 
 // Auth
 import PortalPage from './pages/auth/PortalPage';
@@ -31,10 +33,12 @@ import ShopkeeperDashboard from './pages/shopkeeper/ShopkeeperDashboard';
 import AddProduct from './pages/shopkeeper/AddProduct';
 import ShopkeeperProfile from './pages/shopkeeper/ShopkeeperProfile';
 import { ShopkeeperProducts } from './pages/shopkeeper/ShopkeeperProducts';
+import ShopkeeperOrders from './pages/shopkeeper/ShopkeeperOrders';
 
 // Admin
 import AdminLayout from './layouts/AdminLayout';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminOrders from './pages/admin/AdminOrders';
 import { AdminPendingProducts, AdminApprovedProducts, AdminPendingShops, AdminUsers, AdminCategories, AdminSettings } from './pages/admin/AdminPages';
 
 export default function App() {
@@ -54,6 +58,8 @@ export default function App() {
           <Route path="/shops" element={<ShopsPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/order-summary" element={<OrderSummaryPage />} />
+          <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
 
           {/* Auth */}
           <Route path="/portal" element={<PortalPage />} />
@@ -72,12 +78,14 @@ export default function App() {
             <Route path="dashboard" element={<ShopkeeperDashboard />} />
             <Route path="products" element={<ShopkeeperProducts />} />
             <Route path="add-product" element={<AddProduct />} />
+            <Route path="orders" element={<ShopkeeperOrders />} />
             <Route path="profile" element={<ShopkeeperProfile />} />
           </Route>
 
           {/* Admin */}
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="orders" element={<AdminOrders />} />
             <Route path="pending-products" element={<AdminPendingProducts />} />
             <Route path="approved-products" element={<AdminApprovedProducts />} />
             <Route path="pending-shops" element={<AdminPendingShops />} />

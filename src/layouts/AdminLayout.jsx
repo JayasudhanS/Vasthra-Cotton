@@ -1,9 +1,10 @@
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { FiGrid, FiClock, FiPackage, FiCheck, FiUsers, FiSettings, FiLogOut, FiShoppingBag } from 'react-icons/fi';
+import { FiGrid, FiClock, FiPackage, FiCheck, FiUsers, FiSettings, FiLogOut, FiShoppingBag, FiList } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 
 const links = [
   { name: 'Dashboard', path: '/admin/dashboard', icon: <FiGrid size={18} /> },
+  { name: 'Orders', path: '/admin/orders', icon: <FiList size={18} /> },
   { name: 'Pending Shops', path: '/admin/pending-shops', icon: <FiClock size={18} /> },
   { name: 'Pending Products', path: '/admin/pending-products', icon: <FiPackage size={18} /> },
   { name: 'Approved Products', path: '/admin/approved-products', icon: <FiCheck size={18} /> },

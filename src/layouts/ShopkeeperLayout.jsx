@@ -1,9 +1,10 @@
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { FiGrid, FiPackage, FiPlusCircle, FiClock, FiCheck, FiXCircle, FiUser, FiLogOut } from 'react-icons/fi';
+import { FiGrid, FiPackage, FiPlusCircle, FiClock, FiCheck, FiXCircle, FiUser, FiLogOut, FiList } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 
 const links = [
   { name: 'Dashboard', path: '/shopkeeper/dashboard', icon: <FiGrid size={18} /> },
+  { name: 'Orders', path: '/shopkeeper/orders', icon: <FiList size={18} /> },
   { name: 'My Products', path: '/shopkeeper/products', icon: <FiPackage size={18} /> },
   { name: 'Add Product', path: '/shopkeeper/add-product', icon: <FiPlusCircle size={18} /> },
   { name: 'Profile', path: '/shopkeeper/profile', icon: <FiUser size={18} /> },

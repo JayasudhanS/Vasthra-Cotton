@@ -1,9 +1,9 @@
 import { useState, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiFilter, FiX, FiRefreshCw } from 'react-icons/fi';
-import ProductCard from '../components/shared/ProductCard';
-import { products, categories } from '../data';
+import { FiFilter, FiX, FiRefreshCw, FiCheckCircle, FiMapPin, FiStar } from 'react-icons/fi';
+import ProductCard, { StarRating } from '../components/shared/ProductCard';
+import { products, categories, shops } from '../data';
 
 const colors = ['Red', 'Gold', 'Green', 'Blue', 'Pink', 'Maroon', 'Orange', 'White', 'Black'];
 const fabrics = ['Silk', 'Cotton', 'Georgette', 'Chiffon', 'Linen', 'Organza', 'Crepe', 'Tussar'];
@@ -19,8 +19,12 @@ export default function ProductsPage() {
   const [showFilter, setShowFilter] = useState(false);
   const [filters, setFilters] = useState({ category: '', color: '', fabric: '', sort: 'newest', minPrice: '', maxPrice: '' });
 
+  const shopId = params.get('shop') ? +params.get('shop') : null;
+  const shop = shopId ? shops.find(s => s.id === shopId) : null;
+
   const filtered = useMemo(() => {
     let list = products.filter(p => p.status === 'approved');
+    if (shopId) list = list.filter(p => p.shopId === shopId);
     if (params.get('filter') === 'featured') list = list.filter(p => p.featured);
     if (filters.category) list = list.filter(p => p.category === filters.category);
     if (filters.color) list = list.filter(p => p.color === filters.color);
@@ -31,23 +35,57 @@ export default function ProductsPage() {
     else if (filters.sort === 'price-desc') list.sort((a, b) => b.offerPrice - a.offerPrice);
     else if (filters.sort === 'popular') list.sort((a, b) => b.rating - a.rating);
     return list;
-  }, [filters, params]);
+  }, [filters, params, shopId]);
 
   const clearFilters = () => {
     setFilters({ category: '', color: '', fabric: '', sort: 'newest', minPrice: '', maxPrice: '' });
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 lg:px-8 py-10 sm:py-12">
+    <div className="max-w-7xl mx-auto px-4 lg:px-8 py-8 sm:py-12">
+      {/* Shop Banner */}
+      {shop && (
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+          className="card-base p-6 sm:p-8 mb-8 bg-white border border-[#D4AF37]/20 shadow-sm">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+            <img src={shop.logo} alt={shop.name} className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover border-3 border-[#D4AF37]/40 shadow-lg flex-shrink-0" />
+            <div className="flex-1 text-center sm:text-left">
+              <div className="flex items-center justify-center sm:justify-start gap-2 mb-2">
+                <span className="inline-flex items-center gap-1 text-xs font-bold text-[#2D8F5E] bg-[#2D8F5E]/10 px-2.5 py-1 rounded-full">
+                  <FiCheckCircle size={12} /> Verified Seller
+                </span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#7B1E3A] m-0 mb-2" style={{ fontFamily: 'Playfair Display' }}>
+                {shop.name}
+              </h1>
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 text-sm text-[#6B4A48] mb-3">
+                <span className="flex items-center gap-1.5">
+                  <FiMapPin className="text-[#D4AF37]" size={14} /> {shop.location}
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <FiStar className="text-[#D4AF37]" size={14} /> {shop.rating} Rating
+                </span>
+                <span className="font-semibold text-[#7B1E3A]">{shop.products} Products</span>
+              </div>
+              <p className="text-xs text-[#6B4A48] m-0 font-medium">
+                Owner: <span className="text-[#7B1E3A] font-semibold">{shop.owner}</span>
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-[#D4AF37]/20">
         <div>
-          <span className="text-xs uppercase tracking-widest text-[#D4AF37] font-bold block mb-1">
-            ✦ Authentic Indian Heritage
-          </span>
-          <h1 className="text-3xl lg:text-4xl font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>
-            {params.get('filter') === 'featured' ? 'Featured Masterpieces' : 'All Sarees Collection'}
-          </h1>
+          {!shop && (
+            <span className="text-xs uppercase tracking-widest text-[#D4AF37] font-bold block mb-1">
+              ✦ Authentic Indian Heritage
+            </span>
+          )}
+          <h2 className="text-2xl lg:text-3xl font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>
+            {shop ? `${shop.name} Collection` : params.get('filter') === 'featured' ? 'Featured Masterpieces' : 'All Sarees Collection'}
+          </h2>
           <p className="text-sm text-[#6B4A48] mt-1 m-0 font-medium">
             Showing <span className="font-bold text-[#7B1E3A]">{filtered.length}</span> handpicked sarees
           </p>
@@ -192,4 +230,3 @@ export default function ProductsPage() {
     </div>
   );
 }
-
