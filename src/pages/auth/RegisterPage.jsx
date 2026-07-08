@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { FiUser, FiMail, FiLock, FiPhone, FiMapPin, FiFileText, FiImage, FiUploadCloud } from 'react-icons/fi';
+import { FiUser, FiMail, FiLock, FiPhone, FiEye, FiEyeOff, FiUploadCloud } from 'react-icons/fi';
 import { useAuth } from '../../context/AuthContext';
 
 export default function RegisterPage() {
@@ -10,156 +10,254 @@ export default function RegisterPage() {
   const { login } = useAuth();
   const isShopkeeper = role === 'shopkeeper';
 
-  const [form, setForm] = useState({ name: '', email: '', password: '', phone: '', shopName: '', address: '', description: '' });
+  const [showPass, setShowPass] = useState(false);
+  const [showConfirmPass, setShowConfirmPass] = useState(false);
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    password: '',
+    confirmPassword: '',
+    shopName: '',
+    address: '',
+    description: '',
+  });
 
   const upd = (k) => (e) => setForm({ ...form, [k]: e.target.value });
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (form.password && form.confirmPassword && form.password !== form.confirmPassword) {
+      alert('Passwords do not match. Please verify your password.');
+      return;
+    }
     login({ email: form.email || 'newuser@vasthracotton.com', name: form.name || 'New Member' }, role);
     navigate(isShopkeeper ? '/shopkeeper/dashboard' : '/user/dashboard');
   };
 
-  const fields = [
-    { key: 'name', label: 'Full Name / Owner Name', icon: <FiUser size={18} />, placeholder: 'e.g. Radhika Iyer', type: 'text' },
-    { key: 'email', label: 'Email Address', icon: <FiMail size={18} />, placeholder: 'name@example.com', type: 'email' },
-    { key: 'phone', label: 'Contact Phone Number', icon: <FiPhone size={18} />, placeholder: '+91 98765 43210', type: 'tel' },
-    { key: 'password', label: 'Create Password', icon: <FiLock size={18} />, placeholder: 'At least 8 characters', type: 'password' },
-  ];
-
-  const shopFields = [
-    { key: 'shopName', label: 'Weave House / Shop Name', icon: <FiFileText size={18} />, placeholder: 'e.g. Kanchipuram Royal Silks', type: 'text' },
-    { key: 'address', label: 'Shop Location & Address', icon: <FiMapPin size={18} />, placeholder: 'Weavers Colony, Kanchipuram, Tamil Nadu', type: 'text' },
-    { key: 'description', label: 'Heritage & Craftsmanship Description', icon: <FiFileText size={18} />, placeholder: 'Tell customers about your weaving tradition and specialties...', type: 'text' },
-  ];
-
   return (
-    <section className="min-h-[85vh] flex items-center justify-center py-16 px-4 bg-gradient-to-br from-[#FFF8F0] via-white to-[#FFF8F0]">
-      <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
-        className="w-full max-w-xl card-base p-8 sm:p-10 border-2 border-[#D4AF37]/30 shadow-2xl bg-white">
-        
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-6">
-            <img
-              src="/images/logo_vas.png"
-              alt="Vasthra Cotton Logo"
-              className="w-14 h-14 sm:w-16 sm:h-16 object-contain flex-shrink-0"
-            />
-            <span className="text-4xl sm:text-5xl font-bold text-[#7B1E3A] tracking-tight whitespace-nowrap" style={{ fontFamily: 'Playfair Display' }}>
-              Vasthra <span className="text-[#D4AF37]">Cotton</span>
-            </span>
-          </div>
-          <span className="text-xs font-bold uppercase tracking-widest text-[#D4AF37] block mb-1">
-            ✦ Join India's Heritage Network
+    <section className="min-h-[88vh] flex items-center justify-center py-16 px-4 bg-[#FFF8F0]">
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="w-full max-w-[580px] bg-white rounded-2xl p-8 sm:p-12 shadow-xl border border-[#D4AF37]/35 mx-auto"
+      >
+        {/* Website Logo & Name */}
+        <div className="flex items-center justify-center gap-3.5 mb-10">
+          <img
+            src="/images/logo_vas.png"
+            alt="Vasthra Cotton Logo"
+            className="w-12 h-12 sm:w-14 sm:h-14 object-contain flex-shrink-0"
+          />
+          <span className="text-[24px] sm:text-[26px] lg:text-[30px] font-bold text-[#7B1E3A] tracking-tight whitespace-nowrap" style={{ fontFamily: 'Playfair Display' }}>
+            Vasthra <span className="text-[#D4AF37]">Cotton</span>
           </span>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#7B1E3A] m-0 mb-1.5" style={{ fontFamily: 'Playfair Display' }}>
-            {isShopkeeper ? '🏪 Partner as a Weaver / Shop' : '👤 Create Saree Connoisseur Account'}
+        </div>
+
+        {/* Heading & Subtitle */}
+        <div className="text-center mb-10 space-y-3">
+          <h1 className="text-[26px] sm:text-[28px] lg:text-[32px] font-bold text-[#7B1E3A] m-0 leading-tight" style={{ fontFamily: 'Playfair Display' }}>
+            Create Account
           </h1>
-          <p className="text-xs sm:text-sm text-[#6B4A48] m-0 leading-relaxed font-light">
-            {isShopkeeper ? 'List your authentic sarees to buyers worldwide with 0% onboarding fee.' : 'Unlock exclusive access to silk drops, wishlist tracking & member discounts.'}
+          <p className="text-[18px] text-[#6B4A48] m-0 font-normal leading-relaxed">
+            Create your account to continue.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {fields.slice(0, 2).map(f => (
-              <div key={f.key}>
-                <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block mb-1.5">{f.label}</label>
-                <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B4A48]">{f.icon}</span>
-                  <input type={f.type} required placeholder={f.placeholder} value={form[f.key]} onChange={upd(f.key)}
-                    className="input-field !pl-10 !h-12 !text-sm bg-[#FFF8F0]/40" />
-                </div>
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Full Name */}
+          <div>
+            <div className="relative w-full">
+              <div className="absolute left-[18px] top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-[#6B4A48] pointer-events-none flex-shrink-0 z-10">
+                <FiUser size={24} />
               </div>
-            ))}
+              <input
+                type="text"
+                required
+                placeholder="Full Name"
+                value={form.name}
+                onChange={upd('name')}
+                style={{ paddingLeft: '60px', paddingRight: '20px', height: '58px' }}
+                className="w-full rounded-[12px] border border-[#D4AF37]/45 bg-white text-[16px] sm:text-[17px] lg:text-[18px] text-[#4A2C2A] placeholder:text-[16px] placeholder:text-gray-400 focus:border-[#7B1E3A] focus:ring-2 focus:ring-[#7B1E3A]/15 outline-none transition-all duration-200 shadow-sm"
+              />
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {fields.slice(2, 4).map(f => (
-              <div key={f.key}>
-                <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block mb-1.5">{f.label}</label>
-                <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B4A48]">{f.icon}</span>
-                  <input type={f.type} required placeholder={f.placeholder} value={form[f.key]} onChange={upd(f.key)}
-                    className="input-field !pl-10 !h-12 !text-sm bg-[#FFF8F0]/40" />
-                </div>
+          {/* Email Address */}
+          <div>
+            <div className="relative w-full">
+              <div className="absolute left-[18px] top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-[#6B4A48] pointer-events-none flex-shrink-0 z-10">
+                <FiMail size={24} />
               </div>
-            ))}
+              <input
+                type="email"
+                required
+                placeholder="Email Address"
+                value={form.email}
+                onChange={upd('email')}
+                style={{ paddingLeft: '60px', paddingRight: '20px', height: '58px' }}
+                className="w-full rounded-[12px] border border-[#D4AF37]/45 bg-white text-[16px] sm:text-[17px] lg:text-[18px] text-[#4A2C2A] placeholder:text-[16px] placeholder:text-gray-400 focus:border-[#7B1E3A] focus:ring-2 focus:ring-[#7B1E3A]/15 outline-none transition-all duration-200 shadow-sm"
+              />
+            </div>
           </div>
 
+          {/* Phone Number */}
+          <div>
+            <div className="relative w-full">
+              <div className="absolute left-[18px] top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-[#6B4A48] pointer-events-none flex-shrink-0 z-10">
+                <FiPhone size={24} />
+              </div>
+              <input
+                type="tel"
+                required
+                placeholder="Phone Number"
+                value={form.phone}
+                onChange={upd('phone')}
+                style={{ paddingLeft: '60px', paddingRight: '20px', height: '58px' }}
+                className="w-full rounded-[12px] border border-[#D4AF37]/45 bg-white text-[16px] sm:text-[17px] lg:text-[18px] text-[#4A2C2A] placeholder:text-[16px] placeholder:text-gray-400 focus:border-[#7B1E3A] focus:ring-2 focus:ring-[#7B1E3A]/15 outline-none transition-all duration-200 shadow-sm"
+              />
+            </div>
+          </div>
+
+          {/* Password */}
+          <div>
+            <div className="relative w-full">
+              <div className="absolute left-[18px] top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-[#6B4A48] pointer-events-none flex-shrink-0 z-10">
+                <FiLock size={24} />
+              </div>
+              <input
+                type={showPass ? 'text' : 'password'}
+                required
+                placeholder="Password"
+                value={form.password}
+                onChange={upd('password')}
+                style={{ paddingLeft: '60px', paddingRight: '60px', height: '58px' }}
+                className="w-full rounded-[12px] border border-[#D4AF37]/45 bg-white text-[16px] sm:text-[17px] lg:text-[18px] text-[#4A2C2A] placeholder:text-[16px] placeholder:text-gray-400 focus:border-[#7B1E3A] focus:ring-2 focus:ring-[#7B1E3A]/15 outline-none transition-all duration-200 shadow-sm"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPass(!showPass)}
+                className="absolute right-[18px] top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-[#6B4A48] hover:text-[#7B1E3A] cursor-pointer bg-transparent border-none p-0 transition-colors z-10"
+                aria-label="Toggle password visibility"
+              >
+                {showPass ? <FiEyeOff size={24} /> : <FiEye size={24} />}
+              </button>
+            </div>
+          </div>
+
+          {/* Confirm Password */}
+          <div>
+            <div className="relative w-full">
+              <div className="absolute left-[18px] top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-[#6B4A48] pointer-events-none flex-shrink-0 z-10">
+                <FiLock size={24} />
+              </div>
+              <input
+                type={showConfirmPass ? 'text' : 'password'}
+                required
+                placeholder="Confirm Password"
+                value={form.confirmPassword}
+                onChange={upd('confirmPassword')}
+                style={{ paddingLeft: '60px', paddingRight: '60px', height: '58px' }}
+                className="w-full rounded-[12px] border border-[#D4AF37]/45 bg-white text-[16px] sm:text-[17px] lg:text-[18px] text-[#4A2C2A] placeholder:text-[16px] placeholder:text-gray-400 focus:border-[#7B1E3A] focus:ring-2 focus:ring-[#7B1E3A]/15 outline-none transition-all duration-200 shadow-sm"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPass(!showConfirmPass)}
+                className="absolute right-[18px] top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-[#6B4A48] hover:text-[#7B1E3A] cursor-pointer bg-transparent border-none p-0 transition-colors z-10"
+                aria-label="Toggle confirm password visibility"
+              >
+                {showConfirmPass ? <FiEyeOff size={24} /> : <FiEye size={24} />}
+              </button>
+            </div>
+          </div>
+
+          {/* Shopkeeper Specific Fields */}
           {isShopkeeper && (
-            <div className="pt-4 mt-4 border-t border-[#D4AF37]/20 space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-bold text-[#7B1E3A] uppercase tracking-wider">Weave House Information</span>
-                <span className="text-[11px] text-[#2D8F5E] font-semibold">✓ Verified Seller Protection</span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {shopFields.slice(0, 2).map(f => (
-                  <div key={f.key}>
-                    <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block mb-1.5">{f.label}</label>
-                    <div className="relative">
-                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B4A48]">{f.icon}</span>
-                      <input type={f.type} required placeholder={f.placeholder} value={form[f.key]} onChange={upd(f.key)}
-                        className="input-field !pl-10 !h-12 !text-sm bg-[#FFF8F0]/40" />
-                    </div>
-                  </div>
-                ))}
+            <div className="pt-6 mt-4 border-t border-[#D4AF37]/25 space-y-6">
+              <div>
+                <input
+                  type="text"
+                  required
+                  placeholder="Weave House / Shop Name"
+                  value={form.shopName}
+                  onChange={upd('shopName')}
+                  style={{ paddingLeft: '20px', paddingRight: '20px', height: '58px' }}
+                  className="w-full rounded-[12px] border border-[#D4AF37]/45 bg-white text-[16px] sm:text-[17px] lg:text-[18px] text-[#4A2C2A] placeholder:text-[16px] placeholder:text-gray-400 focus:border-[#7B1E3A] focus:ring-2 focus:ring-[#7B1E3A]/15 outline-none transition-all duration-200 shadow-sm"
+                />
               </div>
 
               <div>
-                <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block mb-1.5">{shopFields[2].label}</label>
-                <div className="relative">
-                  <span className="absolute left-3.5 top-3 text-[#6B4A48]">{shopFields[2].icon}</span>
-                  <textarea
-                    required
-                    rows="2"
-                    placeholder={shopFields[2].placeholder}
-                    value={form.description}
-                    onChange={upd('description')}
-                    className="textarea-field !pl-10 !text-sm bg-[#FFF8F0]/40"
-                  />
-                </div>
+                <input
+                  type="text"
+                  required
+                  placeholder="Shop Location & Address"
+                  value={form.address}
+                  onChange={upd('address')}
+                  style={{ paddingLeft: '20px', paddingRight: '20px', height: '58px' }}
+                  className="w-full rounded-[12px] border border-[#D4AF37]/45 bg-white text-[16px] sm:text-[17px] lg:text-[18px] text-[#4A2C2A] placeholder:text-[16px] placeholder:text-gray-400 focus:border-[#7B1E3A] focus:ring-2 focus:ring-[#7B1E3A]/15 outline-none transition-all duration-200 shadow-sm"
+                />
               </div>
 
               <div>
-                <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block mb-1.5">Shop Emblem / Logo</label>
-                <div onClick={() => alert('Demo: File upload simulation ready.')} className="flex flex-col items-center justify-center gap-2 p-5 rounded-xl border-2 border-dashed border-[#D4AF37]/40 bg-[#FFF8F0]/30 hover:bg-[#FFF8F0]/60 transition-colors cursor-pointer text-center group">
-                  <div className="w-10 h-10 rounded-full bg-[#D4AF37]/10 text-[#D4AF37] flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <FiUploadCloud size={20} />
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-[#7B1E3A] m-0">Click to upload shop logo or Silk Mark certificate</p>
-                    <p className="text-[10px] text-[#6B4A48]/70 m-0 mt-0.5">PNG, JPG or WEBP up to 5MB</p>
-                  </div>
-                </div>
+                <textarea
+                  required
+                  rows="3"
+                  placeholder="Tell customers about your weaving tradition & specialties..."
+                  value={form.description}
+                  onChange={upd('description')}
+                  style={{ padding: '16px 20px' }}
+                  className="w-full rounded-[12px] border border-[#D4AF37]/45 bg-white text-[16px] sm:text-[17px] lg:text-[18px] text-[#4A2C2A] placeholder:text-[16px] placeholder:text-gray-400 focus:border-[#7B1E3A] focus:ring-2 focus:ring-[#7B1E3A]/15 outline-none transition-all duration-200 shadow-sm resize-none leading-relaxed"
+                />
+              </div>
+
+              <div
+                onClick={() => alert('Demo: File upload simulation ready.')}
+                className="flex items-center justify-center gap-4 p-5 rounded-[12px] border-2 border-dashed border-[#D4AF37]/60 bg-[#FFF8F0]/40 hover:bg-[#FFF8F0]/70 transition-colors cursor-pointer text-center group shadow-sm"
+              >
+                <FiUploadCloud size={28} className="text-[#D4AF37] group-hover:scale-110 transition-transform flex-shrink-0" />
+                <span className="text-[16px] sm:text-[17px] font-semibold text-[#7B1E3A]">
+                  Upload Shop Emblem or Certificate
+                </span>
               </div>
             </div>
           )}
 
-          <div className="pt-2">
-            <button type="submit" className="btn-golden w-full justify-center !py-3.5 !min-h-[48px] !text-sm cursor-pointer shadow-md">
-              Complete Registration & Access Portal →
+          {/* Create Account Button */}
+          <div className="pt-3">
+            <button
+              type="submit"
+              style={{ height: '58px' }}
+              className="w-full rounded-[12px] bg-gradient-to-r from-[#D4AF37] to-[#E8C94A] hover:from-[#E8C94A] hover:to-[#D4AF37] text-[#4A2C2A] text-[18px] font-bold cursor-pointer shadow-md hover:shadow-lg transition-all flex items-center justify-center"
+            >
+              Create Account
             </button>
           </div>
         </form>
 
-        <div className="border-t border-[#D4AF37]/20 pt-6 mt-6 text-center">
-          <p className="text-xs sm:text-sm text-[#6B4A48] m-0">
-            Already registered with us?{' '}
-            <Link to={`/login/${role}`} className="text-[#7B1E3A] font-bold hover:underline ml-1">
-              Sign In Here
+        {/* Links */}
+        <div className="mt-10 space-y-5 text-center">
+          <div className="pt-6 border-t border-[#D4AF37]/25">
+            <span className="text-[16px] text-[#6B4A48] mr-2">Already have an account?</span>
+            <Link
+              to={`/login/${role}`}
+              className="text-[16px] font-semibold text-[#7B1E3A] hover:underline no-underline transition-colors"
+            >
+              Sign In
             </Link>
-          </p>
-        </div>
+          </div>
 
-        <div className="mt-4 text-center">
-          <Link to="/portal" className="inline-flex items-center gap-1 text-xs text-[#D4AF37] font-semibold hover:underline no-underline">
-            ← Switch Access Portal
-          </Link>
+          <div>
+            <Link
+              to="/portal"
+              className="text-[16px] font-semibold text-[#6B4A48] hover:text-[#7B1E3A] hover:underline no-underline transition-colors block"
+            >
+              Switch Portal
+            </Link>
+          </div>
         </div>
       </motion.div>
     </section>
   );
 }
-

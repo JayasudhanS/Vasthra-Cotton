@@ -4,121 +4,147 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { FiMail, FiLock, FiEye, FiEyeOff } from 'react-icons/fi';
 import { useAuth } from '../../context/AuthContext';
 
-const roleConfig = {
-  user: { title: 'User Portal', color: '#7B1E3A', gradient: 'from-[#7B1E3A] to-[#9B2E4A]', emoji: '👤', desc: 'Sign in to track orders, manage wishlist & shop sarees.' },
-  shopkeeper: { title: 'Weaver & Seller Portal', color: '#D4AF37', gradient: 'from-[#D4AF37] to-[#B8952E]', emoji: '🏪', desc: 'Sign in to manage your silk house, catalogue & orders.' },
-  admin: { title: 'Admin Command Center', color: '#4A2C2A', gradient: 'from-[#4A2C2A] to-[#6B4A48]', emoji: '🛡️', desc: 'Sign in to oversee marketplace operations & approvals.' },
-};
-
 export default function LoginPage() {
   const { role } = useParams();
   const navigate = useNavigate();
   const { login } = useAuth();
-  const config = roleConfig[role] || roleConfig.user;
   const [showPass, setShowPass] = useState(false);
   const [form, setForm] = useState({ email: '', password: '' });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    login({ email: form.email || 'user@vasthracotton.com', name: role === 'admin' ? 'Master Admin' : role === 'shopkeeper' ? 'Kanjivaram Weaves' : 'Ananya Sharma' }, role);
+    login(
+      {
+        email: form.email || 'user@vasthracotton.com',
+        name: role === 'admin' ? 'Master Admin' : role === 'shopkeeper' ? 'Kanjivaram Weaves' : 'Ananya Sharma',
+      },
+      role
+    );
     if (role === 'admin') navigate('/admin/dashboard');
     else if (role === 'shopkeeper') navigate('/shopkeeper/dashboard');
     else navigate('/user/dashboard');
   };
 
   return (
-    <section className="min-h-[82vh] flex items-center justify-center py-16 px-4 bg-gradient-to-br from-[#FFF8F0] via-white to-[#FFF8F0]">
-      <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
-        className="w-full max-w-md card-base p-8 sm:p-10 border-2 border-[#D4AF37]/30 shadow-2xl bg-white">
-        
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-6">
-            <img
-              src="/images/logo_vas.png"
-              alt="Vasthra Cotton Logo"
-              className="w-14 h-14 sm:w-16 sm:h-16 object-contain flex-shrink-0"
-            />
-            <span className="text-4xl sm:text-5xl font-bold text-[#7B1E3A] tracking-tight whitespace-nowrap" style={{ fontFamily: 'Playfair Display' }}>
-              Vasthra <span className="text-[#D4AF37]">Cotton</span>
-            </span>
-          </div>
-          <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${config.gradient} flex items-center justify-center mx-auto mb-4 text-3xl shadow-md`}>
-            {config.emoji}
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#7B1E3A] m-0 mb-1" style={{ fontFamily: 'Playfair Display' }}>
-            {config.title}
+    <section className="min-h-[88vh] flex items-center justify-center py-16 px-4 bg-[#FFF8F0]">
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="w-full max-w-[520px] bg-white rounded-2xl p-8 sm:p-12 shadow-xl border border-[#D4AF37]/35 mx-auto"
+      >
+        {/* Website Logo & Name */}
+        <div className="flex items-center justify-center gap-3.5 mb-10">
+          <img
+            src="/images/logo_vas.png"
+            alt="Vasthra Cotton Logo"
+            className="w-12 h-12 sm:w-14 sm:h-14 object-contain flex-shrink-0"
+          />
+          <span className="text-[24px] sm:text-[26px] lg:text-[30px] font-bold text-[#7B1E3A] tracking-tight whitespace-nowrap" style={{ fontFamily: 'Playfair Display' }}>
+            Vasthra <span className="text-[#D4AF37]">Cotton</span>
+          </span>
+        </div>
+
+        {/* Heading & Subtitle */}
+        <div className="text-center mb-10 space-y-3">
+          <h1 className="text-[26px] sm:text-[28px] lg:text-[32px] font-bold text-[#7B1E3A] m-0 leading-tight" style={{ fontFamily: 'Playfair Display' }}>
+            Log In
           </h1>
-          <p className="text-xs sm:text-sm text-[#6B4A48] m-0 leading-relaxed font-light">
-            {config.desc}
+          <p className="text-[18px] text-[#6B4A48] m-0 font-normal leading-relaxed">
+            Welcome back. Please sign in to continue.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Email Address */}
           <div>
-            <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block mb-1.5">Email Address</label>
-            <div className="relative">
-              <FiMail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B4A48]" size={18} />
+            <div className="relative w-full">
+              <div className="absolute left-[18px] top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-[#6B4A48] pointer-events-none flex-shrink-0 z-10">
+                <FiMail size={24} />
+              </div>
               <input
                 type="email"
                 required
-                placeholder="name@example.com"
+                placeholder="Email Address"
                 value={form.email}
                 onChange={e => setForm({ ...form, email: e.target.value })}
-                className="input-field !pl-10 !h-12 !text-sm bg-[#FFF8F0]/40"
+                style={{ paddingLeft: '60px', paddingRight: '20px', height: '58px' }}
+                className="w-full rounded-[12px] border border-[#D4AF37]/45 bg-white text-[16px] sm:text-[17px] lg:text-[18px] text-[#4A2C2A] placeholder:text-[16px] placeholder:text-gray-400 focus:border-[#7B1E3A] focus:ring-2 focus:ring-[#7B1E3A]/15 outline-none transition-all duration-200 shadow-sm"
               />
             </div>
           </div>
 
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A]">Password</label>
-              <a href="#forgot" onClick={e => { e.preventDefault(); alert('Demo: Use any password to log in!'); }} className="text-xs text-[#D4AF37] hover:underline font-medium">
-                Forgot password?
-              </a>
-            </div>
-            <div className="relative">
-              <FiLock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B4A48]" size={18} />
+          {/* Password */}
+          <div className="space-y-2.5">
+            <div className="relative w-full">
+              <div className="absolute left-[18px] top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-[#6B4A48] pointer-events-none flex-shrink-0 z-10">
+                <FiLock size={24} />
+              </div>
               <input
                 type={showPass ? 'text' : 'password'}
                 required
-                placeholder="••••••••"
+                placeholder="Password"
                 value={form.password}
                 onChange={e => setForm({ ...form, password: e.target.value })}
-                className="input-field !pl-10 !pr-10 !h-12 !text-sm bg-[#FFF8F0]/40"
+                style={{ paddingLeft: '60px', paddingRight: '60px', height: '58px' }}
+                className="w-full rounded-[12px] border border-[#D4AF37]/45 bg-white text-[16px] sm:text-[17px] lg:text-[18px] text-[#4A2C2A] placeholder:text-[16px] placeholder:text-gray-400 focus:border-[#7B1E3A] focus:ring-2 focus:ring-[#7B1E3A]/15 outline-none transition-all duration-200 shadow-sm"
               />
               <button
                 type="button"
                 onClick={() => setShowPass(!showPass)}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#6B4A48] cursor-pointer bg-transparent border-none p-0 hover:text-[#7B1E3A] transition-colors"
+                className="absolute right-[18px] top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center text-[#6B4A48] hover:text-[#7B1E3A] cursor-pointer bg-transparent border-none p-0 transition-colors z-10"
+                aria-label="Toggle password visibility"
               >
-                {showPass ? <FiEyeOff size={18} /> : <FiEye size={18} />}
+                {showPass ? <FiEyeOff size={24} /> : <FiEye size={24} />}
               </button>
+            </div>
+            <div className="flex justify-end pt-1">
+              <a
+                href="#forgot"
+                onClick={e => { e.preventDefault(); alert('Demo: Use any password to log in!'); }}
+                className="text-[16px] font-semibold text-[#7B1E3A] hover:underline no-underline transition-colors"
+              >
+                Forgot Password?
+              </a>
             </div>
           </div>
 
-          <button type="submit" className="btn-golden w-full justify-center !py-3.5 !min-h-[48px] !text-sm cursor-pointer shadow-md mt-2">
-            Sign In to Portal →
-          </button>
+          {/* Login Button */}
+          <div className="pt-3">
+            <button
+              type="submit"
+              style={{ height: '58px' }}
+              className="w-full rounded-[12px] bg-gradient-to-r from-[#D4AF37] to-[#E8C94A] hover:from-[#E8C94A] hover:to-[#D4AF37] text-[#4A2C2A] text-[18px] font-bold cursor-pointer shadow-md hover:shadow-lg transition-all flex items-center justify-center"
+            >
+              Log In
+            </button>
+          </div>
         </form>
 
-        {role !== 'admin' && (
-          <div className="border-t border-[#D4AF37]/20 pt-6 mt-6 text-center">
-            <p className="text-xs sm:text-sm text-[#6B4A48] m-0">
-              Don't have an account yet?{' '}
-              <Link to={`/register/${role}`} className="text-[#7B1E3A] font-bold hover:underline ml-1">
+        {/* Links */}
+        <div className="mt-10 space-y-5 text-center">
+          {role !== 'admin' && (
+            <div className="pt-6 border-t border-[#D4AF37]/25">
+              <Link
+                to={`/register/${role}`}
+                className="text-[16px] font-semibold text-[#7B1E3A] hover:underline no-underline transition-colors block"
+              >
                 Create Account
               </Link>
-            </p>
-          </div>
-        )}
+            </div>
+          )}
 
-        <div className="mt-4 text-center">
-          <Link to="/portal" className="inline-flex items-center gap-1 text-xs text-[#D4AF37] font-semibold hover:underline no-underline">
-            ← Switch Access Portal
-          </Link>
+          <div className={role === 'admin' ? 'pt-6 border-t border-[#D4AF37]/25' : ''}>
+            <Link
+              to="/portal"
+              className="text-[16px] font-semibold text-[#6B4A48] hover:text-[#7B1E3A] hover:underline no-underline transition-colors block"
+            >
+              Switch Portal
+            </Link>
+          </div>
         </div>
       </motion.div>
     </section>
   );
 }
-
