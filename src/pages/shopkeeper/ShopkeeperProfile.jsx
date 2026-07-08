@@ -1,7 +1,17 @@
 import { motion } from 'framer-motion';
-import { FiCheckCircle, FiShield, FiMail, FiPhone, FiMapPin, FiPackage, FiStar } from 'react-icons/fi';
+import { FiCheckCircle, FiShield, FiMail, FiPhone, FiMapPin, FiPackage, FiStar, FiLogOut } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 export default function ShopkeeperProfile() {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
   return (
     <div className="space-y-6">
       <div className="pb-4 border-b border-[#D4AF37]/20 flex items-center justify-between">
@@ -52,6 +62,9 @@ export default function ShopkeeperProfile() {
           </button>
           <button onClick={() => alert('Silk Mark certification documents downloaded.')} className="btn-outline-maroon flex-1 justify-center !py-3 !text-xs cursor-pointer">
             Download Silk Mark Certificate
+          </button>
+          <button onClick={handleLogout} className="w-full sm:w-auto px-5 py-3 rounded-xl border border-red-300 text-red-600 font-bold bg-red-50/70 hover:bg-red-100/80 flex items-center justify-center gap-2 text-xs cursor-pointer transition-all shadow-sm">
+            <FiLogOut size={16} /> Log Out
           </button>
         </div>
       </motion.div>

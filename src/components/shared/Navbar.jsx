@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiSearch, FiHeart, FiMenu, FiX, FiUser, FiGrid, FiClock, FiChevronDown, FiShield, FiShoppingBag } from 'react-icons/fi';
+import { FiSearch, FiHeart, FiMenu, FiX, FiUser, FiGrid, FiClock, FiChevronDown, FiShield, FiShoppingBag, FiLogOut } from 'react-icons/fi';
 import { useWishlist } from '../../context/WishlistContext';
 import { useAuth } from '../../context/AuthContext';
 
@@ -29,7 +29,7 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeIdx, setActiveIdx] = useState(-1);
   const { wishlist } = useWishlist();
-  const { user, role } = useAuth();
+  const { user, role, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -280,6 +280,21 @@ export default function Navbar() {
                                   </Link>
                                 );
                               })}
+                              {user && (
+                                <button
+                                  type="button"
+                                  onClick={() => { setLoginDropdownOpen(false); logout(); navigate('/'); }}
+                                  className="w-full mt-1 flex items-center gap-3 p-2.5 rounded-lg transition-all border border-red-200 bg-red-50/70 hover:bg-red-50 text-red-600 font-semibold cursor-pointer text-left"
+                                >
+                                  <div className="w-8 h-8 rounded-lg bg-red-100 text-red-600 flex items-center justify-center flex-shrink-0">
+                                    <FiLogOut size={15} />
+                                  </div>
+                                  <div className="min-w-0 flex-1">
+                                    <span className="text-xs font-bold block leading-snug">Log Out</span>
+                                    <span className="text-[10px] block truncate text-red-500/80">Sign out of {role} account</span>
+                                  </div>
+                                </button>
+                              )}
                             </div>
                           </div>
                         </motion.div>
@@ -330,12 +345,21 @@ export default function Navbar() {
 
             {/* Login / Profile */}
             {user ? (
-              <Link
-                to={getDashboardPath()}
-                className="btn-golden !py-2 !px-4 !min-h-[38px] !text-xs hidden sm:inline-flex no-underline shadow-sm"
-              >
-                <FiGrid size={15} /> <span className="max-w-[100px] truncate">{user.name?.split(' ')[0] || 'Dashboard'}</span>
-              </Link>
+              <div className="flex items-center gap-2">
+                <Link
+                  to={getDashboardPath()}
+                  className="btn-golden !py-2 !px-3.5 !min-h-[38px] !text-xs hidden sm:inline-flex no-underline shadow-sm items-center gap-1.5"
+                >
+                  <FiGrid size={15} /> <span className="max-w-[100px] truncate">{user.name?.split(' ')[0] || 'Dashboard'}</span>
+                </Link>
+                <button
+                  onClick={() => { logout(); navigate('/'); }}
+                  title="Log Out"
+                  className="btn-outline-maroon !py-2 !px-3.5 !min-h-[38px] !text-xs hidden sm:inline-flex shadow-sm cursor-pointer border-[#7B1E3A] text-[#7B1E3A] hover:bg-[#7B1E3A] hover:text-white transition-all items-center gap-1.5 rounded-xl font-bold"
+                >
+                  <FiLogOut size={15} /> <span>Log Out</span>
+                </button>
+              </div>
             ) : (
               <Link
                 to="/portal"
@@ -527,6 +551,23 @@ export default function Navbar() {
                                   </Link>
                                 );
                               })}
+                              {user && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setMobileOpen(false);
+                                    setMobileLoginOpen(false);
+                                    logout();
+                                    navigate('/');
+                                  }}
+                                  className="w-full py-3 px-4 rounded-xl transition-all text-sm font-bold no-underline flex items-center gap-3.5 border border-red-200 text-red-600 bg-red-50/70 hover:bg-red-50 cursor-pointer"
+                                >
+                                  <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-red-100 text-red-600">
+                                    <FiLogOut size={16} />
+                                  </div>
+                                  <span className="flex-1 text-left">Log Out ({role})</span>
+                                </button>
+                              )}
                             </motion.div>
                           )}
                         </AnimatePresence>
@@ -540,7 +581,11 @@ export default function Navbar() {
                       key={link.name}
                       to={link.path}
                       onClick={() => setMobileOpen(false)}
-                      className={`py-3.5 px-5 rounded-xl transition-all text-base font-semibold no-underline flex items-center justify-between ${active ? 'bg-[#7B1E3A] !text-white font-semibold shadow-sm' : 'text-[#4A2C2A] hover:bg-[#FFF8F0] hover:text-[#7B1E3A]'}`}
+                      className={`py-3.5 px-4 rounded-xl font-body transition-all text-base font-semibold no-underline flex items-center justify-between border border-transparent ${
+                        active
+                          ? 'bg-[#7B1E3A] text-white shadow-md'
+                          : 'text-[#4A2C2A] hover:bg-[#FFF8F0] hover:text-[#7B1E3A]'
+                      }`}
                     >
                       {link.name}
                       {active && <span className="w-2 h-2 rounded-full bg-[#D4AF37]" />}
@@ -549,15 +594,27 @@ export default function Navbar() {
                 })}
               </div>
 
-              <div className="p-5 border-t border-[#D4AF37]/20 bg-[#FFF8F0]/50 mt-auto">
+              <div className="p-5 border-t border-[#D4AF37]/20 bg-[#FFF8F0]/50 mt-auto space-y-2.5">
                 {user ? (
-                  <Link
-                    to={getDashboardPath()}
-                    onClick={() => setMobileOpen(false)}
-                    className="btn-golden w-full justify-center !py-3.5 !text-sm no-underline shadow-md"
-                  >
-                    <FiGrid size={18} /> Dashboard ({role})
-                  </Link>
+                  <div className="flex flex-col gap-2.5">
+                    <Link
+                      to={getDashboardPath()}
+                      onClick={() => setMobileOpen(false)}
+                      className="btn-golden w-full justify-center !py-3.5 !text-sm no-underline shadow-md flex items-center gap-2"
+                    >
+                      <FiGrid size={18} /> Dashboard ({role})
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setMobileOpen(false);
+                        logout();
+                        navigate('/');
+                      }}
+                      className="w-full py-3.5 px-4 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 border-2 border-red-300 text-red-600 bg-white hover:bg-red-50 cursor-pointer shadow-sm"
+                    >
+                      <FiLogOut size={18} /> Log Out ({user.name?.split(' ')[0] || role})
+                    </button>
+                  </div>
                 ) : (
                   <Link
                     to="/portal"

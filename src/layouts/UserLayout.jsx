@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { FiHome, FiGrid, FiHeart, FiPackage, FiUser, FiLogOut } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 
 const links = [
   { name: 'Home', path: '/user/dashboard', icon: <FiHome size={18} /> },
-  { name: 'Categories', path: '/categories', icon: <FiGrid size={18} /> },
   { name: 'Wishlist', path: '/wishlist', icon: <FiHeart size={18} /> },
   { name: 'Orders', path: '/user/orders', icon: <FiPackage size={18} /> },
   { name: 'Profile', path: '/user/profile', icon: <FiUser size={18} /> },
@@ -14,6 +13,13 @@ const links = [
 export default function UserLayout() {
   const { pathname } = useLocation();
   const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 lg:px-8 py-8">
       {/* Top nav for user */}
@@ -24,7 +30,7 @@ export default function UserLayout() {
             {l.icon} {l.name}
           </Link>
         ))}
-        <button onClick={() => { logout(); }} className="flex items-center gap-2 px-4 py-2.5 rounded-full text-xs sm:text-sm font-semibold bg-white text-red-500 hover:bg-red-50 hover:text-red-600 transition-all cursor-pointer border border-red-200 ml-auto shadow-xs">
+        <button onClick={handleLogout} className="flex items-center gap-2 px-4 py-2.5 rounded-full text-xs sm:text-sm font-semibold bg-white text-red-500 hover:bg-red-50 hover:text-red-600 transition-all cursor-pointer border border-red-200 ml-auto shadow-xs whitespace-nowrap">
           <FiLogOut size={18} /> Logout
         </button>
       </div>
