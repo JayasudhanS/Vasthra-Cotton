@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { FiArrowRight, FiShield, FiStar, FiTruck, FiCheckCircle, FiHeart, FiAward, FiUsers, FiShoppingBag } from 'react-icons/fi';
+import { useAuth } from '../context/AuthContext';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper/modules';
 import 'swiper/css';
@@ -12,24 +13,25 @@ import { useState } from 'react';
 /* ─── Hero ─── */
 function Hero() {
   return (
-    <section className="relative min-h-[auto] sm:min-h-[72vh] lg:min-h-[82vh] flex flex-col justify-center overflow-hidden bg-gradient-to-br from-[#7B1E3A] via-[#5A1028] to-[#3D1A24] w-full">
-      <div className="bg-[#5A1028] text-[#D4AF37] text-[10px] sm:text-xs font-bold tracking-widest uppercase py-2.5 px-4 text-center border-b border-[#D4AF37]/30 flex items-center justify-center gap-2 w-full z-30 relative shadow-inner">
-        <FiAward className="text-sm animate-pulse flex-shrink-0" />
-        <span>India's Premier Authentic Saree Marketplace</span>
-      </div>
+    <div className="w-full max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 pt-3 sm:pt-4">
+      <section className="relative min-h-[auto] sm:min-h-[72vh] lg:min-h-[82vh] flex flex-col justify-center overflow-hidden bg-gradient-to-br from-[#7B1E3A] via-[#5A1028] to-[#3D1A24] w-full rounded-2xl sm:rounded-3xl shadow-xl border border-[#D4AF37]/30">
+        <div className="bg-[#5A1028] text-[#D4AF37] text-[10px] sm:text-xs font-bold tracking-widest uppercase py-2.5 px-4 text-center border-b border-[#D4AF37]/30 flex items-center justify-center gap-2 w-full z-30 relative shadow-inner">
+          <FiAward className="text-sm animate-pulse flex-shrink-0" />
+          <span>India's Premier Authentic Saree Marketplace</span>
+        </div>
 
-      <div className="absolute inset-0 opacity-35 sm:opacity-25 lg:opacity-20 transition-all duration-700" style={{ backgroundImage: 'url("https://images.pexels.com/photos/2814808/pexels-photo-2814808.jpeg?auto=compress&cs=tinysrgb&w=1600")', backgroundSize: 'cover', backgroundPosition: '70% 25%' }} />
-      <div className="absolute inset-0 bg-gradient-to-r from-[#7B1E3A]/95 via-[#7B1E3A]/85 to-[#7B1E3A]/50 lg:to-transparent" />
+        <div className="absolute inset-0 opacity-35 sm:opacity-25 lg:opacity-20 transition-all duration-700" style={{ backgroundImage: 'url("https://images.pexels.com/photos/2814808/pexels-photo-2814808.jpeg?auto=compress&cs=tinysrgb&w=1600")', backgroundSize: 'cover', backgroundPosition: '70% 25%' }} />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#7B1E3A]/95 via-[#7B1E3A]/85 to-[#7B1E3A]/50 lg:to-transparent" />
 
-      <div className="absolute bottom-0 left-0 right-0 w-full overflow-hidden leading-none z-20">
-        <svg className="relative block w-full h-8 sm:h-12 lg:h-16 text-[#FFF8F0]" viewBox="0 0 1200 120" preserveAspectRatio="none">
-          <path d="M0,0 C300,90 900,90 1200,0 L1200,120 L0,120 Z" fill="currentColor"></path>
-        </svg>
-      </div>
+        <div className="absolute bottom-0 left-0 right-0 w-full overflow-hidden leading-none z-20">
+          <svg className="relative block w-full h-8 sm:h-12 lg:h-16 text-[#FFF8F0]" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M0,0 C300,90 900,90 1200,0 L1200,120 L0,120 Z" fill="currentColor"></path>
+          </svg>
+        </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-20 sm:py-20 lg:py-24 grid lg:grid-cols-12 gap-8 lg:gap-8 items-center w-full z-20">
-        <motion.div initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7 }} className="lg:col-span-7 flex flex-col justify-center">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold !text-white leading-snug sm:leading-tight tracking-tight" style={{ fontFamily: 'Playfair Display' }}>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-20 sm:py-20 lg:py-24 grid lg:grid-cols-12 gap-8 lg:gap-8 items-center w-full z-20">
+          <motion.div initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7 }} className="lg:col-span-7 flex flex-col justify-center">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold !text-white leading-snug sm:leading-tight tracking-tight" style={{ fontFamily: 'Playfair Display' }}>
             <span className="!text-white block">Celebrate Every Tradition with</span>
             <span className="!text-[#D4AF37] block mt-1 sm:mt-1.5">Timeless Elegance</span>
           </h1>
@@ -79,6 +81,7 @@ function Hero() {
         </motion.div>
       </div>
     </section>
+    </div>
   );
 }
 
@@ -376,6 +379,13 @@ function Newsletter() {
 
 /* ─── Main Landing Page ─── */
 export default function LandingPage() {
+  const { user, role } = useAuth();
+
+  if (user) {
+    const dashboardPath = role === 'admin' ? '/admin/dashboard' : role === 'shopkeeper' ? '/shopkeeper/dashboard' : '/user/dashboard';
+    return <Navigate to={dashboardPath} replace />;
+  }
+
   return (
     <div className="w-full max-w-full overflow-x-hidden bg-[#FFF8F0]">
       <Hero />

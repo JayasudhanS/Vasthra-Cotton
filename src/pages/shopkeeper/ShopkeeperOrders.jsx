@@ -15,12 +15,12 @@ const statusColors = {
 export default function ShopkeeperOrders() {
   const { orders, updateOrderStatus } = useOrders();
   const { user } = useAuth();
-  const [statusFilter, setStatusFilter] = useState('All');
+  const [statusFilter, setStatusFilter] = useState('Confirmed');
 
   // Filter orders for current shopkeeper's shop only
-  const shopName = user?.name || '';
+  const shopName = user?.shopName || user?.name || '';
   const myOrders = orders.filter(o => {
-    // Match by shopkeeper's name (since mock auth sets name to shop name for shopkeepers)
+    if (shopName && o.shopName && o.shopName !== shopName) return false;
     if (statusFilter !== 'All' && o.status !== statusFilter) return false;
     return true;
   });
@@ -50,7 +50,7 @@ export default function ShopkeeperOrders() {
       {myOrders.length === 0 ? (
         <div className="card-base p-16 text-center max-w-lg mx-auto bg-white border-dashed">
           <div className="w-16 h-16 rounded-full bg-[#7B1E3A]/10 text-[#7B1E3A] flex items-center justify-center mx-auto mb-4 text-2xl"><FiPackage /></div>
-          <h3 className="text-xl font-bold text-[#7B1E3A] mb-1" style={{ fontFamily: 'Playfair Display' }}>No Orders Yet</h3>
+          <h3 className="text-xl font-bold text-[#7B1E3A] mb-1" style={{ fontFamily: 'Playfair Display' }}>No orders found.</h3>
           <p className="text-sm text-[#6B4A48] m-0">Orders placed for your shop will appear here.</p>
         </div>
       ) : (

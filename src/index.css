@@ -86,6 +86,10 @@ footer>* {
 }
 
 /* ─── Typography ─── */
+html {
+  font-size: 16px;
+}
+
 body {
   font-family: var(--font-body);
   background-color: var(--color-ivory);
@@ -95,6 +99,25 @@ body {
   font-size: 15px;
   line-height: 1.6;
   letter-spacing: -0.01em;
+}
+
+/* 2 Steps Bigger Font Size for PC & Laptop Screens */
+@media (min-width: 1024px) {
+  html {
+    font-size: 18.5px;
+  }
+  body {
+    font-size: 17.5px;
+  }
+}
+
+@media (min-width: 1440px) {
+  html {
+    font-size: 19.5px;
+  }
+  body {
+    font-size: 18.5px;
+  }
 }
 
 h1,
@@ -626,4 +649,136 @@ img {
 }
 .scrollbar-hidden::-webkit-scrollbar {
   display: none;
+}
+
+/* ==========================================================================
+   BREADCRUMB HORIZONTAL ROW RESET
+   Prevents global nav tag reset from forcing vertical column wrapping.
+   ========================================================================== */
+.breadcrumb-row,
+nav.breadcrumb-nav {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  width: auto !important;
+  max-width: 100% !important;
+}
+
+.breadcrumb-row > *,
+nav.breadcrumb-nav > * {
+  width: auto !important;
+  max-width: none !important;
+  flex-shrink: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+/* ==========================================================================
+   GLOBAL RESPONSIVE PAGE & COMPONENT HORIZONTAL PADDING (FLIPKART/AMAZON STYLE)
+   Ensures approx 12px-16px (14px exact) consistent left/right spacing across EVERY
+   page, layout container, dashboard, table, form, banner, and section on mobile.
+   ========================================================================== */
+@media (max-width: 639px) {
+  .max-w-7xl,
+  .max-w-6xl,
+  .max-w-5xl,
+  .max-w-4xl,
+  .max-w-3xl,
+  .max-w-2xl,
+  .max-w-xl,
+  .max-w-lg,
+  .max-w-md,
+  .page-container,
+  main > div,
+  main > section,
+  footer > div,
+  nav > div.max-w-7xl,
+  .card-base {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Prevent double padding when containers are nested inside main or parent section */
+  main > div .max-w-7xl,
+  main > div .max-w-6xl,
+  main > div .max-w-5xl,
+  main > div .max-w-4xl,
+  main > div .max-w-3xl,
+  main > div .max-w-2xl,
+  main > div .max-w-xl,
+  main > section .max-w-7xl,
+  main > section .max-w-6xl,
+  main > section .max-w-5xl,
+  main > section .max-w-4xl,
+  main > section .max-w-3xl,
+  main > section .max-w-2xl,
+  main > section .max-w-xl {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* Fixed mobile bottom navigation bars and header elements */
+  .lg\:hidden.fixed.bottom-0 {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+    box-sizing: border-box !important;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  /* Proportionally reduced tablet spacing */
+  .max-w-7xl,
+  .max-w-6xl,
+  .max-w-5xl,
+  .max-w-4xl,
+  .max-w-3xl,
+  .max-w-2xl,
+  .max-w-xl,
+  .page-container,
+  main > div,
+  main > section,
+  footer > div,
+  nav > div.max-w-7xl {
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+    box-sizing: border-box !important;
+  }
+
+  main > div .max-w-7xl,
+  main > div .max-w-6xl,
+  main > div .max-w-5xl,
+  main > div .max-w-4xl,
+  main > div .max-w-3xl,
+  main > div .max-w-2xl,
+  main > div .max-w-xl,
+  main > section .max-w-7xl,
+  main > section .max-w-6xl,
+  main > section .max-w-5xl,
+  main > section .max-w-4xl,
+  main > section .max-w-3xl,
+  main > section .max-w-2xl,
+  main > section .max-w-xl {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  /* Maintain existing centered container on desktop with left and right whitespace */
+  .max-w-7xl,
+  .max-w-6xl,
+  .max-w-5xl,
+  .max-w-4xl,
+  .max-w-3xl,
+  .max-w-2xl,
+  .max-w-xl,
+  .page-container,
+  footer > div,
+  nav > div.max-w-7xl {
+    padding-left: 32px !important;
+    padding-right: 32px !important;
+    box-sizing: border-box !important;
+  }
 }

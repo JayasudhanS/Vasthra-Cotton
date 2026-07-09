@@ -2,12 +2,14 @@ import { motion } from 'framer-motion';
 import { FiHeart, FiTrash2, FiShoppingBag, FiArrowRight } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import { useWishlist } from '../context/WishlistContext';
+import BreadcrumbBack from '../components/shared/BreadcrumbBack';
 
 export default function WishlistPage() {
   const { wishlist, removeFromWishlist } = useWishlist();
 
   return (
     <div className="max-w-7xl mx-auto px-4 lg:px-8 py-10">
+      <BreadcrumbBack items={[{ label: 'Wishlist', path: '/wishlist' }]} title="Wishlist" />
       <div className="flex items-center justify-between pb-4 border-b border-[#D4AF37]/20 mb-8">
         <div>
           <span className="text-xs uppercase font-bold tracking-widest text-[#D4AF37] block mb-1">✦ Wardrobe Collection</span>

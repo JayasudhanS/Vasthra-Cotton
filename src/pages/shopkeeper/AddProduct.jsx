@@ -2,13 +2,29 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FiImage, FiSave, FiUploadCloud, FiCheckCircle, FiPlus, FiAlertCircle } from 'react-icons/fi';
 import { categories } from '../../data';
+import { useProducts } from '../../context/ProductContext';
+import { useAuth } from '../../context/AuthContext';
 
 export default function AddProduct() {
+  const { addProduct } = useProducts();
+  const { user } = useAuth();
   const [form, setForm] = useState({ name: '', category: '', price: '', offerPrice: '', stock: '', description: '', fabric: 'Silk', color: 'Gold', zariType: 'Pure Zari' });
   const [submitted, setSubmitted] = useState(false);
   const upd = (k) => (e) => setForm({ ...form, [k]: e.target.value });
 
-  const handleSubmit = (e) => { e.preventDefault(); setSubmitted(true); };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    addProduct({
+      ...form,
+      price: Number(form.price) || 18000,
+      offerPrice: Number(form.offerPrice || form.price) || 14500,
+      stock: Number(form.stock) || 5,
+      shopName: user?.name || user?.shopName || 'Weave House',
+      ownerName: user?.ownerName || 'Master Weaver',
+      image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=600&q=80',
+    });
+    setSubmitted(true);
+  };
 
   if (submitted) {
     return (

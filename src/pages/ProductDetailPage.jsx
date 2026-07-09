@@ -7,18 +7,35 @@ import ProductCard from '../components/shared/ProductCard';
 import { products, shops } from '../data';
 import { useWishlist } from '../context/WishlistContext';
 import { useAuth } from '../context/AuthContext';
+import BreadcrumbBack from '../components/shared/BreadcrumbBack';
 
 export default function ProductDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const product = products.find(p => p.id === +id) || products[0];
-  const shop = shops.find(s => s.id === product.shopId);
-  const related = products.filter(p => p.categoryId === product.categoryId && p.id !== product.id).slice(0, 4);
+  const product = products.find(p => p.id === +id) || {
+    id: '',
+    name: '',
+    price: 0,
+    offerPrice: 0,
+    rating: 0,
+    reviews: 0,
+    images: ['/images/placeholder.png'],
+    image: '/images/placeholder.png',
+    color: '',
+    fabric: '',
+    description: '',
+    specifications: { Fabric: '', Color: '', Length: '', Blouse: '', Wash: '', Weight: '' },
+    shopName: '',
+    category: '',
+    shopId: ''
+  };
+  const shop = shops.find(s => s.id === product?.shopId) || { id: '', name: '', owner: '', location: '', logo: '/images/placeholder.png', products: '', rating: '' };
+  const related = products.filter(p => p.categoryId === product?.categoryId && p.id !== product?.id).slice(0, 4);
   const [selectedImg, setSelectedImg] = useState(0);
   const { isInWishlist, toggleWishlist } = useWishlist();
   const { user } = useAuth();
-  const liked = isInWishlist(product.id);
-  const discount = Math.round(((product.price - product.offerPrice) / product.price) * 100);
+  const liked = product?.id ? isInWishlist(product.id) : false;
+  const discount = typeof product?.price === 'number' && product.price > 0 && typeof product?.offerPrice === 'number' ? Math.round(((product.price - product.offerPrice) / product.price) * 100) : 0;
 
   const handleShare = () => {
     if (navigator.share) {
@@ -44,25 +61,20 @@ export default function ProductDetailPage() {
     }
     navigate('/order-summary', { state: { product, shop } });
   };
-
   return (
     <div className="max-w-7xl mx-auto px-4 lg:px-8 py-8 sm:py-12">
-      {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-xs text-[#6B4A48] mb-8 overflow-x-auto pb-2">
-        <Link to="/" className="text-[#6B4A48] hover:text-[#7B1E3A] no-underline">Home</Link>
-        <span>/</span>
-        <Link to="/products" className="text-[#6B4A48] hover:text-[#7B1E3A] no-underline">Sarees</Link>
-        <span>/</span>
-        <Link to={`/products?category=${product.category}`} className="text-[#6B4A48] hover:text-[#7B1E3A] no-underline">{product.category}</Link>
-        <span>/</span>
-        <span className="text-[#7B1E3A] font-semibold truncate">{product.name}</span>
-      </nav>
+      {/* Breadcrumb & Back */}
+      <BreadcrumbBack items={[
+        { label: 'Sarees', path: '/products' },
+        { label: product?.category || 'Collection', path: `/products?category=${product?.category || ''}` },
+        { label: product?.name || 'Saree Details' }
+      ]} />
 
       <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 mb-20 items-start">
         {/* Gallery */}
         <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }} className="lg:col-span-6 lg:sticky lg:top-[110px]">
           <div className="rounded-2xl overflow-hidden mb-4 aspect-[4/5] bg-[#F5EDE0] shadow-md border border-[#D4AF37]/20 relative group">
-            <img src={product.images[selectedImg] || product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" />
+            <img src={product?.images?.[selectedImg] || product?.image || ''} alt={product?.name || ''} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out" />
             {discount > 0 && (
               <span className="absolute top-4 left-4 bg-[#7B1E3A] text-white text-xs font-bold px-3 py-1 rounded-full shadow-md tracking-wide">
                 {discount}% OFF
@@ -70,14 +82,14 @@ export default function ProductDetailPage() {
             )}
           </div>
 
-          <div className="flex gap-3 overflow-x-auto pb-2">
-            {(product.images || [product.image]).map((img, i) => (
+          <div className="flex gap-3 overflow-x-auto pb-2 min-h-[6rem]">
+            {(product?.images?.length ? product.images : [product?.image || '']).map((img, i) => (
               <button
                 key={i}
                 onClick={() => setSelectedImg(i)}
                 className={`w-20 h-24 rounded-xl overflow-hidden cursor-pointer border-2 transition-all flex-shrink-0 bg-[#F5EDE0] ${i === selectedImg ? 'border-[#D4AF37] shadow-md scale-95' : 'border-transparent opacity-60 hover:opacity-100'}`}
               >
-                <img src={img} alt="" className="w-full h-full object-cover" />
+                <img src={img || ''} alt="" className="w-full h-full object-cover" />
               </button>
             ))}
           </div>
@@ -110,19 +122,21 @@ export default function ProductDetailPage() {
           </div>
 
           {/* Price */}
-          <div className="flex items-baseline gap-3 mb-8 bg-[#FFF8F0]/50 p-5 rounded-2xl border border-[#D4AF37]/15">
-            <span className="text-3xl sm:text-4xl font-bold text-[#7B1E3A]">₹{product.offerPrice.toLocaleString()}</span>
-            <span className="text-base text-[#6B4A48] line-through">₹{product.price.toLocaleString()}</span>
-            <span className="ml-auto bg-[#7B1E3A] text-white text-xs font-bold px-3 py-1.5 rounded-full">
-              Save ₹{(product.price - product.offerPrice).toLocaleString()}
-            </span>
+          <div className="flex items-baseline gap-3 mb-8 bg-[#FFF8F0]/50 p-5 rounded-2xl border border-[#D4AF37]/15 min-h-[5.5rem]">
+            <span className="text-3xl sm:text-4xl font-bold text-[#7B1E3A]">{typeof product?.offerPrice === 'number' && product.offerPrice > 0 ? `₹${product.offerPrice.toLocaleString()}` : ''}</span>
+            <span className="text-base text-[#6B4A48] line-through">{typeof product?.price === 'number' && product.price > 0 ? `₹${product.price.toLocaleString()}` : ''}</span>
+            {typeof product?.price === 'number' && product.price > 0 && typeof product?.offerPrice === 'number' && product.offerPrice > 0 && (
+              <span className="ml-auto bg-[#7B1E3A] text-white text-xs font-bold px-3 py-1.5 rounded-full">
+                Save ₹{(product.price - product.offerPrice).toLocaleString()}
+              </span>
+            )}
           </div>
 
           {/* Description */}
           <div className="mb-8">
             <h4 className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] mb-3">About This Drape</h4>
-            <p className="text-sm text-[#6B4A48] leading-relaxed m-0 font-light">
-              {product.description || "An authentic handloom weave crafted with meticulous attention to traditional motifs and rich zari borders. Perfect for weddings, festivities, and heirloom gifting."}
+            <p className="text-sm text-[#6B4A48] leading-relaxed m-0 font-light min-h-[1.5rem]">
+              {product?.description || ''}
             </p>
           </div>
 
@@ -130,8 +144,8 @@ export default function ProductDetailPage() {
           <div className="mb-8">
             <h4 className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] mb-4">Specifications & Fabric Care</h4>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {Object.entries(product.specifications || { Fabric: product.fabric, Color: product.color, Length: '6.3 Meters (inc. Blouse)', Care: 'Dry Clean Only' }).map(([k, v]) => (
-                <div key={k} className="bg-white rounded-xl p-4 border border-[#D4AF37]/20 shadow-xs flex flex-col">
+              {Object.entries(product?.specifications || { Fabric: product?.fabric || '', Color: product?.color || '', Length: '', Care: '' }).map(([k, v]) => (
+                <div key={k} className="bg-white rounded-xl p-4 border border-[#D4AF37]/20 shadow-xs flex flex-col min-h-[3.5rem]">
                   <p className="text-[10px] uppercase tracking-wider text-[#D4AF37] font-bold m-0 mb-1">{k}</p>
                   <p className="text-xs sm:text-sm text-[#4A2C2A] font-semibold m-0 truncate">{v}</p>
                 </div>
@@ -187,22 +201,21 @@ export default function ProductDetailPage() {
           </div>
 
           {/* Shop info */}
-          {shop && (
-            <div className="card-base p-6 flex flex-col sm:flex-row items-center justify-between gap-5 bg-gradient-to-r from-white via-[#FFF8F0]/30 to-white">
-              <div className="flex items-center gap-4">
-                <img src={shop.logo} alt={shop.name} className="w-14 h-14 rounded-full object-cover border-2 border-[#D4AF37]" />
-                <div>
-                  <span className="text-[10px] uppercase font-bold text-[#D4AF37] tracking-wider block">Sold by Verified Weaver</span>
-                  <p className="font-bold text-[#7B1E3A] text-base m-0" style={{ fontFamily: 'Playfair Display' }}>{shop.name}</p>
-                  <p className="text-xs text-[#6B4A48] m-0 font-medium">{shop.location} · {shop.products} Products · ⭐ {shop.rating}</p>
-                </div>
+          {/* Shop info */}
+          <div className="card-base p-6 flex flex-col sm:flex-row items-center justify-between gap-5 bg-gradient-to-r from-white via-[#FFF8F0]/30 to-white min-h-[5.5rem]">
+            <div className="flex items-center gap-4">
+              <img src={shop?.logo || ''} alt={shop?.name || ''} className="w-14 h-14 rounded-full object-cover border-2 border-[#D4AF37]" />
+              <div>
+                <span className="text-[10px] uppercase font-bold text-[#D4AF37] tracking-wider block">Sold by Verified Weaver</span>
+                <p className="font-bold text-[#7B1E3A] text-base m-0 min-h-[1.25rem]" style={{ fontFamily: 'Playfair Display' }}>{shop?.name || ''}</p>
+                <p className="text-xs text-[#6B4A48] m-0 font-medium min-h-[1rem]">{shop?.location ? `${shop.location} · ` : ''}{typeof shop?.products === 'number' ? `${shop.products} Products · ` : ''}{typeof shop?.rating === 'number' ? `⭐ ${shop.rating}` : ''}</p>
               </div>
-
-              <Link to={`/products?shop=${shop.id}`} className="btn-outline-gold !py-2 !px-5 !min-h-[38px] !text-xs no-underline flex-shrink-0 w-full sm:w-auto text-center">
-                Visit Store
-              </Link>
             </div>
-          )}
+
+            <Link to={`/products?shop=${shop?.id || ''}`} className="btn-outline-gold !py-2 !px-5 !min-h-[38px] !text-xs no-underline flex-shrink-0 w-full sm:w-auto text-center">
+              Visit Store
+            </Link>
+          </div>
         </motion.div>
       </div>
 

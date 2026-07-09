@@ -4,13 +4,16 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 export default function ShopkeeperProfile() {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
     navigate('/');
   };
+
+  const displayName = user?.name || 'Ramesh';
+  const displayShopName = user?.shopName || user?.name || 'Ramesh Silks';
 
   return (
     <div className="space-y-6">
@@ -26,23 +29,23 @@ export default function ShopkeeperProfile() {
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="card-base p-8 max-w-2xl bg-white border border-[#D4AF37]/20 shadow-sm space-y-8">
         <div className="flex items-center gap-6 pb-6 border-b border-[#D4AF37]/15">
-          <img src="https://ui-avatars.com/api/?name=Lakshmi+Silks&background=7B1E3A&color=fff&size=128" alt="Shop" className="w-20 h-20 rounded-2xl object-cover border-2 border-[#D4AF37]/40 shadow-md flex-shrink-0" />
+          <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=7B1E3A&color=fff&size=128`} alt="Shop" className="w-20 h-20 rounded-2xl object-cover border-2 border-[#D4AF37]/40 shadow-md flex-shrink-0" />
           <div>
-            <span className="text-[10px] uppercase tracking-widest text-[#D4AF37] font-bold block mb-0.5">✦ Heritage Loom Cooperative</span>
-            <h2 className="text-2xl font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>Lakshmi Silks & Handlooms</h2>
-            <p className="text-xs text-[#6B4A48] m-0 mt-1 font-mono">Weaver ID: #WH-1049 · Kanchipuram Cluster</p>
+            <span className="text-[10px] uppercase tracking-widest text-[#D4AF37] font-bold block mb-0.5">✦ Weaver House Profile</span>
+            <h2 className="text-2xl font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>{displayName}</h2>
+            <p className="text-xs text-[#6B4A48] m-0 mt-1 font-mono">Weaver ID: {user?.id || 'WK-1048'} · {user?.location || 'Kanchipuram, Tamil Nadu'}</p>
           </div>
         </div>
 
         <div className="space-y-4">
           <h3 className="text-sm font-bold text-[#7B1E3A] uppercase tracking-wider m-0">Weaver House Specifications</h3>
           {[
-            { icon: <FiShield />, label: 'Master Weaver & Owner', value: 'Smt. Lakshmi Devi' },
-            { icon: <FiMail />, label: 'Official Business Email', value: 'contact@lakshmisilks.com' },
-            { icon: <FiPhone />, label: 'Artisan Helpline', value: '+91 98765 43210' },
-            { icon: <FiMapPin />, label: 'Loom Cluster Location', value: 'North Mada Street, Kanchipuram, Tamil Nadu - 631501' },
-            { icon: <FiPackage />, label: 'Live Masterpieces in Vasthra Cotton', value: '45 Handwoven Sarees Active' },
-            { icon: <FiStar />, label: 'Connoisseur Rating', value: '4.8 ★ (Based on 142 Verified Orders)' }
+            { icon: <FiShield />, label: 'Master Weaver & Owner', value: displayName },
+            { icon: <FiMail />, label: 'Official Business Email', value: user?.email || '' },
+            { icon: <FiPhone />, label: 'Artisan Helpline', value: user?.phone || '' },
+            { icon: <FiMapPin />, label: 'Loom Cluster Location', value: user?.address || '' },
+            { icon: <FiPackage />, label: 'Live Masterpieces in Vasthra Cotton', value: '0 Sarees Active' },
+            { icon: <FiStar />, label: 'Connoisseur Rating', value: '0.0 ★ (0 Verified Orders)' }
           ].map((f, i) => (
             <div key={i} className="flex items-start gap-4 p-4 bg-[#FFF8F0]/60 rounded-xl border border-[#D4AF37]/15">
               <div className="w-10 h-10 rounded-lg bg-[#D4AF37]/10 text-[#D4AF37] flex items-center justify-center text-base flex-shrink-0 mt-0.5">

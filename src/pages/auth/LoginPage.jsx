@@ -13,13 +13,17 @@ export default function LoginPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    login(
+    const res = login(
       {
-        email: form.email || 'user@vasthracotton.com',
-        name: role === 'admin' ? 'Master Admin' : role === 'shopkeeper' ? 'Kanjivaram Weaves' : 'Ananya Sharma',
+        email: form.email || (role === 'admin' ? 'admin@vasthracotton.com' : role === 'shopkeeper' ? 'ramesh@vasthracotton.com' : 'jayasudhan@vasthracotton.com'),
+        name: role === 'admin' ? 'Administrator' : role === 'shopkeeper' ? 'Ramesh' : 'Jayasudhan',
       },
       role
     );
+    if (res && res.success === false) {
+      alert(res.message);
+      return;
+    }
     if (role === 'admin') navigate('/admin/dashboard');
     else if (role === 'shopkeeper') navigate('/shopkeeper/dashboard');
     else navigate('/user/dashboard');

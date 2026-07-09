@@ -1,6 +1,7 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { FiGrid, FiClock, FiPackage, FiCheck, FiUsers, FiSettings, FiLogOut, FiShoppingBag, FiList } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
+import BreadcrumbBack from '../components/shared/BreadcrumbBack';
 
 const links = [
   { name: 'Dashboard', path: '/admin/dashboard', icon: <FiGrid size={18} /> },
@@ -15,7 +16,7 @@ const links = [
 
 export default function AdminLayout() {
   const { pathname } = useLocation();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -28,6 +29,7 @@ export default function AdminLayout() {
       <aside className="hidden lg:flex flex-col w-[260px] bg-gradient-to-b from-[#4A2C2A] to-[#2D1A19] p-5 sticky top-[100px] h-[calc(100vh-100px)] overflow-y-auto">
         <div className="mb-6 px-3">
           <p className="text-xs uppercase tracking-wider text-[#D4AF37] font-semibold">Admin Panel</p>
+          <p className="text-sm font-bold text-white truncate mt-1">{user?.name || 'Administrator'}</p>
         </div>
         <nav className="space-y-1 flex-1">
           {links.map(l => (
@@ -60,6 +62,7 @@ export default function AdminLayout() {
       </div>
 
       <main className="flex-1 p-5 sm:p-6 lg:p-10 pb-24 lg:pb-10 bg-[#FFF8F0]">
+        <BreadcrumbBack />
         <Outlet />
       </main>
     </div>

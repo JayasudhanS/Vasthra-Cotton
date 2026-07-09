@@ -2,9 +2,11 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { FiArrowRight, FiHeart, FiShoppingBag, FiAward } from 'react-icons/fi';
 import ProductCard from '../../components/shared/ProductCard';
+import { useAuth } from '../../context/AuthContext';
 import { products } from '../../data';
 
 export default function UserDashboard() {
+  const { user } = useAuth();
   const trending = products.filter(p => p.trending).slice(0, 4);
   const newArrivals = products.filter(p => p.newArrival).slice(0, 4);
   const recommended = products.filter(p => p.featured).slice(0, 4);
@@ -22,8 +24,8 @@ export default function UserDashboard() {
           style={{ backgroundImage: 'url("https://images.pexels.com/photos/2814808/pexels-photo-2814808.jpeg?auto=compress&cs=tinysrgb&w=800")', backgroundSize: 'cover', backgroundPosition: 'center' }}
         />
         <div className="relative z-10 w-full flex items-center">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white m-0 leading-tight" style={{ fontFamily: 'Playfair Display' }}>
-            Welcome back, Ananya!
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white m-0 leading-tight min-h-[2.5rem]" style={{ fontFamily: 'Playfair Display' }}>
+            Welcome back, {user?.name || 'Jayasudhan'}!
           </h1>
         </div>
       </motion.div>
@@ -71,9 +73,15 @@ export default function UserDashboard() {
               View All Catalogue <FiArrowRight size={14} />
             </Link>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {sec.data.map((p, i) => <ProductCard key={p.id} product={p} index={i} />)}
-          </div>
+          {sec.data.length === 0 ? (
+            <div className="card-base p-12 text-center bg-[#FFF8F0]/30 border-dashed border border-[#D4AF37]/20">
+              <p className="text-sm font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>No products available.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {sec.data.map((p, i) => <ProductCard key={p.id} product={p} index={i} />)}
+            </div>
+          )}
         </section>
       ))}
     </div>

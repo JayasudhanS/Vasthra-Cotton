@@ -82,11 +82,11 @@ export default function ContactPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
                     <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block mb-1.5">Your Full Name *</label>
-                    <input type="text" required placeholder="e.g. Ananya Reddy" value={form.name} onChange={e => setForm({...form, name: e.target.value})} className="input-field !h-12 !text-sm" />
+                    <input type="text" required placeholder="e.g. Customer Name" value={form.name} onChange={e => setForm({...form, name: e.target.value})} className="input-field !h-12 !text-sm" />
                   </div>
                   <div>
                     <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block mb-1.5">Email Address *</label>
-                    <input type="email" required placeholder="e.g. ananya@example.com" value={form.email} onChange={e => setForm({...form, email: e.target.value})} className="input-field !h-12 !text-sm" />
+                    <input type="email" required placeholder="e.g. customer@example.com" value={form.email} onChange={e => setForm({...form, email: e.target.value})} className="input-field !h-12 !text-sm" />
                   </div>
                 </div>
 

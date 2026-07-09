@@ -7,7 +7,7 @@ import { useAuth } from '../../context/AuthContext';
 export default function RegisterPage() {
   const { role } = useParams();
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, registerShopkeeper } = useAuth();
   const isShopkeeper = role === 'shopkeeper';
 
   const [showPass, setShowPass] = useState(false);
@@ -31,8 +31,21 @@ export default function RegisterPage() {
       alert('Passwords do not match. Please verify your password.');
       return;
     }
-    login({ email: form.email || 'newuser@vasthracotton.com', name: form.name || 'New Member' }, role);
-    navigate(isShopkeeper ? '/shopkeeper/dashboard' : '/user/dashboard');
+    if (isShopkeeper) {
+      registerShopkeeper({
+        name: form.name || 'Ramesh',
+        email: form.email || 'ramesh@vasthracotton.com',
+        phone: form.phone || '',
+        shopName: form.shopName || form.name || 'Ramesh Silks',
+        address: form.address || '',
+        description: form.description || '',
+      });
+      alert('Your registration has been submitted successfully. Your account is currently under review by our administrator. You will be able to access your dashboard once your account has been approved.');
+      navigate('/login/shopkeeper');
+      return;
+    }
+    login({ email: form.email || 'jayasudhan@vasthracotton.com', name: form.name || 'Jayasudhan' }, role);
+    navigate('/user/dashboard');
   };
 
   return (

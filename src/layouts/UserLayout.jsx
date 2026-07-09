@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { FiHome, FiGrid, FiHeart, FiPackage, FiUser, FiLogOut } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
+import BreadcrumbBack from '../components/shared/BreadcrumbBack';
 
 const links = [
   { name: 'Home', path: '/user/dashboard', icon: <FiHome className="w-6 h-6 sm:w-8 sm:h-8" /> },
@@ -22,6 +23,7 @@ export default function UserLayout() {
 
   return (
     <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <BreadcrumbBack />
       {/* Top nav for user - Flipkart Category Strip Style */}
       <div className="bg-white rounded-3xl p-3 sm:p-5 md:p-6 mb-8 border-2 border-[#D4AF37]/30 shadow-lg">
         <div className="flex items-stretch justify-between gap-2.5 sm:gap-5 lg:gap-6 overflow-x-auto pb-1 sm:pb-0 scrollbar-hidden w-full">

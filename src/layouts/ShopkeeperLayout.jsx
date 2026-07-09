@@ -1,6 +1,7 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { FiGrid, FiPackage, FiPlusCircle, FiClock, FiCheck, FiXCircle, FiUser, FiLogOut, FiList } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
+import BreadcrumbBack from '../components/shared/BreadcrumbBack';
 
 const links = [
   { name: 'Dashboard', path: '/shopkeeper/dashboard', icon: <FiGrid size={18} /> },
@@ -12,7 +13,7 @@ const links = [
 
 export default function ShopkeeperLayout() {
   const { pathname } = useLocation();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -26,6 +27,7 @@ export default function ShopkeeperLayout() {
       <aside className="hidden lg:flex flex-col w-[260px] bg-white border-r border-[#D4AF37]/15 p-5 sticky top-[100px] h-[calc(100vh-100px)] overflow-y-auto shadow-sm">
         <div className="mb-6 px-3">
           <p className="text-xs uppercase tracking-wider text-[#D4AF37] font-bold">✦ Shopkeeper Panel</p>
+          <p className="text-sm font-bold text-[#7B1E3A] truncate mt-1">{user?.name || 'Ramesh'}</p>
         </div>
         <nav className="space-y-1.5 flex-1">
           {links.map(l => (
@@ -62,6 +64,7 @@ export default function ShopkeeperLayout() {
 
       {/* Content */}
       <main className="flex-1 p-5 sm:p-6 lg:p-10 pb-24 lg:pb-10 bg-[#FFF8F0]/40">
+        <BreadcrumbBack />
         <Outlet />
       </main>
     </div>

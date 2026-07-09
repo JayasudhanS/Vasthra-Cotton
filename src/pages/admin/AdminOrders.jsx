@@ -78,7 +78,7 @@ export default function AdminOrders() {
       {filtered.length === 0 ? (
         <div className="card-base p-16 text-center max-w-lg mx-auto bg-white border-dashed">
           <div className="w-16 h-16 rounded-full bg-[#7B1E3A]/10 text-[#7B1E3A] flex items-center justify-center mx-auto mb-4 text-2xl">📦</div>
-          <h3 className="text-xl font-bold text-[#7B1E3A] mb-1" style={{ fontFamily: 'Playfair Display' }}>No Orders Found</h3>
+          <h3 className="text-xl font-bold text-[#7B1E3A] mb-1" style={{ fontFamily: 'Playfair Display' }}>No orders found.</h3>
           <p className="text-sm text-[#6B4A48] m-0">No orders match your current filters.</p>
         </div>
       ) : (

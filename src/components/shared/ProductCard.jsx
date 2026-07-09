@@ -18,8 +18,8 @@ export { StarRating };
 
 export default function ProductCard({ product, index = 0 }) {
   const { isInWishlist, toggleWishlist } = useWishlist();
-  const liked = isInWishlist(product.id);
-  const discount = Math.round(((product.price - product.offerPrice) / product.price) * 100);
+  const liked = product?.id ? isInWishlist(product.id) : false;
+  const discount = typeof product?.price === 'number' && product.price > 0 && typeof product?.offerPrice === 'number' ? Math.round(((product.price - product.offerPrice) / product.price) * 100) : 0;
 
   return (
     <motion.div
@@ -32,8 +32,8 @@ export default function ProductCard({ product, index = 0 }) {
       {/* Image Container with Fixed 4:5 Aspect Ratio */}
       <div className="relative overflow-hidden aspect-[4/5] bg-[#F5EDE0] w-full" style={{ minHeight: '200px' }}>
         <img
-          src={product.image}
-          alt={product.name}
+          src={product?.image || ''}
+          alt={product?.name || ''}
           loading="lazy"
           className="w-full h-full object-cover group-hover:scale-[1.06] transition-transform duration-600 ease-out"
         />
@@ -75,35 +75,35 @@ export default function ProductCard({ product, index = 0 }) {
       <div className="flex flex-col flex-1 p-4 sm:p-5 justify-between bg-white gap-1">
         <div>
           <div className="flex items-center justify-between gap-2 mb-1">
-            <span className="text-[10px] uppercase tracking-wider text-[#D4AF37] font-bold truncate">
-              {product.shopName}
+            <span className="text-[10px] uppercase tracking-wider text-[#D4AF37] font-bold truncate min-h-[1rem] inline-block">
+              {product?.shopName || ''}
             </span>
-            <span className="text-[11px] text-[#6B4A48] bg-[#FFF8F0] px-2 py-0.5 rounded-md truncate font-medium">
-              {product.category}
+            <span className="text-[11px] text-[#6B4A48] bg-[#FFF8F0] px-2 py-0.5 rounded-md truncate font-medium min-h-[1.25rem] inline-block">
+              {product?.category || ''}
             </span>
           </div>
 
-          <Link to={`/product/${product.id}`} className="no-underline block group-hover:text-[#7B1E3A] transition-colors">
-            <h3 className="text-sm font-semibold text-[#4A2C2A] mb-1.5 line-clamp-1 leading-snug" style={{ fontFamily: 'Poppins' }}>
-              {product.name}
+          <Link to={`/product/${product?.id || ''}`} className="no-underline block group-hover:text-[#7B1E3A] transition-colors">
+            <h3 className="text-sm font-semibold text-[#4A2C2A] mb-1.5 line-clamp-1 leading-snug min-h-[1.25rem]" style={{ fontFamily: 'Poppins' }}>
+              {product?.name || ''}
             </h3>
           </Link>
 
-          <div className="flex items-center gap-1.5 mb-2">
-            <StarRating rating={product.rating} size={12} />
-            <span className="text-[11px] text-[#6B4A48] font-medium">({product.reviews})</span>
+          <div className="flex items-center gap-1.5 mb-2 min-h-[1rem]">
+            <StarRating rating={product?.rating || 0} size={12} />
+            <span className="text-[11px] text-[#6B4A48] font-medium">{typeof product?.reviews === 'number' && product.reviews > 0 ? `(${product.reviews})` : ''}</span>
           </div>
         </div>
 
         {/* Bottom Price Row */}
-        <div className="flex items-center justify-between border-t border-[#D4AF37]/15 pt-3 mt-auto">
+        <div className="flex items-center justify-between border-t border-[#D4AF37]/15 pt-3 mt-auto min-h-[2.5rem]">
           <div className="flex items-baseline gap-2">
-            <span className="text-base font-bold text-[#7B1E3A]">₹{product.offerPrice.toLocaleString()}</span>
-            <span className="text-xs text-[#6B4A48] line-through">₹{product.price.toLocaleString()}</span>
+            <span className="text-base font-bold text-[#7B1E3A] min-h-[1.5rem] inline-block">{typeof product?.offerPrice === 'number' && product.offerPrice > 0 ? `₹${product.offerPrice.toLocaleString()}` : ''}</span>
+            <span className="text-xs text-[#6B4A48] line-through min-h-[1rem] inline-block">{typeof product?.price === 'number' && product.price > 0 ? `₹${product.price.toLocaleString()}` : ''}</span>
           </div>
           <Link
-            to={`/product/${product.id}`}
-            aria-label={`View ${product.name}`}
+            to={`/product/${product?.id || ''}`}
+            aria-label={`View ${product?.name || ''}`}
             className="w-8 h-8 rounded-lg bg-[#FFF8F0] text-[#7B1E3A] flex items-center justify-center hover:bg-[#7B1E3A] hover:text-white transition-colors no-underline sm:hidden"
           >
             <FiShoppingBag size={15} />

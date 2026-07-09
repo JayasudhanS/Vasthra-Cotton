@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FiFilter, FiX, FiRefreshCw, FiCheckCircle, FiMapPin, FiStar } from 'react-icons/fi';
 import ProductCard, { StarRating } from '../components/shared/ProductCard';
 import { products, categories, shops } from '../data';
+import { useProducts } from '../context/ProductContext';
 
 const colors = ['Red', 'Gold', 'Green', 'Blue', 'Pink', 'Maroon', 'Orange', 'White', 'Black'];
 const fabrics = ['Silk', 'Cotton', 'Georgette', 'Chiffon', 'Linen', 'Organza', 'Crepe', 'Tussar'];
@@ -15,6 +16,7 @@ const sortOptions = [
 ];
 
 export default function ProductsPage() {
+  const { products: dynamicProducts } = useProducts();
   const [params] = useSearchParams();
   const [showFilter, setShowFilter] = useState(false);
   const [filters, setFilters] = useState({ category: '', color: '', fabric: '', sort: 'newest', minPrice: '', maxPrice: '' });
@@ -23,7 +25,7 @@ export default function ProductsPage() {
   const shop = shopId ? shops.find(s => s.id === shopId) : null;
 
   const filtered = useMemo(() => {
-    let list = products.filter(p => p.status === 'approved');
+    let list = [...products.filter(p => p.status === 'approved'), ...dynamicProducts.filter(p => p.status === 'approved')];
     if (shopId) list = list.filter(p => p.shopId === shopId);
     if (params.get('filter') === 'featured') list = list.filter(p => p.featured);
     if (filters.category) list = list.filter(p => p.category === filters.category);
@@ -203,7 +205,16 @@ export default function ProductsPage() {
 
         {/* Products Grid */}
         <div className="flex-1 w-full">
-          {filtered.length === 0 ? (
+          {products.length === 0 ? (
+            <div className="card-base p-16 text-center max-w-lg mx-auto my-8 bg-[#FFF8F0]/30 border-dashed">
+              <div className="w-16 h-16 rounded-full bg-[#7B1E3A]/10 text-[#7B1E3A] flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                ✦
+              </div>
+              <h3 className="text-xl font-bold text-[#7B1E3A] mb-2" style={{ fontFamily: 'Playfair Display' }}>
+                No products available.
+              </h3>
+            </div>
+          ) : filtered.length === 0 ? (
             <div className="card-base p-16 text-center max-w-lg mx-auto my-8 bg-[#FFF8F0]/30 border-dashed">
               <div className="w-16 h-16 rounded-full bg-[#7B1E3A]/10 text-[#7B1E3A] flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
                 ✦

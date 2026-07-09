@@ -2,10 +2,18 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FiInstagram, FiMail, FiPhone, FiMapPin, FiSend, FiCheckCircle } from 'react-icons/fi';
 import { FaFacebookF, FaWhatsapp, FaPinterestP } from 'react-icons/fa';
+import { useAuth } from '../../context/AuthContext';
 
 export default function Footer() {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const { user, role } = useAuth();
+
+  const getDashboardPath = () => {
+    if (role === 'admin') return '/admin/dashboard';
+    if (role === 'shopkeeper') return '/shopkeeper/dashboard';
+    return '/user/dashboard';
+  };
 
   const handleSubscribe = (e) => {
     e.preventDefault();
@@ -22,7 +30,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 lg:gap-10 mb-14">
           {/* Brand - Takes 2 Columns on Large Screens */}
           <div className="lg:col-span-2 pr-0 lg:pr-6">
-            <Link to="/" className="flex items-center gap-3 sm:gap-4 no-underline mb-6 group w-fit">
+            <Link to={user ? getDashboardPath() : '/'} className="flex items-center gap-3 sm:gap-4 no-underline mb-6 group w-fit">
               <img
                 src="/images/logo_vas.png"
                 alt="Vasthra Cotton Logo"

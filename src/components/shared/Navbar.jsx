@@ -89,7 +89,7 @@ export default function Navbar() {
 
         <div className="w-full max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 flex items-center justify-between h-[76px] sm:h-[84px]">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 sm:gap-3.5 no-underline group flex-shrink-0 min-w-0 mr-1 sm:mr-2">
+          <Link to={user ? getDashboardPath() : '/'} className="flex items-center gap-2 sm:gap-3.5 no-underline group flex-shrink-0 min-w-0 mr-1 sm:mr-2">
             <img
               src="/images/logo_vas.png"
               alt="Vasthra Cotton Logo"
@@ -210,7 +210,7 @@ export default function Navbar() {
               if (link.isDropdown) {
                 const active = location.pathname.startsWith('/login');
                 const activeChild = link.children?.find(c => location.pathname === c.path);
-                const displayLabel = activeChild ? activeChild.name : link.name;
+                const displayLabel = user ? (user.name || (role === 'admin' ? 'Administrator' : role === 'shopkeeper' ? 'Ramesh' : 'Jayasudhan')) : (activeChild ? activeChild.name : link.name);
                 return (
                   <div
                     key={link.name}
@@ -301,10 +301,11 @@ export default function Navbar() {
               }
 
               const active = location.pathname === link.path || (link.path !== '/' && location.pathname.startsWith(link.path.split('?')[0]) && link.path !== '/');
+              const targetPath = (user && link.path === '/') ? getDashboardPath() : link.path;
               return (
                 <Link
                   key={link.name}
-                  to={link.path}
+                  to={targetPath}
                   className={`text-sm font-medium transition-colors relative group no-underline py-1 ${active ? 'text-[#7B1E3A] font-semibold' : 'text-[#4A2C2A] hover:text-[#7B1E3A]'}`}
                 >
                   {link.name}
@@ -563,10 +564,11 @@ export default function Navbar() {
                   }
 
                   const active = location.pathname === link.path;
+                  const targetPath = (user && link.path === '/') ? getDashboardPath() : link.path;
                   return (
                     <Link
                       key={link.name}
-                      to={link.path}
+                      to={targetPath}
                       onClick={() => setMobileOpen(false)}
                       className={`py-3.5 px-4 rounded-xl font-body transition-all text-base font-semibold no-underline flex items-center justify-between border border-transparent ${active
                           ? 'bg-[#7B1E3A] text-white shadow-md'
@@ -583,6 +585,10 @@ export default function Navbar() {
               <div className="p-5 border-t border-[#D4AF37]/20 bg-[#FFF8F0]/50 mt-auto space-y-2.5">
                 {user ? (
                   <div className="flex flex-col gap-2.5">
+                    <div className="px-1 py-1 text-center">
+                      <span className="text-[11px] uppercase tracking-wider text-[#D4AF37] font-bold block">✦ Logged in as</span>
+                      <span className="text-sm font-bold text-[#7B1E3A]">{user.name || (role === 'admin' ? 'Administrator' : role === 'shopkeeper' ? 'Ramesh' : 'Jayasudhan')}</span>
+                    </div>
                     <Link
                       to={getDashboardPath()}
                       onClick={() => setMobileOpen(false)}
@@ -598,7 +604,7 @@ export default function Navbar() {
                       }}
                       className="w-full py-3.5 px-4 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 border-2 border-red-300 text-red-600 bg-white hover:bg-red-50 cursor-pointer shadow-sm"
                     >
-                      <FiLogOut size={18} /> Log Out ({user.name?.split(' ')[0] || role})
+                      <FiLogOut size={18} /> Log Out ({user.name?.split(' ')[0] || (role === 'admin' ? 'Administrator' : role === 'shopkeeper' ? 'Ramesh' : 'Jayasudhan')})
                     </button>
                   </div>
                 ) : (
