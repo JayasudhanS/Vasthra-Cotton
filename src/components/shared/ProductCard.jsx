@@ -40,7 +40,7 @@ export default function ProductCard({ product, index = 0 }) {
 
         {/* Discount badge */}
         {discount > 0 && (
-          <span className="absolute top-3 left-3 bg-[#7B1E3A] text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-sm z-10 tracking-wide">
+          <span className="absolute top-3.5 sm:top-4 left-3.5 sm:left-4 bg-[#7B1E3A] text-white text-[11px] font-bold px-3 py-1.5 rounded-full shadow-sm z-10 tracking-wide">
             {discount}% OFF
           </span>
         )}
@@ -49,22 +49,22 @@ export default function ProductCard({ product, index = 0 }) {
         <button
           onClick={() => toggleWishlist(product)}
           aria-label={liked ? "Remove from wishlist" : "Add to wishlist"}
-          className={`absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer border border-[#D4AF37]/30 z-10 shadow-sm ${liked ? 'bg-[#7B1E3A] text-white border-transparent' : 'bg-white/90 backdrop-blur-md text-[#4A2C2A] hover:bg-[#7B1E3A] hover:text-white hover:border-transparent'}`}
+          className={`absolute top-3.5 sm:top-4 right-3.5 sm:right-4 w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer border border-[#D4AF37]/30 z-10 shadow-sm ${liked ? 'bg-[#7B1E3A] text-white border-transparent' : 'bg-white/90 backdrop-blur-md text-[#4A2C2A] hover:bg-[#7B1E3A] hover:text-white hover:border-transparent'}`}
         >
           <FiHeart size={16} fill={liked ? 'currentColor' : 'none'} />
         </button>
 
         {/* Hover overlay for Desktop */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4 gap-2 z-10">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-5 gap-2.5 z-10">
           <Link
             to={`/product/${product.id}`}
-            className="bg-white/95 backdrop-blur-sm text-[#4A2C2A] px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 hover:bg-white hover:text-[#7B1E3A] transition-colors no-underline shadow-md"
+            className="bg-white/95 backdrop-blur-sm text-[#4A2C2A] px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 hover:bg-white hover:text-[#7B1E3A] transition-colors no-underline shadow-md"
           >
             <FiEye size={14} /> Quick View
           </Link>
           <Link
             to={`/product/${product.id}`}
-            className="bg-gradient-to-r from-[#D4AF37] to-[#E8C94A] text-[#4A2C2A] px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 hover:shadow-lg transition-all no-underline shadow-md"
+            className="bg-gradient-to-r from-[#D4AF37] to-[#E8C94A] text-[#4A2C2A] px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 hover:shadow-lg transition-all no-underline shadow-md"
           >
             <FiShoppingBag size={14} /> Buy Now
           </Link>
@@ -72,13 +72,13 @@ export default function ProductCard({ product, index = 0 }) {
       </div>
 
       {/* Info Section - Flex-1 with space-between ensures uniform price alignment at bottom */}
-      <div className="flex flex-col flex-1 p-4 sm:p-5 justify-between bg-white gap-1">
+      <div className="flex flex-col flex-1 p-5 sm:p-6 justify-between bg-white gap-1.5">
         <div>
-          <div className="flex items-center justify-between gap-2 mb-1">
+          <div className="flex items-center justify-between gap-2.5 mb-1.5">
             <span className="text-[10px] uppercase tracking-wider text-[#D4AF37] font-bold truncate min-h-[1rem] inline-block">
               {product?.shopName || ''}
             </span>
-            <span className="text-[11px] text-[#6B4A48] bg-[#FFF8F0] px-2 py-0.5 rounded-md truncate font-medium min-h-[1.25rem] inline-block">
+            <span className="text-[11px] text-[#6B4A48] bg-[#FFF8F0] px-2.5 py-1 rounded-md truncate font-medium min-h-[1.25rem] inline-block">
               {product?.category || ''}
             </span>
           </div>

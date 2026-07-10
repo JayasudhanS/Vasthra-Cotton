@@ -32,7 +32,7 @@ export default function UserDashboard() {
 
       {/* Quick Perks - Flipkart Style Horizontal Feature Row */}
       <div className="flex items-stretch justify-between gap-3 sm:gap-5 lg:gap-6 overflow-x-auto pb-2 scrollbar-hidden w-full">
-        <div className="flex-1 min-w-[110px] sm:min-w-[160px] bg-white border border-[#D4AF37]/30 rounded-2xl p-4 sm:p-5 flex flex-col items-center justify-center gap-2.5 sm:gap-3 text-center shadow-xs hover:shadow-md transition-all">
+        <div className="flex-1 min-w-[120px] sm:min-w-[160px] bg-white border border-[#D4AF37]/30 rounded-2xl p-5 sm:p-6 flex flex-col items-center justify-center gap-3 sm:gap-3.5 text-center shadow-xs hover:shadow-md transition-all">
           <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#FFF8F0] text-[#7B1E3A] flex items-center justify-center text-xl sm:text-2xl shadow-2xs border border-[#D4AF37]/25 flex-shrink-0">
             <FiShoppingBag className="w-6 h-6 sm:w-7 sm:h-7" />
           </div>
@@ -41,7 +41,7 @@ export default function UserDashboard() {
           </span>
         </div>
 
-        <div className="flex-1 min-w-[110px] sm:min-w-[160px] bg-white border border-[#D4AF37]/30 rounded-2xl p-4 sm:p-5 flex flex-col items-center justify-center gap-2.5 sm:gap-3 text-center shadow-xs hover:shadow-md transition-all">
+        <div className="flex-1 min-w-[120px] sm:min-w-[160px] bg-white border border-[#D4AF37]/30 rounded-2xl p-5 sm:p-6 flex flex-col items-center justify-center gap-3 sm:gap-3.5 text-center shadow-xs hover:shadow-md transition-all">
           <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#FFF8F0] text-[#D4AF37] flex items-center justify-center text-xl sm:text-2xl shadow-2xs border border-[#D4AF37]/25 flex-shrink-0">
             <FiAward className="w-6 h-6 sm:w-7 sm:h-7" />
           </div>
@@ -50,7 +50,7 @@ export default function UserDashboard() {
           </span>
         </div>
 
-        <div className="flex-1 min-w-[110px] sm:min-w-[160px] bg-white border border-[#D4AF37]/30 rounded-2xl p-4 sm:p-5 flex flex-col items-center justify-center gap-2.5 sm:gap-3 text-center shadow-xs hover:shadow-md transition-all">
+        <div className="flex-1 min-w-[120px] sm:min-w-[160px] bg-white border border-[#D4AF37]/30 rounded-2xl p-5 sm:p-6 flex flex-col items-center justify-center gap-3 sm:gap-3.5 text-center shadow-xs hover:shadow-md transition-all">
           <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#FFF8F0] text-[#7B1E3A] flex items-center justify-center text-xl sm:text-2xl shadow-2xs border border-[#D4AF37]/25 flex-shrink-0">
             <FiHeart className="w-6 h-6 sm:w-7 sm:h-7" />
           </div>

@@ -343,7 +343,7 @@ export function AdminCategories() {
 
       {showAdd && (
         <motion.form initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} onSubmit={handleAdd}
-          className="card-base p-6 bg-[#FFF8F0] border border-[#D4AF37]/40 shadow-md space-y-4 max-w-xl">
+          className="card-base p-6 sm:p-8 bg-[#FFF8F0] border border-[#D4AF37]/40 shadow-md space-y-4 max-w-xl">
           <h3 className="text-base font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>Create New Weave Category</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
@@ -369,11 +369,11 @@ export function AdminCategories() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {categories.map(c => (
-            <div key={c.id} className="card-base p-5 bg-white border border-[#D4AF37]/20 shadow-sm flex flex-col justify-between group hover:border-[#D4AF37] transition-all">
+            <div key={c.id} className="card-base p-6 bg-white border border-[#D4AF37]/20 shadow-sm flex flex-col justify-between group hover:border-[#D4AF37] transition-all">
               <div>
                 <div className="h-40 rounded-xl overflow-hidden mb-4 relative bg-[#FFF8F0]">
                   <img src={c.image} alt={c.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                  <span className="absolute top-3 right-3 bg-black/60 backdrop-blur-xs text-white text-[10px] font-bold px-2.5 py-1 rounded-full">
+                  <span className="absolute top-3 right-3 bg-black/60 backdrop-blur-xs text-white text-[10px] font-bold px-3 py-1 rounded-full">
                     {c.count} Weaves
                   </span>
                 </div>
@@ -451,7 +451,7 @@ export function AdminSettings() {
               </select>
             </div>
 
-            <div className="flex items-center justify-between p-4 bg-[#FFF8F0] rounded-xl border border-[#D4AF37]/30">
+            <div className="flex items-center justify-between p-5 bg-[#FFF8F0] rounded-xl border border-[#D4AF37]/30">
               <div>
                 <span className="text-sm font-bold text-[#7B1E3A] block">Silk Mark Fast-Track</span>
                 <span className="text-xs text-[#6B4A48] font-light">Auto-approve sarees from verified Silk Mark houses</span>
@@ -472,7 +472,7 @@ export function AdminSettings() {
             <FiBell className="text-[#D4AF37]" /> Notifications & Maintenance
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="flex items-center justify-between p-4 bg-[#FFF8F0] rounded-xl border border-[#D4AF37]/30">
+            <div className="flex items-center justify-between p-5 bg-[#FFF8F0] rounded-xl border border-[#D4AF37]/30">
               <div>
                 <span className="text-sm font-bold text-[#7B1E3A] block">Instant Weaver Alerts</span>
                 <span className="text-xs text-[#6B4A48] font-light">Send email & SMS upon new order dispatch</span>
@@ -485,7 +485,7 @@ export function AdminSettings() {
               />
             </div>
 
-            <div className="flex items-center justify-between p-4 bg-red-50/70 rounded-xl border border-red-200">
+            <div className="flex items-center justify-between p-5 bg-red-50/70 rounded-xl border border-red-200">
               <div>
                 <span className="text-sm font-bold text-red-800 block">Maintenance Mode</span>
                 <span className="text-xs text-red-600 font-light">Temporarily pause checkout during system updates</span>

@@ -57,22 +57,22 @@ export default function ShopkeeperOrders() {
         <div className="space-y-4">
           {myOrders.map((o, i) => (
             <motion.div key={o.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
-              className="card-base p-5 sm:p-6 bg-white border border-[#D4AF37]/20 shadow-sm">
+              className="card-base p-6 sm:p-7 md:p-8 bg-white border border-[#D4AF37]/20 shadow-sm">
 
               <div className="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-[#D4AF37]/10">
                 <div className="flex items-center gap-3">
                   <span className="text-xs font-mono font-bold text-[#7B1E3A]">#{o.id}</span>
                   <span className="text-xs text-[#6B4A48]">{o.date}</span>
                 </div>
-                <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${statusColors[o.status] || statusColors['Pending']}`}>
+                <span className={`text-xs font-bold px-3.5 py-1.5 rounded-full border ${statusColors[o.status] || statusColors['Pending']}`}>
                   {o.status}
                 </span>
               </div>
 
-              <div className="flex gap-4 mb-4">
-                <img src={o.productImage} alt={o.productName} className="w-14 h-18 rounded-xl object-cover border border-[#D4AF37]/30 flex-shrink-0" />
+              <div className="flex gap-4 sm:gap-5 mb-5">
+                <img src={o.productImage} alt={o.productName} className="w-14 h-18 sm:w-16 sm:h-20 rounded-xl object-cover border border-[#D4AF37]/30 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-bold text-[#7B1E3A] text-sm m-0 mb-1 truncate">{o.productName}</h4>
+                  <h4 className="font-bold text-[#7B1E3A] text-sm sm:text-base m-0 mb-1 truncate">{o.productName}</h4>
                   <p className="text-xs text-[#6B4A48] m-0 mb-1">Qty: {o.quantity} · ₹{o.total.toLocaleString()}</p>
                   <div className="text-xs text-[#4A2C2A]">
                     <span className="font-semibold">{o.customerName}</span> · <span className="text-[#6B4A48]">{o.customerPhone}</span>
@@ -85,7 +85,7 @@ export default function ShopkeeperOrders() {
               <div className="flex flex-wrap gap-2 pt-3 border-t border-[#D4AF37]/10">
                 {['Confirmed', 'Packed', 'Delivered', 'Cancelled'].map(s => (
                   <button key={s} onClick={() => updateOrderStatus(o.id, s)}
-                    className={`px-3 py-1 rounded-lg text-[10px] font-bold cursor-pointer border transition-all ${o.status === s ? 'bg-[#7B1E3A] text-white border-[#7B1E3A]' : 'bg-white text-[#6B4A48] border-[#D4AF37]/20 hover:border-[#7B1E3A]'}`}>
+                    className={`px-3.5 py-1.5 rounded-lg text-xs font-bold cursor-pointer border transition-all ${o.status === s ? 'bg-[#7B1E3A] text-white border-[#7B1E3A]' : 'bg-white text-[#6B4A48] border-[#D4AF37]/20 hover:border-[#7B1E3A]'}`}>
                     {s}
                   </button>
                 ))}

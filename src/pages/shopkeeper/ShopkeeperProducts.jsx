@@ -87,14 +87,14 @@ export function ShopkeeperProducts() {
                     </div>
                   </td>
                   <td className="text-[#6B4A48] font-medium text-xs">
-                    <span className="bg-[#FFF8F0] px-3 py-1 rounded-full border border-[#D4AF37]/20">
+                    <span className="bg-[#FFF8F0] px-3.5 py-1.5 rounded-full border border-[#D4AF37]/20 font-medium">
                       {p.category || 'Silk'}
                     </span>
                   </td>
                   <td className="font-bold text-[#7B1E3A] text-sm">₹{(p.offerPrice || p.price || 14500).toLocaleString()}</td>
                   <td className="text-xs text-[#6B4A48] font-mono">{p.date || '09 Jul 2026'}</td>
                   <td>
-                    <span className={`badge !text-[11px] font-bold px-3 py-1 ${p.status === 'approved' ? 'badge-success' : p.status === 'rejected' ? 'badge-danger' : 'badge-warning'}`}>
+                    <span className={`badge !text-[11px] font-bold px-3.5 py-1.5 ${p.status === 'approved' ? 'badge-success' : p.status === 'rejected' ? 'badge-danger' : 'badge-warning'}`}>
                       {p.status === 'approved' ? 'Approved' : p.status === 'rejected' ? 'Rejected' : 'Pending Approval'}
                     </span>
                   </td>

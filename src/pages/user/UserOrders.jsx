@@ -47,23 +47,23 @@ export default function UserOrders() {
         <div className="space-y-4">
           {orders.map((o, i) => (
             <motion.div key={o.id} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-              className="card-base p-5 sm:p-6 bg-white border border-[#D4AF37]/20 shadow-sm hover:shadow-md transition-all">
+              className="card-base p-6 sm:p-7 md:p-8 bg-white border border-[#D4AF37]/20 shadow-sm hover:shadow-md transition-all">
 
               {/* Order Header */}
               <div className="flex flex-wrap items-center justify-between gap-3 mb-4 pb-4 border-b border-[#D4AF37]/10">
                 <div className="flex items-center gap-3">
-                  <span className="text-xs font-mono font-bold text-[#7B1E3A] bg-[#FFF8F0] px-3 py-1 rounded-lg border border-[#D4AF37]/20">
+                  <span className="text-xs font-mono font-bold text-[#7B1E3A] bg-[#FFF8F0] px-3.5 py-1.5 rounded-lg border border-[#D4AF37]/20">
                     #{o.id}
                   </span>
                   <span className="text-xs text-[#6B4A48]">{o.date}</span>
                 </div>
-                <span className={`text-xs font-bold px-3 py-1 rounded-full border ${statusColors[o.status] || statusColors['Pending']}`}>
+                <span className={`text-xs font-bold px-3.5 py-1.5 rounded-full border ${statusColors[o.status] || statusColors['Pending']}`}>
                   {statusIcons[o.status]} {o.status}
                 </span>
               </div>
 
               {/* Product Info */}
-              <div className="flex gap-4 mb-4">
+              <div className="flex gap-4 sm:gap-5 mb-5">
                 <img src={o.productImage} alt={o.productName} className="w-16 h-20 sm:w-20 sm:h-24 rounded-xl object-cover border border-[#D4AF37]/30 shadow-xs flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <span className="text-[10px] uppercase font-bold text-[#D4AF37] tracking-wider block mb-0.5">{o.shopName}</span>
@@ -73,7 +73,7 @@ export default function UserOrders() {
               </div>
 
               {/* Price Details */}
-              <div className="bg-[#FFF8F0]/60 rounded-xl p-3 sm:p-4 space-y-1.5 text-sm">
+              <div className="bg-[#FFF8F0]/60 rounded-xl p-4 sm:p-5 space-y-2 text-sm border border-[#D4AF37]/15">
                 <div className="flex justify-between text-[#6B4A48]">
                   <span>Price</span>
                   <span className="font-medium">₹{(o.price * o.quantity).toLocaleString()}</span>

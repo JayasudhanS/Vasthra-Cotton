@@ -45,11 +45,11 @@ export default function WishlistPage() {
               <div>
                 <Link to={`/product/${product.id}`} className="block aspect-[4/5] overflow-hidden relative bg-[#FFF8F0] rounded-t-2xl">
                   <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
-                  <span className="absolute top-3 left-3 bg-black/60 backdrop-blur-xs text-white text-[10px] font-bold px-2.5 py-1 rounded-full border border-white/20">
+                  <span className="absolute top-3.5 left-3.5 bg-black/60 backdrop-blur-xs text-white text-[10px] font-bold px-3 py-1.5 rounded-full border border-white/20">
                     {product.category || 'Pure Silk'}
                   </span>
                 </Link>
-                <div className="p-5">
+                <div className="p-5 sm:p-6">
                   <p className="text-[10px] uppercase tracking-widest text-[#D4AF37] font-bold mb-1 block">{product.shopName}</p>
                   <Link to={`/product/${product.id}`} className="text-base font-bold text-[#7B1E3A] hover:text-[#D4AF37] transition-colors no-underline line-clamp-1 block" style={{ fontFamily: 'Playfair Display' }}>
                     {product.name}
@@ -60,7 +60,7 @@ export default function WishlistPage() {
                   </div>
                 </div>
               </div>
-              <div className="p-5 pt-0 flex gap-2.5">
+              <div className="p-5 sm:p-6 pt-0 flex gap-2.5">
                 <button onClick={() => alert(`Added "${product.name}" to cart!`)} className="btn-golden flex-1 justify-center !py-2.5 !text-xs cursor-pointer shadow-sm flex items-center gap-1.5">
                   <FiShoppingBag size={14} /> Move to Cart
                 </button>

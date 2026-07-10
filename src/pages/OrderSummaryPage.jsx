@@ -67,7 +67,7 @@ export default function OrderSummaryPage() {
       <div className="grid lg:grid-cols-5 gap-8 items-start">
         {/* Product Details */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="lg:col-span-3 space-y-6">
-          <div className="card-base p-6 bg-white border border-[#D4AF37]/20">
+          <div className="card-base p-6 sm:p-7 md:p-8 bg-white border border-[#D4AF37]/20">
             <div className="flex gap-5">
               <img src={product.image} alt={product.name} className="w-28 h-36 sm:w-32 sm:h-40 rounded-xl object-cover border border-[#D4AF37]/30 shadow-sm flex-shrink-0" />
               <div className="flex-1 min-w-0">
@@ -93,7 +93,7 @@ export default function OrderSummaryPage() {
           </div>
 
           {/* Delivery Form */}
-          <form onSubmit={handlePlaceOrder} id="order-form" className="card-base p-6 bg-white border border-[#D4AF37]/20 space-y-5">
+          <form onSubmit={handlePlaceOrder} id="order-form" className="card-base p-6 sm:p-7 md:p-8 bg-white border border-[#D4AF37]/20 space-y-5">
             <h3 className="text-base font-bold text-[#7B1E3A] m-0 uppercase tracking-wider flex items-center gap-2">
               <FiTruck className="text-[#D4AF37]" /> Delivery Information
             </h3>
@@ -130,7 +130,7 @@ export default function OrderSummaryPage() {
 
         {/* Price Summary Sidebar */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="lg:col-span-2 lg:sticky lg:top-[110px]">
-          <div className="card-base p-6 bg-white border border-[#D4AF37]/20 space-y-5">
+          <div className="card-base p-6 sm:p-7 md:p-8 bg-white border border-[#D4AF37]/20 space-y-5">
             <h3 className="text-base font-bold text-[#7B1E3A] m-0 uppercase tracking-wider">Price Details</h3>
 
             <div className="space-y-3 text-sm">
@@ -148,7 +148,7 @@ export default function OrderSummaryPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-2 text-xs text-[#2D8F5E] font-medium bg-[#2D8F5E]/10 p-3 rounded-xl">
+            <div className="flex items-center gap-2.5 text-xs text-[#2D8F5E] font-medium bg-[#2D8F5E]/10 p-4 rounded-xl">
               <FiShield size={16} /> Secure Order · No Online Payment Required
             </div>
 

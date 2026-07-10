@@ -46,12 +46,12 @@ export default function UserProfile() {
             { icon: <FiMapPin />, label: 'Default Delivery Address', value: user?.address || '' },
             { icon: <FiAward />, label: 'Membership Tier', value: user?.tier || '' }
           ].map((f, i) => (
-            <div key={i} className="flex items-start gap-4 p-4 bg-[#FFF8F0]/60 rounded-xl border border-[#D4AF37]/15 min-h-[4.5rem]">
+            <div key={i} className="flex items-start gap-4 p-5 sm:p-6 bg-[#FFF8F0]/60 rounded-xl border border-[#D4AF37]/15 min-h-[4.5rem]">
               <div className="w-10 h-10 rounded-lg bg-[#7B1E3A]/10 text-[#7B1E3A] flex items-center justify-center text-base flex-shrink-0 mt-0.5">
                 {f.icon}
               </div>
               <div>
-                <p className="text-[10px] uppercase tracking-wider text-[#D4AF37] font-bold m-0 mb-0.5">{f.label}</p>
+                <p className="text-[10px] uppercase tracking-wider text-[#D4AF37] font-bold m-0 mb-1">{f.label}</p>
                 <p className="text-sm font-semibold text-[#4A2C2A] m-0 leading-relaxed min-h-[1.25rem]">{f.value}</p>
               </div>
             </div>

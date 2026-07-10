@@ -62,7 +62,7 @@ export default function AddProduct() {
             Add New Royal Saree
           </h1>
         </div>
-        <span className="text-xs text-[#6B4A48] bg-[#FFF8F0] px-3 py-1.5 rounded-lg border border-[#D4AF37]/30 flex items-center gap-1.5 w-fit">
+        <span className="text-xs text-[#6B4A48] bg-[#FFF8F0] px-4 py-2 rounded-xl border border-[#D4AF37]/30 flex items-center gap-2 w-fit">
           <FiAlertCircle className="text-[#D4AF37]" /> Silk Mark Certification Required
         </span>
       </div>
@@ -154,7 +154,7 @@ export default function AddProduct() {
             4. High-Resolution Photographs
           </h3>
           <div onClick={() => alert('Demo: Photo upload simulator triggered. In production, this opens the media gallery.')}
-            className="flex flex-col items-center justify-center gap-3 p-8 rounded-2xl border-2 border-dashed border-[#D4AF37]/40 bg-[#FFF8F0]/30 hover:bg-[#FFF8F0]/70 hover:border-[#D4AF37] transition-all cursor-pointer text-center group">
+            className="flex flex-col items-center justify-center gap-3.5 p-8 sm:p-10 rounded-2xl border-2 border-dashed border-[#D4AF37]/40 bg-[#FFF8F0]/30 hover:bg-[#FFF8F0]/70 hover:border-[#D4AF37] transition-all cursor-pointer text-center group">
             <div className="w-14 h-14 rounded-2xl bg-[#D4AF37]/10 text-[#D4AF37] flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-transform shadow-sm">
               <FiUploadCloud size={28} />
             </div>

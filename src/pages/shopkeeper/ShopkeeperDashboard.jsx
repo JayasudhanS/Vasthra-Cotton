@@ -98,7 +98,7 @@ export default function ShopkeeperDashboard() {
                       </div>
                     </td>
                     <td className="text-[#6B4A48] font-medium text-xs">
-                      <span className="bg-[#FFF8F0] px-3 py-1 rounded-full border border-[#D4AF37]/20">
+                      <span className="bg-[#FFF8F0] px-3.5 py-1.5 rounded-full border border-[#D4AF37]/20 font-medium">
                         {p.category}
                       </span>
                     </td>

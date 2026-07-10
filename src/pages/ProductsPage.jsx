@@ -118,19 +118,19 @@ export default function ProductsPage() {
         </AnimatePresence>
 
         {/* Sidebar Filters */}
-        <aside className={`${showFilter ? 'fixed inset-y-0 left-0 z-50 w-80 bg-white p-6 shadow-2xl overflow-y-auto block' : 'hidden'} lg:block lg:static lg:w-64 flex-shrink-0 lg:z-auto lg:bg-transparent lg:p-0 lg:shadow-none`}>
-          <div className="flex items-center justify-between lg:hidden mb-6 pb-4 border-b border-[#D4AF37]/20">
-            <h3 className="text-lg font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>
+        <aside className={`${showFilter ? 'fixed top-20 right-4 sm:right-6 w-[calc(100%-32px)] max-w-[320px] z-50 bg-white/98 backdrop-blur-xl rounded-2xl shadow-2xl border border-[#D4AF37]/25 p-4 sm:p-5 max-h-[calc(100vh-100px)] overflow-y-auto block' : 'hidden'} lg:block lg:static lg:w-64 flex-shrink-0 lg:z-auto lg:bg-transparent lg:p-0 lg:shadow-none lg:border-none lg:max-h-none`}>
+          <div className="flex items-center justify-between lg:hidden mb-4 pb-3 border-b border-[#D4AF37]/20">
+            <h3 className="text-base sm:text-lg font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>
               Filter Sarees
             </h3>
-            <button onClick={() => setShowFilter(false)} className="w-8 h-8 rounded-full bg-[#FFF8F0] flex items-center justify-center cursor-pointer border-none text-[#4A2C2A]">
-              <FiX size={18} />
+            <button onClick={() => setShowFilter(false)} className="w-8 h-8 rounded-full bg-[#FFF8F0] flex items-center justify-center cursor-pointer border border-[#D4AF37]/20 text-[#4A2C2A] shadow-2xs hover:bg-[#E8C94A] transition-colors">
+              <FiX size={16} />
             </button>
           </div>
 
-          <div className="space-y-6 card-base p-6 lg:sticky lg:top-[110px] shadow-sm bg-white">
-            <div className="flex items-center justify-between border-b border-[#D4AF37]/15 pb-3">
-              <span className="text-sm font-bold text-[#7B1E3A] uppercase tracking-wider">Filters</span>
+          <div className="space-y-4 lg:space-y-5 lg:card-base lg:p-6 lg:sticky lg:top-[110px] lg:shadow-sm lg:bg-white">
+            <div className="flex items-center justify-between border-b border-[#D4AF37]/15 pb-2.5">
+              <span className="text-xs sm:text-sm font-bold text-[#7B1E3A] uppercase tracking-wider">Filters</span>
               <button
                 onClick={clearFilters}
                 className="text-xs text-[#D4AF37] hover:text-[#7B1E3A] font-semibold cursor-pointer bg-transparent border-none p-0 flex items-center gap-1 transition-colors"
@@ -139,32 +139,32 @@ export default function ProductsPage() {
               </button>
             </div>
 
-            <div>
-              <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block mb-2">Category / Weave</label>
-              <select value={filters.category} onChange={e => setFilters({ ...filters, category: e.target.value })} className="select-field !h-10 !text-xs bg-[#FFF8F0]/50">
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block">Category / Weave</label>
+              <select value={filters.category} onChange={e => setFilters({ ...filters, category: e.target.value })} className="select-field !h-[44px] sm:!h-[46px] !text-xs sm:!text-sm !px-3.5 !rounded-xl bg-[#FFF8F0]/60">
                 <option value="">All Categories</option>
                 {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
               </select>
             </div>
 
-            <div>
-              <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block mb-2">Color Palette</label>
-              <select value={filters.color} onChange={e => setFilters({ ...filters, color: e.target.value })} className="select-field !h-10 !text-xs bg-[#FFF8F0]/50">
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block">Color Palette</label>
+              <select value={filters.color} onChange={e => setFilters({ ...filters, color: e.target.value })} className="select-field !h-[44px] sm:!h-[46px] !text-xs sm:!text-sm !px-3.5 !rounded-xl bg-[#FFF8F0]/60">
                 <option value="">All Colors</option>
                 {colors.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
 
-            <div>
-              <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block mb-2">Fabric Type</label>
-              <select value={filters.fabric} onChange={e => setFilters({ ...filters, fabric: e.target.value })} className="select-field !h-10 !text-xs bg-[#FFF8F0]/50">
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block">Fabric Type</label>
+              <select value={filters.fabric} onChange={e => setFilters({ ...filters, fabric: e.target.value })} className="select-field !h-[44px] sm:!h-[46px] !text-xs sm:!text-sm !px-3.5 !rounded-xl bg-[#FFF8F0]/60">
                 <option value="">All Fabrics</option>
                 {fabrics.map(f => <option key={f} value={f}>{f}</option>)}
               </select>
             </div>
 
-            <div>
-              <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block mb-2">Price Range (₹)</label>
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block">Price Range (₹)</label>
               <div className="grid grid-cols-2 gap-2.5">
                 <div>
                   <input
@@ -172,7 +172,7 @@ export default function ProductsPage() {
                     value={filters.minPrice}
                     onChange={e => setFilters({ ...filters, minPrice: e.target.value })}
                     placeholder="Min ₹"
-                    className="input-field !h-10 !text-xs !px-3 bg-[#FFF8F0]/50"
+                    className="input-field !h-[44px] sm:!h-[46px] !text-xs sm:!text-sm !px-3 !rounded-xl bg-[#FFF8F0]/60"
                   />
                 </div>
                 <div>
@@ -181,22 +181,22 @@ export default function ProductsPage() {
                     value={filters.maxPrice}
                     onChange={e => setFilters({ ...filters, maxPrice: e.target.value })}
                     placeholder="Max ₹"
-                    className="input-field !h-10 !text-xs !px-3 bg-[#FFF8F0]/50"
+                    className="input-field !h-[44px] sm:!h-[46px] !text-xs sm:!text-sm !px-3 !rounded-xl bg-[#FFF8F0]/60"
                   />
                 </div>
               </div>
             </div>
 
-            <div>
-              <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block mb-2">Sort Collection By</label>
-              <select value={filters.sort} onChange={e => setFilters({ ...filters, sort: e.target.value })} className="select-field !h-10 !text-xs bg-[#FFF8F0]/50 font-medium text-[#7B1E3A]">
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block">Sort Collection By</label>
+              <select value={filters.sort} onChange={e => setFilters({ ...filters, sort: e.target.value })} className="select-field !h-[44px] sm:!h-[46px] !text-xs sm:!text-sm !px-3.5 !rounded-xl bg-[#FFF8F0]/60 font-medium text-[#7B1E3A]">
                 {sortOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
               </select>
             </div>
 
             <button
               onClick={() => { clearFilters(); setShowFilter(false); }}
-              className="btn-outline-maroon w-full !text-xs !min-h-[40px] justify-center mt-2"
+              className="btn-outline-maroon w-full !text-xs sm:!text-sm !h-[44px] sm:!h-[46px] !rounded-xl justify-center mt-2"
             >
               Clear All Filters
             </button>

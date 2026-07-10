@@ -122,7 +122,7 @@ export default function ProductDetailPage() {
           </div>
 
           {/* Price */}
-          <div className="flex items-baseline gap-3 mb-8 bg-[#FFF8F0]/50 p-5 rounded-2xl border border-[#D4AF37]/15 min-h-[5.5rem]">
+          <div className="flex items-baseline gap-3 mb-8 bg-[#FFF8F0]/50 p-5 sm:p-6 rounded-2xl border border-[#D4AF37]/15 min-h-[5.5rem]">
             <span className="text-3xl sm:text-4xl font-bold text-[#7B1E3A]">{typeof product?.offerPrice === 'number' && product.offerPrice > 0 ? `₹${product.offerPrice.toLocaleString()}` : ''}</span>
             <span className="text-base text-[#6B4A48] line-through">{typeof product?.price === 'number' && product.price > 0 ? `₹${product.price.toLocaleString()}` : ''}</span>
             {typeof product?.price === 'number' && product.price > 0 && typeof product?.offerPrice === 'number' && product.offerPrice > 0 && (
@@ -143,9 +143,9 @@ export default function ProductDetailPage() {
           {/* Specifications Grid */}
           <div className="mb-8">
             <h4 className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] mb-4">Specifications & Fabric Care</h4>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
               {Object.entries(product?.specifications || { Fabric: product?.fabric || '', Color: product?.color || '', Length: '', Care: '' }).map(([k, v]) => (
-                <div key={k} className="bg-white rounded-xl p-4 border border-[#D4AF37]/20 shadow-xs flex flex-col min-h-[3.5rem]">
+                <div key={k} className="bg-white rounded-xl p-4 sm:p-5 border border-[#D4AF37]/20 shadow-xs flex flex-col min-h-[3.5rem]">
                   <p className="text-[10px] uppercase tracking-wider text-[#D4AF37] font-bold m-0 mb-1">{k}</p>
                   <p className="text-xs sm:text-sm text-[#4A2C2A] font-semibold m-0 truncate">{v}</p>
                 </div>
@@ -154,7 +154,7 @@ export default function ProductDetailPage() {
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-3 mb-8">
+          <div className="flex items-center gap-3 sm:gap-4 mb-8">
             <button onClick={handleBuyNow} className="btn-golden flex-1 justify-center !py-3.5 !min-h-[50px] !text-sm cursor-pointer shadow-md">
               <FiShoppingBag size={18} /> Buy Now
             </button>
@@ -162,7 +162,7 @@ export default function ProductDetailPage() {
             <button
               onClick={() => toggleWishlist(product)}
               aria-label={liked ? "Remove from wishlist" : "Add to wishlist"}
-              className={`w-12 h-12 rounded-xl flex items-center justify-center border cursor-pointer transition-all flex-shrink-0 shadow-sm ${liked ? 'bg-[#7B1E3A] text-white border-transparent' : 'border-[#D4AF37]/30 text-[#7B1E3A] bg-white hover:bg-[#FFF8F0]'}`}
+              className={`w-12 h-12 sm:w-13 sm:h-13 rounded-xl flex items-center justify-center border cursor-pointer transition-all flex-shrink-0 shadow-sm ${liked ? 'bg-[#7B1E3A] text-white border-transparent' : 'border-[#D4AF37]/30 text-[#7B1E3A] bg-white hover:bg-[#FFF8F0]'}`}
             >
               <FiHeart size={20} fill={liked ? 'currentColor' : 'none'} />
             </button>
@@ -170,19 +170,19 @@ export default function ProductDetailPage() {
             <button
               onClick={handleShare}
               aria-label="Share product"
-              className="w-12 h-12 rounded-xl flex items-center justify-center border border-[#D4AF37]/30 text-[#4A2C2A] cursor-pointer bg-white hover:bg-[#FFF8F0] transition-colors flex-shrink-0 shadow-sm"
+              className="w-12 h-12 sm:w-13 sm:h-13 rounded-xl flex items-center justify-center border border-[#D4AF37]/30 text-[#4A2C2A] cursor-pointer bg-white hover:bg-[#FFF8F0] transition-colors flex-shrink-0 shadow-sm"
             >
               <FiShare2 size={18} />
             </button>
           </div>
 
           {/* Add to Bag */}
-          <button onClick={handleAddToBag} className="btn-outline-gold w-full !py-3 !text-sm cursor-pointer mb-8 justify-center">
+          <button onClick={handleAddToBag} className="btn-outline-gold w-full !py-3.5 !text-sm cursor-pointer mb-8 justify-center">
             Add to Bag
           </button>
 
           {/* Trust Badges */}
-          <div className="grid grid-cols-3 gap-3 p-5 bg-[#FFF8F0] rounded-2xl border border-[#D4AF37]/20 text-center mb-8">
+          <div className="grid grid-cols-3 gap-3 p-5 sm:p-6 bg-[#FFF8F0] rounded-2xl border border-[#D4AF37]/20 text-center mb-8">
             <div className="flex flex-col items-center gap-1.5">
               <FiTruck className="text-[#2D8F5E]" size={20} />
               <span className="text-[11px] font-bold text-[#4A2C2A]">Free Shipping</span>
@@ -202,7 +202,7 @@ export default function ProductDetailPage() {
 
           {/* Shop info */}
           {/* Shop info */}
-          <div className="card-base p-6 flex flex-col sm:flex-row items-center justify-between gap-5 bg-gradient-to-r from-white via-[#FFF8F0]/30 to-white min-h-[5.5rem]">
+          <div className="card-base p-6 sm:p-7 flex flex-col sm:flex-row items-center justify-between gap-5 bg-gradient-to-r from-white via-[#FFF8F0]/30 to-white min-h-[5.5rem]">
             <div className="flex items-center gap-4">
               <img src={shop?.logo || ''} alt={shop?.name || ''} className="w-14 h-14 rounded-full object-cover border-2 border-[#D4AF37]" />
               <div>

@@ -44,7 +44,7 @@ export default function AdminOrders() {
       </div>
 
       {/* Filters */}
-      <div className="card-base p-4 sm:p-5 bg-white border border-[#D4AF37]/20 space-y-4">
+      <div className="card-base p-5 sm:p-6 bg-white border border-[#D4AF37]/20 space-y-4">
         {/* Status Tabs */}
         <div className="flex flex-wrap gap-2">
           {statuses.map(s => (
@@ -88,8 +88,8 @@ export default function AdminOrders() {
               className="card-base bg-white border border-[#D4AF37]/20 shadow-sm hover:shadow-md transition-all overflow-hidden">
 
               {/* Main Row */}
-              <div className="p-5 sm:p-6">
-                <div className="flex flex-col sm:flex-row gap-4">
+              <div className="p-6 sm:p-7 md:p-8">
+                <div className="flex flex-col sm:flex-row gap-4 sm:gap-5">
                   {/* Product Image */}
                   <img src={o.productImage} alt={o.productName} className="w-16 h-20 rounded-xl object-cover border border-[#D4AF37]/30 shadow-xs flex-shrink-0" />
 
@@ -100,7 +100,7 @@ export default function AdminOrders() {
                         <span className="text-xs font-mono font-bold text-[#7B1E3A]">#{o.id}</span>
                         <span className="text-xs text-[#6B4A48] ml-2">{o.date}</span>
                       </div>
-                      <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${statusColors[o.status] || statusColors['Pending']}`}>
+                      <span className={`text-xs font-bold px-3.5 py-1.5 rounded-full border ${statusColors[o.status] || statusColors['Pending']}`}>
                         {o.status}
                       </span>
                     </div>
