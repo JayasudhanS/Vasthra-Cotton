@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Link, Navigate } from 'react-router-dom';
-import { FiArrowRight, FiShield, FiStar, FiTruck, FiCheckCircle, FiHeart, FiAward, FiUsers, FiShoppingBag } from 'react-icons/fi';
+import { FiArrowRight, FiShield, FiStar, FiTruck, FiCheckCircle, FiHeart, FiAward, FiUsers, FiShoppingBag, FiUser } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper/modules';
@@ -12,72 +12,67 @@ import { products, categories, shops, testimonials, festivalBanners } from '../d
 /* ─── Hero ─── */
 function Hero() {
   return (
-    <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 pt-3 sm:pt-6">
-      <section className="relative min-h-[auto] flex flex-col justify-start overflow-hidden bg-gradient-to-br from-[#7B1E3A] via-[#5A1028] to-[#3D1A24] w-full rounded-2xl sm:rounded-3xl shadow-xl border border-[#D4AF37]/30">
-        <div className="bg-[#5A1028] text-[#D4AF37] text-xs sm:text-sm font-bold tracking-widest uppercase py-2.5 px-4 sm:py-3 sm:px-5 text-center border-b border-[#D4AF37]/30 flex items-center justify-center gap-2.5 w-full z-30 relative shadow-inner">
-          <FiAward className="text-base sm:text-lg animate-pulse flex-shrink-0" />
-          <span>India's Premier Authentic Saree Marketplace</span>
-        </div>
+    <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 pt-4 sm:pt-6">
+      <section className="relative overflow-hidden bg-[#FFF8F0] w-full rounded-2xl sm:rounded-3xl shadow-xl border border-[#D4AF37]/30 flex flex-col lg:flex-row min-h-[500px] lg:min-h-[640px]">
+        {/* Left Content Area */}
+        <div className="w-full lg:w-[55%] px-6 sm:px-10 lg:px-16 xl:px-20 py-12 sm:py-16 lg:py-24 flex flex-col justify-center relative z-20 bg-[#FFF8F0]">
+          
+          {/* Top Badge */}
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+            className="bg-[#5A1028] text-white text-[10px] sm:text-xs font-bold tracking-widest uppercase py-2 px-4 sm:py-2.5 sm:px-5 rounded-full flex items-center gap-2.5 w-fit mb-6 sm:mb-8 shadow-sm">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0">
+               <path d="M12 2C12 2 15 8 15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 8 12 2 12 2Z" fill="currentColor"/>
+               <path d="M22 12C22 12 16 15 12 15C10.3431 15 9 16.3431 9 18C9 19.6569 15 22 15 22C15 22 15 16 15 12C15 10.3431 16.3431 9 18 9C19.6569 9 22 12 22 12Z" fill="currentColor"/>
+               <path d="M2 12C2 12 8 15 12 15C13.6569 15 15 16.3431 15 18C15 19.6569 9 22 9 22C9 22 9 16 9 12C9 10.3431 7.65685 9 6 9C4.34315 9 2 12 2 12Z" fill="currentColor"/>
+            </svg>
+            <span>India's Premier Saree Marketplace</span>
+          </motion.div>
 
-        <div className="absolute inset-0 opacity-35 sm:opacity-25 lg:opacity-20 transition-all duration-700" style={{ backgroundImage: 'url("https://images.pexels.com/photos/2814808/pexels-photo-2814808.jpeg?auto=compress&cs=tinysrgb&w=1600")', backgroundSize: 'cover', backgroundPosition: '70% 25%' }} />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#7B1E3A]/95 via-[#7B1E3A]/85 to-[#7B1E3A]/50 lg:to-transparent" />
-
-        <div className="absolute bottom-0 left-0 right-0 w-full overflow-hidden leading-none z-20">
-          <svg className="relative block w-full h-8 sm:h-12 lg:h-16 text-[#FFF8F0]" viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <path d="M0,0 C300,90 900,90 1200,0 L1200,120 L0,120 Z" fill="currentColor"></path>
-          </svg>
-        </div>
-
-        <div className="relative max-w-[1320px] mx-auto px-6 sm:px-8 lg:px-16 xl:px-20 pt-6 sm:pt-8 lg:pt-8 pb-16 sm:pb-20 lg:pb-16 xl:pb-20 grid lg:grid-cols-12 gap-8 lg:gap-12 items-center w-full z-20">
-          <motion.div initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.7 }} className="lg:col-span-7 flex flex-col justify-center">
-            <h1 className="text-[32px] sm:text-4xl md:text-5xl lg:text-5xl xl:text-[54px] font-bold !text-white leading-[1.28] sm:leading-tight lg:leading-[1.18] tracking-tight max-w-2xl mt-1 sm:mt-0" style={{ fontFamily: 'Playfair Display' }}>
-              <span className="!text-white block">Celebrate Every Tradition with</span>
-              <span className="!text-[#D4AF37] block mt-2 sm:mt-2">Timeless Elegance</span>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}>
+            <h1 className="text-[38px] sm:text-[46px] lg:text-[52px] xl:text-[64px] font-bold leading-[1.1] tracking-tight max-w-xl" style={{ fontFamily: 'Playfair Display' }}>
+              <span className="text-[#4A2C2A] block mb-1">Celebrate Every</span>
+              <span className="text-[#4A2C2A] block mb-1">Tradition with</span>
+              <span className="text-[#D4AF37] block mt-1 sm:mt-2">Timeless Elegance</span>
             </h1>
 
-            <div className="flex items-center gap-3.5 my-5 sm:my-6">
-              <div className="h-[2px] w-16 sm:w-24 bg-gradient-to-r from-[#D4AF37] to-[#D4AF37]/10"></div>
-              <span className="text-[#D4AF37] text-lg sm:text-xl">✦</span>
-              <div className="h-[2px] w-16 sm:w-24 bg-gradient-to-l from-[#D4AF37] to-[#D4AF37]/10"></div>
+            {/* Divider */}
+            <div className="flex items-center gap-4 my-6 sm:my-8 w-full max-w-[280px]">
+              <div className="h-[1px] flex-1 bg-[#D4AF37]/40"></div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="text-[#D4AF37]" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z" />
+              </svg>
+              <div className="h-[1px] flex-1 bg-[#D4AF37]/40"></div>
             </div>
 
-            <p className="text-base sm:text-lg md:text-xl lg:text-base xl:text-lg text-white/90 mb-6 sm:mb-7 max-w-xl lg:max-w-lg leading-[1.75] font-normal">
-              Discover exquisite handwoven Kanjivaram, Banarasi, and contemporary sarees from verified weavers across India. Direct from loom to your wardrobe.
+            <p className="text-sm sm:text-base lg:text-lg text-[#4A2C2A] mb-8 sm:mb-10 max-w-md leading-[1.65] font-medium">
+              Discover handcrafted Kanjivaram, Banarasi, and designer sarees from trusted weavers across India.
             </p>
 
-            <div className="flex flex-row flex-wrap sm:flex-nowrap items-center justify-start gap-3 sm:gap-4 w-full sm:w-auto mt-1">
-              <Link to="/products" className="flex-1 sm:flex-initial bg-[#D4AF37] hover:bg-[#E8C94A] text-[#4A2C2A] text-xs sm:text-sm lg:text-sm xl:text-base px-4 sm:px-7 h-[46px] sm:h-[48px] lg:h-[50px] rounded-full font-bold transition-all duration-300 no-underline shadow-lg hover:shadow-[#D4AF37]/40 inline-flex items-center justify-center gap-2 text-center min-w-[140px]">
-                <span>Explore Collection</span> <FiArrowRight className="text-base sm:text-lg flex-shrink-0" />
+            <div className="flex flex-col sm:flex-row items-center justify-start gap-4 sm:gap-5 w-full sm:w-auto">
+              <Link to="/products" className="w-full sm:w-auto bg-[#5A1028] hover:bg-[#4A2C2A] text-white px-6 sm:px-8 h-[52px] sm:h-[56px] rounded-xl font-medium transition-all duration-300 no-underline shadow-md hover:shadow-lg inline-flex items-center justify-center gap-2.5 text-sm sm:text-base min-w-[210px]">
+                <FiShoppingBag className="text-lg opacity-90" /> <span>Explore Collection</span> <FiArrowRight className="text-lg opacity-90" />
               </Link>
-              <Link to="/portal" className="flex-1 sm:flex-initial bg-[#4A2C2A]/80 hover:bg-[#4A2C2A] text-white border-2 border-[#D4AF37]/70 hover:border-[#D4AF37] px-4 sm:px-7 h-[46px] sm:h-[48px] lg:h-[50px] rounded-full font-bold transition-all duration-300 no-underline text-xs sm:text-sm lg:text-sm xl:text-base inline-flex items-center justify-center gap-2 backdrop-blur-sm text-center shadow-md min-w-[140px]">
-                <FiShoppingBag className="text-base sm:text-lg text-[#D4AF37] flex-shrink-0" /> <span>Login/Register</span>
+              <Link to="/portal" className="w-full sm:w-auto bg-transparent text-[#4A2C2A] hover:bg-[#D4AF37]/10 border border-[#D4AF37]/60 hover:border-[#D4AF37] px-6 sm:px-8 h-[52px] sm:h-[56px] rounded-xl font-bold transition-all duration-300 no-underline text-sm sm:text-base inline-flex items-center justify-center gap-2.5 min-w-[210px]">
+                <FiUser className="text-lg text-[#4A2C2A]" /> <span>Login / Register</span>
               </Link>
             </div>
           </motion.div>
+        </div>
 
-          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7, delay: 0.2 }}
-            className="hidden lg:flex lg:col-span-5 justify-center lg:justify-end relative pb-6 lg:pb-0">
-            <div className="relative w-[380px] h-[480px] lg:w-[330px] lg:h-[410px] xl:w-[360px] xl:h-[450px]">
-              <div className="absolute inset-0 rounded-3xl overflow-hidden border-4 border-[#D4AF37]/40 shadow-2xl bg-[#4A2C2A]">
-                <img src="https://images.pexels.com/photos/2814808/pexels-photo-2814808.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Exquisite Indian Silk Saree" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
-              </div>
-
-              <div className="absolute -bottom-5 -left-5 glass-card p-3.5 lg:p-4 flex items-center gap-3.5 shadow-xl bg-white/95 rounded-2xl border border-[#D4AF37]/30">
-                <div className="w-11 h-11 lg:w-12 lg:h-12 rounded-xl bg-gradient-to-br from-[#D4AF37] to-[#E8C94A] flex items-center justify-center text-[#4A2C2A] shadow-md flex-shrink-0">
-                  <FiStar size={20} className="fill-current" />
-                </div>
-                <div>
-                  <p className="text-xs lg:text-sm font-bold text-[#4A2C2A] m-0">4.9 / 5 Rating</p>
-                  <p className="text-[11px] lg:text-xs text-[#6B4A48] m-0 font-medium">Silk Mark Certified Weavers</p>
-                </div>
-              </div>
-
-              <div className="absolute -top-3 -right-3 glass-card px-3.5 py-2 flex items-center gap-2 shadow-lg bg-white/95 rounded-xl border border-[#D4AF37]/30">
-                <FiShield className="text-[#2D8F5E]" size={16} />
-                <span className="text-[11px] lg:text-xs font-bold text-[#4A2C2A]">100% Genuine Silk</span>
-              </div>
-            </div>
-          </motion.div>
+        {/* Right Image Area */}
+        <div className="w-full lg:w-[45%] relative h-[320px] sm:h-[450px] lg:h-auto overflow-hidden">
+          {/* Main background image */}
+          <img 
+            src="https://images.pexels.com/photos/2814808/pexels-photo-2814808.jpeg?auto=compress&cs=tinysrgb&w=1200" 
+            alt="Exquisite Indian Silk Saree" 
+            className="absolute inset-0 w-full h-full object-cover object-center lg:object-[60%_50%] hover:scale-105 transition-transform duration-1000 ease-in-out" 
+          />
+          {/* Subtle gradient overlay to soften edges */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#FFF8F0]/30 to-transparent" />
+          {/* Gradient to blend with the left side on desktop */}
+          <div className="hidden lg:block absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#FFF8F0] to-transparent z-10" />
+          {/* Gradient to blend with top side on mobile */}
+          <div className="block lg:hidden absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-[#FFF8F0] to-transparent z-10" />
         </div>
       </section>
     </div>
