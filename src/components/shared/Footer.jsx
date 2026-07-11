@@ -36,7 +36,7 @@ export default function Footer() {
                 alt="Vasthra Cotton Logo"
                 className="w-14 h-14 sm:w-16 sm:h-16 object-contain flex-shrink-0 group-hover:scale-105 transition-transform"
               />
-              <span className="text-5xl sm:text-6xl font-bold text-white tracking-tight" style={{ fontFamily: 'Playfair Display' }}>
+              <span className="text-2xl sm:text-3xl font-bold text-white tracking-tight" style={{ fontFamily: 'Playfair Display' }}>
                 Vasthra <span className="text-[#D4AF37]">Cotton</span>
               </span>
             </Link>

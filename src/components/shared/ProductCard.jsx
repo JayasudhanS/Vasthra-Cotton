@@ -72,7 +72,7 @@ export default function ProductCard({ product, index = 0 }) {
       </div>
 
       {/* Info Section - Flex-1 with space-between ensures uniform price alignment at bottom */}
-      <div className="flex flex-col flex-1 p-5 sm:p-6 justify-between bg-white gap-1.5">
+      <div className="flex flex-col flex-1 p-4 sm:p-5 md:p-6 justify-between bg-white gap-1.5">
         <div>
           <div className="flex items-center justify-between gap-2.5 mb-1.5">
             <span className="text-[10px] uppercase tracking-wider text-[#D4AF37] font-bold truncate min-h-[1rem] inline-block">

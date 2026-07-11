@@ -22,10 +22,10 @@ export default function UserLayout() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10">
       <BreadcrumbBack />
       {/* Top nav for user - Flipkart Category Strip Style */}
-      <div className="bg-white rounded-3xl p-5 sm:p-6 md:p-8 mb-8 border-2 border-[#D4AF37]/30 shadow-lg">
+      <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 mb-6 sm:mb-8 border-2 border-[#D4AF37]/30 shadow-lg">
         <div className="flex items-stretch justify-between gap-3 sm:gap-5 lg:gap-6 overflow-x-auto pb-2 sm:pb-0 scrollbar-hidden w-full">
           {links.map(l => {
             const isActive = pathname === l.path;

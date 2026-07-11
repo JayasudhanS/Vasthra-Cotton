@@ -787,3 +787,326 @@ nav.breadcrumb-nav > * {
     box-sizing: border-box !important;
   }
 }
+
+/* ==========================================================================
+   COMPREHENSIVE SPACING & BREATHING ROOM REFINEMENTS
+   Ensures no content touches or hugs borders across all components.
+   ========================================================================== */
+
+/* ─── Card Internal Padding Enforcement ─── */
+/* Ensure card-base always has minimum internal padding */
+.card-base > div:first-child,
+.card-base > form:first-child {
+  min-height: 0;
+}
+
+/* ─── Table Breathing Room ─── */
+@media (max-width: 639px) {
+  .table-base th {
+    padding: 14px 16px !important;
+    font-size: 0.625rem !important;
+  }
+  .table-base td {
+    padding: 14px 16px !important;
+    font-size: 0.8125rem !important;
+  }
+  .table-container {
+    padding: 6px !important;
+    border-radius: 14px !important;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .table-base th {
+    padding: 15px 20px !important;
+  }
+  .table-base td {
+    padding: 16px 20px !important;
+  }
+  .table-container {
+    padding: 6px !important;
+  }
+}
+
+/* ─── Dashboard Stat Cards Internal Spacing ─── */
+@media (max-width: 639px) {
+  .card-base[class*="p-6"],
+  .card-base[class*="p-7"] {
+    min-height: 0;
+  }
+}
+
+/* ─── Empty State Containers ─── */
+@media (max-width: 639px) {
+  .card-base.border-dashed,
+  .card-base[class*="border-dashed"] {
+    padding: 2.5rem 1.5rem !important;
+  }
+}
+
+/* ─── Form Card Containers ─── */
+@media (max-width: 639px) {
+  form.card-base,
+  .card-base > form {
+    padding: 1.25rem !important;
+  }
+  /* Ensure form labels have proper spacing from card edges */
+  form .input-field,
+  form .select-field,
+  form .textarea-field {
+    margin-bottom: 2px;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  form.card-base,
+  .card-base > form {
+    padding: 1.75rem !important;
+  }
+}
+
+/* ─── Sidebar Navigation Item Spacing ─── */
+aside nav a,
+aside nav button {
+  min-height: 44px;
+}
+
+/* ─── Mobile Bottom Navigation Bar ─── */
+@media (max-width: 1023px) {
+  .fixed.bottom-0 {
+    padding-top: 10px !important;
+    padding-bottom: max(10px, env(safe-area-inset-bottom)) !important;
+    gap: 4px !important;
+  }
+  .fixed.bottom-0 a,
+  .fixed.bottom-0 button {
+    min-width: 56px;
+    padding: 6px 8px !important;
+  }
+}
+
+/* ─── Badge Breathing Room ─── */
+.badge {
+  padding: 6px 14px;
+  min-height: 28px;
+}
+
+/* ─── Section Titles Vertical Spacing ─── */
+@media (max-width: 639px) {
+  .section-title {
+    margin-bottom: 0.5rem;
+  }
+  .section-subtitle {
+    margin-bottom: 2rem;
+  }
+}
+
+/* ─── Dropdown / Popup Internal Spacing ─── */
+@media (max-width: 639px) {
+  .backdrop-blur-xl[class*="rounded-2xl"][class*="p-4"] {
+    padding: 16px !important;
+  }
+}
+
+/* ─── Footer Internal Spacing ─── */
+@media (max-width: 639px) {
+  footer .grid {
+    gap: 2rem !important;
+  }
+  footer h4 {
+    margin-bottom: 1rem !important;
+  }
+  footer ul {
+    gap: 0.625rem !important;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  footer .grid {
+    gap: 2.5rem !important;
+  }
+}
+
+/* ─── Product Card Info Section ─── */
+@media (max-width: 639px) {
+  .card-base > div[class*="p-5"],
+  .card-base > div[class*="p-6"] {
+    min-height: 0;
+  }
+}
+
+/* ─── Glass Card Internal Spacing ─── */
+.glass-card {
+  padding: 16px;
+}
+
+/* ─── Breadcrumb Row Spacing ─── */
+@media (max-width: 639px) {
+  .breadcrumb-row,
+  nav.breadcrumb-nav {
+    padding-bottom: 2px !important;
+  }
+}
+
+/* ─── Order Card Content Spacing ─── */
+@media (max-width: 639px) {
+  .card-base[class*="p-6"] > div:first-child,
+  .card-base[class*="p-7"] > div:first-child {
+    min-height: 0;
+  }
+}
+
+/* ─── Admin/Shopkeeper Layout Content Area ─── */
+@media (max-width: 639px) {
+  main.flex-1[class*="p-6"] {
+    padding: 1rem !important;
+    padding-bottom: 6rem !important;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  main.flex-1[class*="p-6"],
+  main.flex-1[class*="p-8"] {
+    padding: 1.5rem !important;
+    padding-bottom: 6rem !important;
+  }
+}
+
+/* ─── User Layout Top Nav Card ─── */
+@media (max-width: 639px) {
+  .card-base[class*="rounded-3xl"][class*="p-5"] {
+    padding: 1rem !important;
+    border-radius: 1.25rem !important;
+  }
+}
+
+/* ─── Inputs & Selects Inside Cards on Mobile ─── */
+@media (max-width: 639px) {
+  .input-field,
+  .select-field {
+    height: 44px !important;
+    font-size: 0.8125rem !important;
+  }
+  .textarea-field {
+    font-size: 0.8125rem !important;
+    padding: 14px 16px !important;
+  }
+}
+
+/* ─── Auth Form Cards ─── */
+@media (max-width: 639px) {
+  section[class*="min-h-"][class*="flex"][class*="items-center"] > div[class*="rounded-2xl"][class*="shadow-xl"] {
+    padding: 1.5rem !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+}
+
+/* ─── Portal Cards ─── */
+@media (max-width: 639px) {
+  section[class*="min-h-"] a[class*="rounded-2xl"][class*="p-8"] {
+    padding: 1.5rem !important;
+  }
+}
+
+/* ─── Specification Grid Cards ─── */
+@media (max-width: 639px) {
+  div[class*="rounded-xl"][class*="p-4"][class*="border"][class*="shadow-xs"] {
+    padding: 0.875rem !important;
+  }
+}
+
+/* ─── Trust Badge Grid ─── */
+@media (max-width: 639px) {
+  div[class*="grid-cols-3"][class*="p-5"][class*="rounded-2xl"] {
+    padding: 1rem !important;
+    gap: 0.5rem !important;
+  }
+}
+
+/* ─── Settings Toggle Rows ─── */
+@media (max-width: 639px) {
+  div[class*="p-5"][class*="rounded-xl"][class*="border"][class*="flex"][class*="items-center"][class*="justify-between"] {
+    padding: 1rem !important;
+  }
+}
+
+/* ─── Swiper Slide Cards ─── */
+@media (max-width: 639px) {
+  .swiper-slide div[class*="p-6"],
+  .swiper-slide div[class*="p-7"] {
+    padding: 1.25rem !important;
+  }
+}
+
+/* ─── Newsletter Card Internal ─── */
+@media (max-width: 639px) {
+  div[class*="rounded-3xl"][class*="border-2"][class*="border-\\[\\#D4AF37\\]"] > div[class*="relative"] {
+    padding: 0 !important;
+  }
+}
+
+/* ─── Price Detail Sidebar ─── */
+@media (max-width: 639px) {
+  .lg\:sticky .card-base {
+    padding: 1.25rem !important;
+  }
+}
+
+/* ─── Shop Banner Card on Products Page ─── */
+@media (max-width: 639px) {
+  .card-base[class*="mb-8"] {
+    padding: 1.25rem !important;
+  }
+}
+
+/* ─── Contact Info Card Items ─── */
+@media (max-width: 639px) {
+  div[class*="p-3\\.5"][class*="rounded-xl"][class*="bg-\\[\\#FFF8F0\\]"] {
+    padding: 0.875rem !important;
+  }
+}
+
+/* ─── Profile Info Rows ─── */
+@media (max-width: 639px) {
+  div[class*="p-5"][class*="rounded-xl"][class*="bg-\\[\\#FFF8F0\\]\\/60"] {
+    padding: 1rem !important;
+  }
+  div[class*="p-4"][class*="rounded-xl"][class*="bg-\\[\\#FFF8F0\\]\\/60"] {
+    padding: 0.875rem !important;
+  }
+}
+
+/* ─── Category Card Overlay Text ─── */
+@media (max-width: 639px) {
+  div[class*="absolute"][class*="inset-0"] + div[class*="relative"][class*="p-5"] {
+    padding: 1rem !important;
+  }
+}
+
+/* ─── Wishlist Card Actions ─── */
+@media (max-width: 639px) {
+  .card-base div[class*="p-5"][class*="pt-0"] {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    padding-bottom: 1rem !important;
+  }
+}
+
+/* ─── Order Expanded Details ─── */
+@media (max-width: 639px) {
+  div[class*="border-t"][class*="p-5"][class*="bg-\\[\\#FFF8F0\\]"] {
+    padding: 1rem !important;
+  }
+}
+
+/* ─── Ensure smooth transitions on spacing adjustments ─── */
+.card-base,
+.glass-card,
+.table-container,
+.badge,
+.input-field,
+.select-field,
+.textarea-field {
+  transition: padding 0.2s ease, margin 0.2s ease;
+}

@@ -8,7 +8,6 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import ProductCard, { StarRating } from '../components/shared/ProductCard';
 import { products, categories, shops, testimonials, festivalBanners } from '../data';
-import { useState } from 'react';
 
 /* ─── Hero ─── */
 function Hero() {
@@ -368,52 +367,6 @@ function Testimonials() {
   );
 }
 
-/* ─── Newsletter ─── */
-function Newsletter() {
-  const [email, setEmail] = useState('');
-  return (
-    <section className="py-16 sm:py-24 lg:py-28 bg-gradient-to-b from-[#FFF8F0] via-white to-[#FFF8F0] w-full overflow-hidden flex justify-center items-center border-t border-[#D4AF37]/15">
-      <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 text-center">
-        <div className="bg-gradient-to-br from-[#7B1E3A] via-[#5A1028] to-[#4A2C2A] text-white p-8 sm:p-14 lg:p-16 border-2 border-[#D4AF37]/50 shadow-2xl rounded-3xl w-full relative overflow-hidden max-w-5xl mx-auto">
-          {/* Decorative Background Glow */}
-          <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-[#D4AF37]/15 blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-24 -left-24 w-64 h-64 rounded-full bg-[#D4AF37]/15 blur-3xl pointer-events-none" />
-
-          <div className="relative z-10">
-            <span className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#D4AF37] to-[#E8C94A] text-[#4A2C2A] flex items-center justify-center mx-auto mb-5 text-2xl font-bold shadow-lg" style={{ fontFamily: 'Playfair Display' }}>
-              ✦
-            </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight" style={{ fontFamily: 'Playfair Display' }}>
-              Join the Royal Weave Club
-            </h2>
-            <p className="text-sm sm:text-base text-white/80 max-w-xl mx-auto mb-8 leading-relaxed font-light">
-              Subscribe to receive insider access to new weaver drops, bridal collections, and <span className="text-[#D4AF37] font-semibold">₹1,000 off</span> your first order.
-            </p>
-
-            <form onSubmit={e => { e.preventDefault(); if (email.trim()) { alert('Welcome to Vasthra Cotton! Check your email for your welcome discount.'); setEmail(''); } }}
-              className="flex flex-col sm:flex-row gap-3.5 max-w-lg mx-auto">
-              <input
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                required
-                placeholder="Enter your email address..."
-                className="input-field !h-14 !text-base !px-6 !rounded-xl !bg-white/95 !text-[#4A2C2A] !border-[#D4AF37] focus:!bg-white shadow-lg flex-1"
-              />
-              <button type="submit" className="btn-golden !h-14 !px-8 !text-base !rounded-xl !font-bold shadow-xl cursor-pointer flex-shrink-0">
-                Subscribe Now ✨
-              </button>
-            </form>
-            <p className="text-xs text-white/60 mt-5 m-0">
-              🔒 We respect your privacy. Unsubscribe at any time with a single click.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 /* ─── Main Landing Page ─── */
 export default function LandingPage() {
   const { user, role } = useAuth();
@@ -434,7 +387,6 @@ export default function LandingPage() {
       <FestivalCollections />
       <WhyChooseUs />
       <Testimonials />
-      <Newsletter />
     </div>
   );
 }
