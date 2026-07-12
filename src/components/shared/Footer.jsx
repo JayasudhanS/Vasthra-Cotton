@@ -103,7 +103,7 @@ export default function Footer() {
             <h4 className="text-[#D4AF37] font-semibold text-sm mb-5 tracking-wider uppercase font-mono">Contact Us</h4>
             <div className="space-y-4">
               {[
-                { icon: <FiMapPin size={16} className="text-[#D4AF37] flex-shrink-0 mt-0.5" />, text: 'Silk Weavers Hub, T. Nagar, Chennai - 600017, Tamil Nadu' },
+                { icon: <FiMapPin size={16} className="text-[#D4AF37] flex-shrink-0 mt-0.5" />, text: '2nd Street, Kamaraj Nagar, Aundipatty - 625512, Tamil Nadu' },
                 { icon: <FiPhone size={16} className="text-[#D4AF37] flex-shrink-0" />, text: '+91 98765 43210 (Mon-Sat, 10am-7pm)' },
                 { icon: <FiMail size={16} className="text-[#D4AF37] flex-shrink-0" />, text: 'support@vasthracotton.com' },
               ].map((c, i) => (
