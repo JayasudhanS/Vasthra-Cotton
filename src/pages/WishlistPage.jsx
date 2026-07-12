@@ -2,10 +2,12 @@ import { motion } from 'framer-motion';
 import { FiHeart, FiTrash2, FiShoppingBag, FiArrowRight } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import { useWishlist } from '../context/WishlistContext';
+import { useCart } from '../context/CartContext';
 import BreadcrumbBack from '../components/shared/BreadcrumbBack';
 
 export default function WishlistPage() {
   const { wishlist, removeFromWishlist } = useWishlist();
+  const { addToCart } = useCart();
 
   return (
     <div className="max-w-7xl mx-auto px-4 lg:px-8 py-10">
@@ -61,7 +63,10 @@ export default function WishlistPage() {
                 </div>
               </div>
               <div className="p-5 sm:p-6 pt-0 flex gap-2.5">
-                <button onClick={() => alert(`Added "${product.name}" to cart!`)} className="btn-golden flex-1 justify-center !py-2.5 !text-xs cursor-pointer shadow-sm flex items-center gap-1.5">
+                <button 
+                  onClick={() => { addToCart(product); removeFromWishlist(product.id); }} 
+                  className="btn-golden flex-1 justify-center !py-2.5 !text-xs cursor-pointer shadow-sm flex items-center gap-1.5"
+                >
                   <FiShoppingBag size={14} /> Move to Cart
                 </button>
                 <button onClick={() => removeFromWishlist(product.id)} title="Remove from wishlist"

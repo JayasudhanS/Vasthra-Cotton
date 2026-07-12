@@ -9,6 +9,7 @@ import ProductsPage from './pages/ProductsPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import CategoriesPage from './pages/CategoriesPage';
 import WishlistPage from './pages/WishlistPage';
+import CartPage from './pages/CartPage';
 import SearchPage from './pages/SearchPage';
 import ShopsPage from './pages/ShopsPage';
 import AboutPage from './pages/AboutPage';
@@ -54,6 +55,7 @@ export default function App() {
           <Route path="/product/:id" element={<ProductDetailPage />} />
           <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/wishlist" element={<WishlistPage />} />
+          <Route path="/cart" element={<CartPage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/shops" element={<ShopsPage />} />
           <Route path="/about" element={<AboutPage />} />

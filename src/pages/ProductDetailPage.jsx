@@ -6,6 +6,7 @@ import { StarRating } from '../components/shared/ProductCard';
 import ProductCard from '../components/shared/ProductCard';
 import { products, shops } from '../data';
 import { useWishlist } from '../context/WishlistContext';
+import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import BreadcrumbBack from '../components/shared/BreadcrumbBack';
 
@@ -33,6 +34,7 @@ export default function ProductDetailPage() {
   const related = products.filter(p => p.categoryId === product?.categoryId && p.id !== product?.id).slice(0, 4);
   const [selectedImg, setSelectedImg] = useState(0);
   const { isInWishlist, toggleWishlist } = useWishlist();
+  const { addToCart } = useCart();
   const { user } = useAuth();
   const liked = product?.id ? isInWishlist(product.id) : false;
   const discount = typeof product?.price === 'number' && product.price > 0 && typeof product?.offerPrice === 'number' ? Math.round(((product.price - product.offerPrice) / product.price) * 100) : 0;
@@ -55,11 +57,9 @@ export default function ProductDetailPage() {
   };
 
   const handleAddToBag = () => {
-    if (!user) {
-      navigate('/login/user');
-      return;
-    }
-    navigate('/order-summary', { state: { product, shop } });
+    addToCart(product);
+    // Navigate to cart to show the added item in the new Cart experience
+    navigate('/cart');
   };
   return (
     <div className="max-w-7xl mx-auto px-4 lg:px-8 py-8 sm:py-12">
@@ -177,8 +177,8 @@ export default function ProductDetailPage() {
           </div>
 
           {/* Add to Bag */}
-          <button onClick={handleAddToBag} className="btn-outline-gold w-full !py-3.5 !text-sm cursor-pointer mb-8 justify-center">
-            Add to Bag
+          <button onClick={handleAddToBag} className="btn-outline-gold w-full !py-3.5 !text-sm cursor-pointer mb-8 justify-center shadow-sm hover:shadow-md transition-shadow">
+            Add to Cart
           </button>
 
           {/* Trust Badges */}

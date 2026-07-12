@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import App from './App'
 import { WishlistProvider } from './context/WishlistContext'
+import { CartProvider } from './context/CartContext'
 import { AuthProvider } from './context/AuthContext'
 import { OrderProvider } from './context/OrderContext'
 import { ProductProvider } from './context/ProductContext'
@@ -15,7 +16,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <OrderProvider>
           <ProductProvider>
             <WishlistProvider>
-              <App />
+              <CartProvider>
+                <App />
+              </CartProvider>
             </WishlistProvider>
           </ProductProvider>
         </OrderProvider>

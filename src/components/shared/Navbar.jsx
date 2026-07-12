@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiSearch, FiHeart, FiMenu, FiX, FiUser, FiGrid, FiClock, FiChevronDown, FiShield, FiShoppingBag, FiLogOut } from 'react-icons/fi';
+import { FiSearch, FiHeart, FiMenu, FiX, FiUser, FiGrid, FiClock, FiChevronDown, FiShield, FiShoppingBag, FiLogOut, FiShoppingCart, FiPackage, FiHome, FiPhone } from 'react-icons/fi';
 import { useWishlist } from '../../context/WishlistContext';
+import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 
 const navLinks = [
@@ -29,6 +30,7 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeIdx, setActiveIdx] = useState(-1);
   const { wishlist } = useWishlist();
+  const { cartCount } = useCart();
   const { user, role, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -329,6 +331,20 @@ export default function Navbar() {
               )}
             </Link>
 
+            {/* Cart */}
+            <Link
+              to="/cart"
+              aria-label="Cart"
+              className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center hover:bg-[#FFF8F0] transition-colors text-[#4A2C2A] no-underline flex-shrink-0"
+            >
+              <FiShoppingCart size={19} />
+              {cartCount > 0 && (
+                <span className="absolute top-0.5 right-0.5 w-4 h-4 bg-[#7B1E3A] text-white text-[10px] rounded-full flex items-center justify-center font-bold shadow-sm">
+                  {cartCount > 9 ? '9+' : cartCount}
+                </span>
+              )}
+            </Link>
+
             {/* Menu toggle */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
@@ -453,132 +469,83 @@ export default function Navbar() {
                 </button>
               </div>
 
-              <div className="flex flex-col space-y-2">
-                {navLinks.map(link => {
-                  if (link.isDropdown) {
-                    const active = location.pathname.startsWith('/login');
-                    const activeChild = link.children?.find(c => location.pathname === c.path);
-                    const displayLabel = activeChild ? activeChild.name : link.name;
-                    return (
-                      <div key={link.name} className="flex flex-col">
-                        <button
-                          type="button"
-                          onClick={() => setMobileLoginOpen(!mobileLoginOpen)}
-                          className={`h-[46px] sm:h-[48px] px-4 rounded-xl transition-all text-sm sm:text-base font-semibold flex items-center justify-between w-full border-none cursor-pointer font-body ${active
-                              ? 'bg-[#7B1E3A] !text-white shadow-sm'
-                              : 'bg-transparent text-[#4A2C2A] hover:bg-[#FFF8F0] hover:text-[#7B1E3A] active:bg-[#F5EDE0]'
-                            }`}
-                        >
-                          <span className="flex items-center gap-2.5">
-                            {displayLabel}
-                          </span>
-                          <FiChevronDown
-                            size={18}
-                            className={`transition-transform duration-300 ${mobileLoginOpen ? 'rotate-180' : ''}`}
-                          />
-                        </button>
-
-                        <AnimatePresence>
-                          {mobileLoginOpen && (
-                            <motion.div
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: 'auto', opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              transition={{ duration: 0.2, ease: 'easeInOut' }}
-                              className="overflow-hidden space-y-2 pt-2 border-t border-[#D4AF37]/15 mt-1"
-                            >
-                              {link.children.map((child) => {
-                                const Icon = child.icon;
-                                const isChildActive = location.pathname === child.path;
-                                return (
-                                  <Link
-                                    key={child.name}
-                                    to={child.path}
-                                    onClick={() => {
-                                      setMobileOpen(false);
-                                      setMobileLoginOpen(false);
-                                    }}
-                                    className={`h-[46px] sm:h-[48px] px-4 rounded-xl transition-all text-xs sm:text-sm font-medium no-underline flex items-center gap-3 border border-transparent ${isChildActive
-                                        ? 'bg-[#7B1E3A]/10 text-[#7B1E3A] font-bold border-[#D4AF37]/30'
-                                        : 'text-[#6B4A48] hover:bg-[#FFF8F0] hover:text-[#7B1E3A] active:bg-[#F5EDE0]'
-                                      }`}
-                                  >
-                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${isChildActive ? 'bg-[#7B1E3A] text-[#D4AF37]' : 'bg-[#FFF8F0] text-[#7B1E3A]'}`}>
-                                      <Icon size={15} />
-                                    </div>
-                                    <span className="flex-1 truncate">{child.name}</span>
-                                    {isChildActive && <span className="w-2 h-2 rounded-full bg-[#D4AF37]" />}
-                                  </Link>
-                                );
-                              })}
-                              {user && (
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setMobileOpen(false);
-                                    setMobileLoginOpen(false);
-                                    logout();
-                                    navigate('/');
-                                  }}
-                                  className="w-full h-[46px] sm:h-[48px] px-4 rounded-xl transition-all text-xs sm:text-sm font-bold no-underline flex items-center gap-3 border border-red-200 text-red-600 bg-red-50/70 hover:bg-red-50 cursor-pointer"
-                                >
-                                  <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-red-100 text-red-600">
-                                    <FiLogOut size={15} />
-                                  </div>
-                                  <span className="flex-1 text-left truncate">Log Out ({role})</span>
-                                </button>
-                              )}
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </div>
-                    );
-                  }
-
+              {/* Navigation Links (Mobile only) */}
+              <div className="flex flex-col space-y-2 lg:hidden">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#D4AF37] px-4 mb-0.5">Navigation</span>
+                {[
+                  { name: 'Home', path: user ? getDashboardPath() : '/', icon: FiHome },
+                  { name: 'Shops', path: '/shops', icon: FiShoppingBag },
+                  { name: 'Login', path: '/portal', icon: FiUser },
+                  { name: 'Contact', path: '/contact', icon: FiPhone }
+                ].map(link => {
                   const active = location.pathname === link.path;
-                  const targetPath = (user && link.path === '/') ? getDashboardPath() : link.path;
+                  const Icon = link.icon;
                   return (
                     <Link
                       key={link.name}
-                      to={targetPath}
+                      to={link.path}
                       onClick={() => setMobileOpen(false)}
-                      className={`h-[46px] sm:h-[48px] px-4 rounded-xl font-body transition-all text-sm sm:text-base font-semibold no-underline flex items-center justify-between border border-transparent ${active
+                      className={`h-[46px] sm:h-[48px] px-4 rounded-xl font-body transition-all text-sm sm:text-base font-semibold no-underline flex items-center justify-between border border-transparent group ${active
                           ? 'bg-[#7B1E3A] text-white shadow-sm'
                           : 'text-[#4A2C2A] hover:bg-[#FFF8F0] hover:text-[#7B1E3A] active:bg-[#F5EDE0]'
                         }`}
                     >
-                      {link.name}
+                      <div className="flex items-center gap-3">
+                        <Icon size={18} className={active ? 'text-[#D4AF37]' : 'text-[#7B1E3A]/70 group-hover:text-[#7B1E3A] transition-colors'} />
+                        {link.name}
+                      </div>
                       {active && <span className="w-2 h-2 rounded-full bg-[#D4AF37]" />}
                     </Link>
                   );
                 })}
               </div>
 
-              <div className="pt-3 border-t border-[#D4AF37]/20 mt-2 space-y-2">
-                {user ? (
-                  <div className="flex flex-col space-y-2">
-                    <div className="px-2 py-1 flex items-center justify-between text-xs font-semibold text-[#6B4A48]">
-                      <span>✦ Account:</span>
-                      <span className="font-bold text-[#7B1E3A] truncate max-w-[150px]">{user.name || role}</span>
-                    </div>
+              {/* Divider between sections (Mobile only) */}
+              <div className="border-t border-[#D4AF37]/15 my-1 lg:hidden" />
+
+              {/* Quick Access */}
+              <div className="flex flex-col space-y-2">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#D4AF37] px-4 mb-0.5 lg:hidden">Quick Access</span>
+                {[
+                  { name: 'My Profile', path: '/user/dashboard', icon: FiUser },
+                  { name: 'Wishlist', path: '/wishlist', icon: FiHeart },
+                  { name: 'Cart', path: '/cart', icon: FiShoppingCart },
+                  { name: 'Orders', path: '/user/orders', icon: FiPackage }
+                ].map(link => {
+                  const active = location.pathname === link.path;
+                  const Icon = link.icon;
+                  return (
                     <Link
-                      to={getDashboardPath()}
+                      key={link.name}
+                      to={link.path}
                       onClick={() => setMobileOpen(false)}
-                      className="btn-golden w-full h-[46px] sm:h-[48px] px-4 !text-xs sm:!text-sm no-underline shadow-sm flex items-center justify-center gap-2 rounded-xl font-bold"
+                      className={`h-[46px] sm:h-[48px] px-4 rounded-xl font-body transition-all text-sm sm:text-base font-semibold no-underline flex items-center justify-between border border-transparent group ${active
+                          ? 'bg-[#7B1E3A] text-white shadow-sm'
+                          : 'text-[#4A2C2A] hover:bg-[#FFF8F0] hover:text-[#7B1E3A] active:bg-[#F5EDE0]'
+                        }`}
                     >
-                      <FiGrid size={16} /> Dashboard ({role})
+                      <div className="flex items-center gap-3">
+                        <Icon size={18} className={active ? 'text-[#D4AF37]' : 'text-[#7B1E3A]/70 group-hover:text-[#7B1E3A] transition-colors'} />
+                        {link.name}
+                      </div>
+                      {active && <span className="w-2 h-2 rounded-full bg-[#D4AF37]" />}
                     </Link>
-                    <button
-                      onClick={() => {
-                        setMobileOpen(false);
-                        logout();
-                        navigate('/');
-                      }}
-                      className="w-full h-[46px] sm:h-[48px] px-4 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 border border-red-300 text-red-600 bg-red-50/50 hover:bg-red-50 cursor-pointer shadow-2xs"
-                    >
-                      <FiLogOut size={16} /> Log Out
-                    </button>
-                  </div>
+                  );
+                })}
+              </div>
+
+              <div className="pt-3 border-t border-[#D4AF37]/20 mt-2">
+                {user ? (
+                  <button
+                    onClick={() => {
+                      setMobileOpen(false);
+                      logout();
+                      navigate('/');
+                    }}
+                    className="btn-golden w-full h-[46px] sm:h-[48px] px-4 !text-xs sm:!text-sm shadow-sm flex items-center justify-center gap-2 rounded-xl font-bold cursor-pointer border-none"
+                  >
+                    <FiLogOut size={16} /> Logout
+                  </button>
                 ) : (
                   <Link
                     to="/portal"

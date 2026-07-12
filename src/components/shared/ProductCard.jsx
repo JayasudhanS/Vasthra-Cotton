@@ -3,6 +3,7 @@ import { FiHeart, FiEye, FiShoppingBag } from 'react-icons/fi';
 import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { useWishlist } from '../../context/WishlistContext';
+import { useCart } from '../../context/CartContext';
 
 function StarRating({ rating, size = 13 }) {
   const stars = [];
@@ -18,6 +19,7 @@ export { StarRating };
 
 export default function ProductCard({ product, index = 0 }) {
   const { isInWishlist, toggleWishlist } = useWishlist();
+  const { addToCart } = useCart();
   const liked = product?.id ? isInWishlist(product.id) : false;
   const discount = typeof product?.price === 'number' && product.price > 0 && typeof product?.offerPrice === 'number' ? Math.round(((product.price - product.offerPrice) / product.price) * 100) : 0;
 
@@ -62,12 +64,12 @@ export default function ProductCard({ product, index = 0 }) {
           >
             <FiEye size={14} /> Quick View
           </Link>
-          <Link
-            to={`/product/${product.id}`}
-            className="bg-gradient-to-r from-[#D4AF37] to-[#E8C94A] text-[#4A2C2A] px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 hover:shadow-lg transition-all no-underline shadow-lg"
+          <button
+            onClick={(e) => { e.preventDefault(); addToCart(product); }}
+            className="bg-gradient-to-r from-[#D4AF37] to-[#E8C94A] text-[#4A2C2A] px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 hover:shadow-lg transition-all border-none cursor-pointer shadow-lg"
           >
-            <FiShoppingBag size={14} /> Buy Now
-          </Link>
+            <FiShoppingBag size={14} /> Add to Cart
+          </button>
         </div>
       </div>
 
@@ -101,13 +103,13 @@ export default function ProductCard({ product, index = 0 }) {
             <span className="text-[15px] sm:text-base md:text-lg font-bold text-[#7B1E3A] min-h-[1.5rem] inline-block">{typeof product?.offerPrice === 'number' && product.offerPrice > 0 ? `₹${product.offerPrice.toLocaleString()}` : ''}</span>
             <span className="text-[11px] sm:text-xs text-[#6B4A48]/70 line-through min-h-[1rem] inline-block">{typeof product?.price === 'number' && product.price > 0 ? `₹${product.price.toLocaleString()}` : ''}</span>
           </div>
-          <Link
-            to={`/product/${product?.id || ''}`}
-            aria-label={`View ${product?.name || ''}`}
-            className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#FFF8F0] text-[#7B1E3A] flex items-center justify-center hover:bg-[#7B1E3A] hover:text-white transition-colors no-underline sm:hidden shadow-sm"
+          <button
+            onClick={(e) => { e.preventDefault(); addToCart(product); }}
+            aria-label={`Add ${product?.name || ''} to cart`}
+            className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#FFF8F0] text-[#7B1E3A] flex items-center justify-center hover:bg-[#7B1E3A] hover:text-white transition-colors cursor-pointer border-none sm:hidden shadow-sm"
           >
             <FiShoppingBag size={15} />
-          </Link>
+          </button>
         </div>
       </div>
     </motion.div>
