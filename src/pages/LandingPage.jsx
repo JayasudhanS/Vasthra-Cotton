@@ -113,7 +113,7 @@ function Hero() {
 /* ─── Statistics Section ─── */
 function StatisticsSection() {
   return (
-    <section className="bg-[#FFF8F0] pt-16 sm:pt-18 pb-16 sm:pb-18 px-5 sm:px-6 lg:px-12 border-b border-[#D4AF37]/15 w-full relative z-20">
+    <section className="bg-[#FFF8F0] pt-12 sm:pt-14 pb-12 sm:pb-14 px-5 sm:px-6 lg:px-12 border-b border-[#D4AF37]/15 w-full relative z-20">
       <div className="max-w-[1240px] mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-8 lg:gap-16 items-center">
         {[
           { n: '5,000+', l: 'Authentic Sarees', icon: FiAward },
@@ -139,7 +139,7 @@ function StatisticsSection() {
 /* ─── Featured Categories ─── */
 function FeaturedCategories() {
   return (
-    <section className="py-14 sm:py-20 lg:py-24 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 w-full overflow-hidden bg-[#FFF8F0]">
+    <section className="py-12 sm:py-16 lg:py-20 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 w-full overflow-hidden bg-[#FFF8F0]">
       <div className="flex items-center justify-between mb-2 sm:mb-3">
         <span className="text-xs sm:text-sm font-bold uppercase tracking-widest text-[#D4AF37] flex items-center gap-1.5">
           ✦ TRENDING WEAVES & COLLECTIONS
@@ -175,7 +175,7 @@ function FeaturedCategories() {
 /* ─── Featured Products ─── */
 function FeaturedProducts() {
   return (
-    <section className="py-16 sm:py-24 lg:py-28 bg-white border-y border-[#D4AF37]/10 w-full overflow-hidden">
+    <section className="py-14 sm:py-20 lg:py-24 bg-white border-y border-[#D4AF37]/10 w-full overflow-hidden">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
         <h2 className="section-title">Featured Sarees</h2>
         <p className="section-subtitle">Handpicked selections representing India's finest craftsmanship</p>
@@ -199,7 +199,7 @@ function FeaturedProducts() {
 /* ─── Trending Shops ─── */
 function TrendingShops() {
   return (
-    <section className="py-16 sm:py-24 lg:py-28 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 w-full overflow-hidden">
+    <section className="py-14 sm:py-20 lg:py-24 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 w-full overflow-hidden">
       <h2 className="section-title">Trending Weavers & Shops</h2>
       <p className="section-subtitle">Connect directly with verified artisans and heritage silk houses</p>
 
@@ -246,7 +246,7 @@ function TrendingShops() {
 /* ─── Festival Banners ─── */
 function FestivalCollections() {
   return (
-    <section className="py-16 sm:py-24 lg:py-28 bg-[#FFF8F0] border-y border-[#D4AF37]/10 w-full overflow-hidden">
+    <section className="py-14 sm:py-20 lg:py-24 bg-[#FFF8F0] border-y border-[#D4AF37]/10 w-full overflow-hidden">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
         <h2 className="section-title">Festival & Bridal Specials</h2>
         <p className="section-subtitle">Celebrate auspicious beginnings with our exclusive celebratory drapes</p>
@@ -433,7 +433,7 @@ function WhyChooseUs() {
     { icon: <FiCheckCircle size={26} />, title: 'Easy Returns', desc: '7-day return policy guarantee.' },
   ];
   return (
-    <section className="py-16 sm:py-24 lg:py-28 max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-12 w-full overflow-hidden">
+    <section className="py-14 sm:py-20 lg:py-24 max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-12 w-full overflow-hidden">
       <h2 className="section-title">Why Choose Vasthra Cotton</h2>
       <p className="section-subtitle">India's trusted luxury saree destination</p>
 
@@ -462,34 +462,34 @@ function WhyChooseUs() {
 /* ─── Testimonials ─── */
 function Testimonials() {
   return (
-    <section className="py-16 sm:py-24 lg:py-28 bg-gradient-to-br from-[#7B1E3A] via-[#5A1028] to-[#4A2C2A] text-white w-full overflow-hidden relative">
+    <section className="py-14 sm:py-20 lg:py-24 bg-gradient-to-br from-[#7B1E3A] via-[#5A1028] to-[#4A2C2A] text-white w-full overflow-hidden relative">
       <div className="max-w-[1400px] mx-auto px-5 sm:px-6 lg:px-12 relative z-10">
         <h2 className="section-title !text-white">Voices of Tradition</h2>
-        <p className="section-subtitle !text-white/80">Real experiences from saree connoisseurs and brides across India</p>
+        <p className="section-subtitle !text-white/75">Real experiences from saree connoisseurs and brides across India</p>
 
         <div className="w-full">
-          <Swiper modules={[Autoplay, Pagination]} autoplay={{ delay: 5000, disableOnInteraction: false }} pagination={{ clickable: true }} spaceBetween={28}
+          <Swiper modules={[Autoplay, Pagination]} autoplay={{ delay: 5000, disableOnInteraction: false }} pagination={{ clickable: true }} spaceBetween={24}
             breakpoints={{ 0: { slidesPerView: 1 }, 640: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } }} className="!pb-14 w-full">
             {testimonials.map(t => (
               <SwiperSlide key={t.id} className="h-auto">
-                <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 sm:p-7 h-full flex flex-col justify-between shadow-xl transition-all duration-300 hover:bg-white/15 hover:border-[#D4AF37]/50">
+                <div className="bg-white/8 backdrop-blur-md border border-white/15 rounded-2xl p-5 sm:p-6 h-full flex flex-col justify-between shadow-xl transition-all duration-400 hover:bg-white/14 hover:border-[#D4AF37]/40 hover:-translate-y-1">
                   <div>
                     <div className="flex items-center gap-3.5 mb-4">
-                      <img src={t.image} alt={t.name} className="w-12 h-12 rounded-full object-cover border-2 border-[#D4AF37] shadow-md" />
+                      <img src={t.image} alt={t.name} className="w-13 h-13 sm:w-14 sm:h-14 rounded-full object-cover border-2 border-[#D4AF37]/60 shadow-lg" />
                       <div>
-                        <p className="text-white font-bold text-sm sm:text-base m-0 leading-snug">{t.name}</p>
-                        <p className="text-xs text-[#D4AF37] m-0 mb-1 font-semibold tracking-wider uppercase">Verified Buyer</p>
+                        <p className="text-white font-bold text-sm sm:text-[15px] m-0 leading-snug">{t.name}</p>
+                        <p className="text-[10px] sm:text-[11px] text-[#D4AF37] m-0 mb-1 font-semibold tracking-widest uppercase">Verified Buyer</p>
                         <StarRating rating={t.rating} size={14} />
                       </div>
                     </div>
-                    <p className="text-white/90 text-sm sm:text-base leading-[1.65] italic m-0">
+                    <p className="text-white/85 text-[13px] sm:text-sm leading-[1.7] italic m-0">
                       "{t.review}"
                     </p>
                   </div>
 
-                  <div className="mt-6 pt-3 border-t border-white/15 flex items-center justify-between text-xs text-white/70 font-mono">
-                    <span className="text-[#D4AF37]/95">✦ Purchased Kanjivaram Silk</span>
-                    <span className="bg-white/10 px-2 py-0.5 rounded text-white">⭐ Verified</span>
+                  <div className="mt-5 pt-3 border-t border-white/12 flex items-center justify-between text-[11px] text-white/60">
+                    <span className="text-[#D4AF37]/90 font-medium">✦ Purchased Kanjivaram Silk</span>
+                    <span className="bg-white/10 px-2.5 py-1 rounded-lg text-white/80 text-[10px] font-semibold">⭐ Verified</span>
                   </div>
                 </div>
               </SwiperSlide>
@@ -511,7 +511,7 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="w-full max-w-full overflow-x-hidden bg-[#FFF8F0] flex flex-col gap-6 sm:gap-8 lg:gap-9 pb-10 sm:pb-14">
+    <div className="w-full max-w-full overflow-x-hidden bg-[#FFF8F0] flex flex-col gap-4 sm:gap-6 lg:gap-8 pb-8 sm:pb-12">
       <Hero />
       <PortalCTASection />
       <StatisticsSection />
