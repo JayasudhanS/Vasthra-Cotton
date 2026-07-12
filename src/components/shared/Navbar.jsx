@@ -329,32 +329,13 @@ export default function Navbar() {
               )}
             </Link>
 
-            {/* Login / Profile */}
-            {user ? (
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <Link
-                  to={getDashboardPath()}
-                  className="btn-golden !py-1.5 sm:!py-2 !px-3 sm:!px-5 !min-h-[34px] sm:!min-h-[40px] !text-[11px] sm:!text-[13px] inline-flex no-underline shadow-sm items-center gap-1.5 sm:gap-2 rounded-lg sm:rounded-xl font-semibold flex-shrink-0 whitespace-nowrap"
-                >
-                  <FiGrid size={15} /> <span className="max-w-[80px] sm:max-w-[120px] truncate">{user.name?.split(' ')[0] || 'Dashboard'}</span>
-                </Link>
-              </div>
-            ) : (
-              <Link
-                to="/portal"
-                className="btn-golden !py-1.5 sm:!py-2 !px-3.5 sm:!px-5 lg:!px-6 !min-h-[34px] sm:!min-h-[40px] lg:!min-h-[42px] !text-[11px] sm:!text-[13px] lg:!text-sm inline-flex no-underline shadow-sm hover:shadow-md items-center gap-1.5 sm:gap-2 rounded-lg sm:rounded-xl font-semibold flex-shrink-0 whitespace-nowrap transition-shadow duration-200"
-              >
-                <FiUser size={16} /> <span>Login</span>
-              </Link>
-            )}
-
-            {/* Mobile menu toggle */}
+            {/* Menu toggle */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label="Toggle navigation menu"
-              className="lg:hidden w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center hover:bg-[#FFF8F0] transition-colors text-[#4A2C2A] cursor-pointer bg-transparent border-none flex-shrink-0"
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center hover:bg-[#FFF8F0] transition-colors text-[#4A2C2A] cursor-pointer bg-transparent border border-transparent hover:border-[#D4AF37]/30 flex-shrink-0"
             >
-              {mobileOpen ? <FiX size={20} /> : <FiMenu size={20} />}
+              {mobileOpen ? <FiX size={22} className="text-[#7B1E3A]" /> : <FiMenu size={22} strokeWidth={1.5} />}
             </button>
           </div>
         </div>
@@ -442,7 +423,7 @@ export default function Navbar() {
         </AnimatePresence>
       </nav>
 
-      {/* Mobile Floating Menu Card */}
+      {/* Floating Menu Card */}
       <AnimatePresence>
         {mobileOpen && (
           <>
@@ -450,7 +431,7 @@ export default function Navbar() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/40 z-40 lg:hidden backdrop-blur-xs"
+              className="fixed inset-0 bg-black/40 z-40 backdrop-blur-xs"
               onClick={() => setMobileOpen(false)}
             />
             <motion.div
@@ -458,7 +439,7 @@ export default function Navbar() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -12, scale: 0.96 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="fixed top-20 right-4 sm:right-6 w-[calc(100%-32px)] max-w-[310px] bg-white/98 backdrop-blur-xl rounded-2xl shadow-2xl border border-[#D4AF37]/25 z-50 lg:hidden flex flex-col p-4 sm:p-5 max-h-[calc(100vh-100px)] overflow-y-auto space-y-2"
+              className="fixed top-20 right-4 sm:right-6 lg:right-12 xl:right-14 w-[calc(100%-32px)] max-w-[310px] bg-white/98 backdrop-blur-xl rounded-2xl shadow-2xl border border-[#D4AF37]/25 z-50 flex flex-col p-4 sm:p-5 max-h-[calc(100vh-100px)] overflow-y-auto space-y-2"
             >
               <div className="flex items-center justify-between pb-3 mb-2 border-b border-[#D4AF37]/20">
                 <span className="text-base sm:text-lg font-bold text-[#7B1E3A]" style={{ fontFamily: 'Playfair Display' }}>
