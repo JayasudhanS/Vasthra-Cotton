@@ -81,28 +81,23 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/97 backdrop-blur-lg shadow-lg' : 'bg-white/90 backdrop-blur-sm shadow-sm'}`}>
-        {/* Top announcement strip */}
-        <div className="bg-gradient-to-r from-[#7B1E3A] via-[#5A1028] to-[#7B1E3A] text-white text-center py-2 text-[11px] sm:text-xs tracking-wider font-light hidden md:block border-b border-[#D4AF37]/20">
-          ✨ Free Shipping on orders above ₹2,999 | Use code <span className="font-semibold text-[#D4AF37] px-1.5 py-0.5 bg-white/10 rounded-md">SAREE10</span> for 10% off ✨
-        </div>
-
-        <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 flex items-center justify-between h-[76px] sm:h-[88px]">
+      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/97 backdrop-blur-lg shadow-lg border-b border-[#D4AF37]/10' : 'bg-white/95 backdrop-blur-sm shadow-sm'}`}>
+        <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-14 flex items-center justify-between h-[64px] sm:h-[72px] lg:h-[76px]">
           {/* Logo */}
-          <Link to={user ? getDashboardPath() : '/'} className="flex items-center gap-2 sm:gap-3.5 no-underline group flex-shrink-0 min-w-0 mr-2 lg:mr-6 xl:mr-10">
+          <Link to={user ? getDashboardPath() : '/'} className="flex items-center gap-2.5 sm:gap-3 no-underline group flex-shrink-0 min-w-0 mr-3 lg:mr-6 xl:mr-10">
             <img
               src="/images/logo_vas.png"
               alt="Vasthra Cotton Logo"
-              className="w-9 h-9 sm:w-12 sm:h-12 lg:w-13 lg:h-13 object-contain flex-shrink-0 group-hover:scale-105 transition-transform"
+              className="w-8 h-8 sm:w-10 sm:h-10 lg:w-11 lg:h-11 object-contain flex-shrink-0 group-hover:scale-105 transition-transform"
             />
-            <span className="text-xl sm:text-3xl lg:text-4xl font-bold text-[#7B1E3A] tracking-tight whitespace-nowrap" style={{ fontFamily: 'Playfair Display' }}>
+            <span className="text-lg sm:text-2xl lg:text-[28px] font-bold text-[#7B1E3A] tracking-tight whitespace-nowrap" style={{ fontFamily: 'Playfair Display' }}>
               Vasthra <span className="text-[#D4AF37]">Cotton</span>
             </span>
           </Link>
 
           {/* Flipkart / Myntra Style Search Box (Desktop) */}
-          <div className="hidden lg:flex items-center flex-1 max-w-md xl:max-w-lg mx-4 xl:mx-8 relative self-center">
-            <form onSubmit={handleSearch} className="w-full h-[44px] bg-[#FFF8F0] hover:bg-[#FFF2E5] focus-within:bg-white focus-within:border-[#7B1E3A] focus-within:ring-2 focus-within:ring-[#7B1E3A]/12 rounded-full border border-[#D4AF37]/35 flex items-center p-1 shadow-inner transition-all duration-200 relative">
+          <div className="hidden lg:flex items-center flex-1 max-w-sm xl:max-w-md mx-5 xl:mx-8 relative self-center">
+            <form onSubmit={handleSearch} className="w-full h-[42px] bg-[#FFF8F0] hover:bg-[#FFF2E5] focus-within:bg-white focus-within:border-[#7B1E3A] focus-within:ring-2 focus-within:ring-[#7B1E3A]/12 rounded-full border border-[#D4AF37]/30 flex items-center p-1 shadow-inner transition-all duration-200 relative">
               <div className="flex items-center justify-center text-[#6B4A48]/70 pl-3 pr-2 flex-shrink-0">
                 <FiSearch size={18} />
               </div>
@@ -113,15 +108,9 @@ export default function Navbar() {
                 onFocus={() => setSearchOpen(true)}
                 onKeyDown={handleKeyDown}
                 placeholder="Search for Sarees, Silks, Kanjivaram, Weavers..."
-                className="w-full bg-transparent text-[#4A2C2A] placeholder-[#6B4A48]/60 text-xs xl:text-sm font-normal focus:outline-none h-full border-none pr-2 min-w-0"
+                className="w-full bg-transparent text-[#4A2C2A] placeholder-[#6B4A48]/60 text-xs xl:text-sm font-normal focus:outline-none h-full border-none pr-4 min-w-0"
               />
-              <button
-                type="submit"
-                aria-label="Submit search"
-                className="bg-gradient-to-r from-[#7B1E3A] to-[#9B2E4A] hover:from-[#5A1028] hover:to-[#7B1E3A] text-white text-xs font-semibold px-5 h-8 rounded-full shadow-sm hover:shadow transition-all cursor-pointer border-none flex items-center justify-center flex-shrink-0"
-              >
-                Search
-              </button>
+              <button type="submit" className="hidden" aria-hidden="true" />
             </form>
 
             {/* Instant Search Dropdown (Recent & Trending) */}
@@ -205,7 +194,7 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Nav Links */}
-          <div className="hidden lg:flex items-center gap-7 xl:gap-10">
+          <div className="hidden lg:flex items-center gap-6 xl:gap-8">
             {navLinks.map(link => {
               if (link.isDropdown) {
                 const active = location.pathname.startsWith('/login');
@@ -221,7 +210,7 @@ export default function Navbar() {
                     <button
                       type="button"
                       onClick={() => setLoginDropdownOpen(!loginDropdownOpen)}
-                      className={`text-sm font-medium transition-colors relative group flex items-center gap-1 border-none cursor-pointer p-0 font-body ${active ? 'bg-transparent text-[#7B1E3A] font-semibold' : 'bg-transparent text-[#4A2C2A] hover:text-[#7B1E3A]'
+                      className={`text-[13px] xl:text-sm font-medium transition-colors relative group flex items-center gap-1.5 border-none cursor-pointer p-0 font-body ${active ? 'bg-transparent text-[#7B1E3A] font-semibold' : 'bg-transparent text-[#4A2C2A] hover:text-[#7B1E3A]'
                         }`}
                     >
                       <span>{displayLabel}</span>
@@ -306,7 +295,7 @@ export default function Navbar() {
                 <Link
                   key={link.name}
                   to={targetPath}
-                  className={`text-sm font-medium transition-colors relative group no-underline py-1 ${active ? 'text-[#7B1E3A] font-semibold' : 'text-[#4A2C2A] hover:text-[#7B1E3A]'}`}
+                  className={`text-[13px] xl:text-sm font-medium transition-colors relative group no-underline py-1.5 ${active ? 'text-[#7B1E3A] font-semibold' : 'text-[#4A2C2A] hover:text-[#7B1E3A]'}`}
                 >
                   {link.name}
                   <span className={`absolute bottom-0 left-0 h-0.5 bg-[#D4AF37] transition-all duration-300 rounded-full ${active ? 'w-full' : 'w-0 group-hover:w-full'}`} />
@@ -316,7 +305,7 @@ export default function Navbar() {
           </div>
 
           {/* Right actions */}
-          <div className="flex items-center gap-1 sm:gap-2 lg:gap-3 flex-shrink-0 ml-auto">
+          <div className="flex items-center gap-1.5 sm:gap-2.5 lg:gap-3.5 flex-shrink-0 ml-auto">
             {/* Search toggle (Mobile only) */}
             <button
               onClick={() => setSearchOpen(!searchOpen)}
@@ -330,11 +319,11 @@ export default function Navbar() {
             <Link
               to="/wishlist"
               aria-label="Wishlist"
-              className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center hover:bg-[#FFF8F0] transition-colors text-[#4A2C2A] no-underline flex-shrink-0"
+              className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center hover:bg-[#FFF8F0] transition-colors text-[#4A2C2A] no-underline flex-shrink-0"
             >
-              <FiHeart size={18} />
+              <FiHeart size={19} />
               {wishlist.length > 0 && (
-                <span className="absolute top-1 right-1 w-4 h-4 bg-[#7B1E3A] text-white text-[10px] rounded-full flex items-center justify-center font-bold shadow-sm">
+                <span className="absolute top-0.5 right-0.5 w-4 h-4 bg-[#7B1E3A] text-white text-[10px] rounded-full flex items-center justify-center font-bold shadow-sm">
                   {wishlist.length > 9 ? '9+' : wishlist.length}
                 </span>
               )}
@@ -345,7 +334,7 @@ export default function Navbar() {
               <div className="flex items-center gap-2 flex-shrink-0">
                 <Link
                   to={getDashboardPath()}
-                  className="btn-golden !py-1 sm:!py-2 !px-2 sm:!px-4 !min-h-[30px] sm:!min-h-[40px] !text-[11px] sm:!text-sm inline-flex no-underline shadow-sm items-center gap-1 sm:gap-2 rounded-lg sm:rounded-xl font-semibold flex-shrink-0 whitespace-nowrap"
+                  className="btn-golden !py-1.5 sm:!py-2 !px-3 sm:!px-5 !min-h-[34px] sm:!min-h-[40px] !text-[11px] sm:!text-[13px] inline-flex no-underline shadow-sm items-center gap-1.5 sm:gap-2 rounded-lg sm:rounded-xl font-semibold flex-shrink-0 whitespace-nowrap"
                 >
                   <FiGrid size={15} /> <span className="max-w-[80px] sm:max-w-[120px] truncate">{user.name?.split(' ')[0] || 'Dashboard'}</span>
                 </Link>
@@ -353,9 +342,9 @@ export default function Navbar() {
             ) : (
               <Link
                 to="/portal"
-                className="btn-golden !py-1 sm:!py-2 !px-2 sm:!px-5 !min-h-[30px] sm:!min-h-[40px] !text-[11px] sm:!text-sm inline-flex no-underline shadow-sm items-center gap-1 sm:gap-2 rounded-lg sm:rounded-xl font-semibold flex-shrink-0 whitespace-nowrap"
+                className="btn-golden !py-1.5 sm:!py-2 !px-3.5 sm:!px-5 lg:!px-6 !min-h-[34px] sm:!min-h-[40px] lg:!min-h-[42px] !text-[11px] sm:!text-[13px] lg:!text-sm inline-flex no-underline shadow-sm hover:shadow-md items-center gap-1.5 sm:gap-2 rounded-lg sm:rounded-xl font-semibold flex-shrink-0 whitespace-nowrap transition-shadow duration-200"
               >
-                <FiUser size={15} /> <span>Login</span>
+                <FiUser size={16} /> <span>Login</span>
               </Link>
             )}
 
@@ -391,12 +380,10 @@ export default function Navbar() {
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
                     placeholder="Search Kanjivaram, Banarasi, Silk..."
-                    className="w-full bg-transparent text-[#4A2C2A] placeholder-[#6B4A48]/60 text-xs sm:text-sm font-normal focus:outline-none h-[38px] border-none pr-2 min-w-0"
+                    className="w-full bg-transparent text-[#4A2C2A] placeholder-[#6B4A48]/60 text-xs sm:text-sm font-normal focus:outline-none h-[38px] border-none pr-4 min-w-0"
                     autoFocus
                   />
-                  <button type="submit" className="bg-gradient-to-r from-[#7B1E3A] to-[#9B2E4A] text-white text-xs font-semibold px-4 h-[38px] rounded-full shadow-sm hover:shadow transition-all cursor-pointer border-none flex items-center justify-center flex-shrink-0">
-                    Search
-                  </button>
+                  <button type="submit" className="hidden" aria-hidden="true" />
                 </form>
 
                 <div className="space-y-4">
@@ -627,7 +614,7 @@ export default function Navbar() {
       </AnimatePresence>
 
       {/* Spacer for fixed nav */}
-      <div className="h-[72px] md:h-[104px]" />
+      <div className="h-[64px] sm:h-[72px] lg:h-[76px]" />
     </>
   );
 }

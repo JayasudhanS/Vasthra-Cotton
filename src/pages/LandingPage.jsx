@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Link, Navigate } from 'react-router-dom';
-import { FiArrowRight, FiShield, FiStar, FiTruck, FiCheckCircle, FiHeart, FiAward, FiUsers, FiShoppingBag, FiUser } from 'react-icons/fi';
+import { FiArrowRight, FiShield, FiStar, FiTruck, FiCheckCircle, FiHeart, FiAward, FiUsers, FiShoppingBag, FiUser, FiChevronRight } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper/modules';
@@ -12,67 +12,98 @@ import { products, categories, shops, testimonials, festivalBanners } from '../d
 /* ─── Hero ─── */
 function Hero() {
   return (
-    <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 pt-4 sm:pt-6">
-      <section className="relative overflow-hidden bg-[#FFF8F0] w-full rounded-2xl sm:rounded-3xl shadow-xl border border-[#D4AF37]/30 flex flex-col lg:flex-row min-h-[500px] lg:min-h-[640px]">
-        {/* Left Content Area */}
-        <div className="w-full lg:w-[55%] px-6 sm:px-10 lg:px-16 xl:px-20 py-12 sm:py-16 lg:py-24 flex flex-col justify-center relative z-20 bg-[#FFF8F0]">
-          
-          {/* Top Badge */}
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
-            className="bg-[#5A1028] text-white text-[10px] sm:text-xs font-bold tracking-widest uppercase py-2 px-4 sm:py-2.5 sm:px-5 rounded-full flex items-center gap-2.5 w-fit mb-6 sm:mb-8 shadow-sm">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="flex-shrink-0">
-               <path d="M12 2C12 2 15 8 15 12C15 13.6569 13.6569 15 12 15C10.3431 15 9 13.6569 9 12C9 8 12 2 12 2Z" fill="currentColor"/>
-               <path d="M22 12C22 12 16 15 12 15C10.3431 15 9 16.3431 9 18C9 19.6569 15 22 15 22C15 22 15 16 15 12C15 10.3431 16.3431 9 18 9C19.6569 9 22 12 22 12Z" fill="currentColor"/>
-               <path d="M2 12C2 12 8 15 12 15C13.6569 15 15 16.3431 15 18C15 19.6569 9 22 9 22C9 22 9 16 9 12C9 10.3431 7.65685 9 6 9C4.34315 9 2 12 2 12Z" fill="currentColor"/>
-            </svg>
-            <span>India's Premier Saree Marketplace</span>
-          </motion.div>
+    <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 pt-4 sm:pt-6">
+      <section className="bg-[#FFF8F0] w-full rounded-2xl sm:rounded-3xl shadow-lg border border-[#D4AF37]/20 overflow-hidden">
+        <div className="flex flex-col lg:flex-row">
 
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}>
-            <h1 className="text-[38px] sm:text-[46px] lg:text-[52px] xl:text-[64px] font-bold leading-[1.1] tracking-tight max-w-xl" style={{ fontFamily: 'Playfair Display' }}>
-              <span className="text-[#4A2C2A] block mb-1">Celebrate Every</span>
-              <span className="text-[#4A2C2A] block mb-1">Tradition with</span>
-              <span className="text-[#D4AF37] block mt-1 sm:mt-2">Timeless Elegance</span>
-            </h1>
+          {/* ── Left: Text Content ── */}
+          <div className="w-full lg:w-[55%] xl:w-[52%] px-6 sm:px-8 md:px-10 lg:px-12 xl:px-16 pt-8 sm:pt-10 lg:pt-14 xl:pt-16 pb-8 sm:pb-10 lg:pb-14 xl:pb-16 flex flex-col justify-center">
+
+            {/* Badge */}
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="bg-[#5A1028] text-white text-[11px] sm:text-xs lg:text-[13px] font-bold tracking-[0.13em] uppercase py-2.5 sm:py-3 px-4 sm:px-5 rounded-full inline-flex items-center gap-2.5 w-fit mb-6 sm:mb-7 lg:mb-8 shadow-sm border border-[#D4AF37]/25"
+            >
+              <span className="text-[#D4AF37] text-sm sm:text-base">✦</span>
+              <span>India's Premier Saree Marketplace</span>
+            </motion.div>
+
+            {/* Heading */}
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="text-[36px] sm:text-[42px] md:text-[46px] lg:text-[46px] xl:text-[56px] font-bold leading-[1.12] sm:leading-[1.15] tracking-tight"
+              style={{ fontFamily: 'Playfair Display' }}
+            >
+              <span className="text-[#4A2C2A] block">Celebrate Every</span>
+              <span className="text-[#4A2C2A] block">Tradition with</span>
+              <span className="text-[#C9993A] block mt-1 sm:mt-1.5">Timeless Elegance</span>
+            </motion.h1>
 
             {/* Divider */}
-            <div className="flex items-center gap-4 my-6 sm:my-8 w-full max-w-[280px]">
-              <div className="h-[1px] flex-1 bg-[#D4AF37]/40"></div>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="text-[#D4AF37]" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z" />
-              </svg>
-              <div className="h-[1px] flex-1 bg-[#D4AF37]/40"></div>
-            </div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="flex items-center gap-3 sm:gap-4 my-5 sm:my-6 lg:my-7 xl:my-8 w-[200px] sm:w-[240px] lg:w-[260px] xl:w-[300px]"
+            >
+              <div className="h-px flex-1 bg-[#C9993A]/50"></div>
+              <span className="text-[#C9993A] text-base sm:text-lg">✦</span>
+              <div className="h-px flex-1 bg-[#C9993A]/50"></div>
+            </motion.div>
 
-            <p className="text-sm sm:text-base lg:text-lg text-[#4A2C2A] mb-8 sm:mb-10 max-w-md leading-[1.65] font-medium">
+            {/* Description */}
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="text-[15px] sm:text-[16px] lg:text-[17px] xl:text-[18px] text-[#4A2C2A]/85 leading-[1.7] sm:leading-[1.75] mb-7 sm:mb-8 lg:mb-9 xl:mb-10 max-w-[460px] font-normal"
+            >
               Discover handcrafted Kanjivaram, Banarasi, and designer sarees from trusted weavers across India.
-            </p>
+            </motion.p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-start gap-4 sm:gap-5 w-full sm:w-auto">
-              <Link to="/products" className="w-full sm:w-auto bg-[#5A1028] hover:bg-[#4A2C2A] text-white px-6 sm:px-8 h-[52px] sm:h-[56px] rounded-xl font-medium transition-all duration-300 no-underline shadow-md hover:shadow-lg inline-flex items-center justify-center gap-2.5 text-sm sm:text-base min-w-[210px]">
-                <FiShoppingBag className="text-lg opacity-90" /> <span>Explore Collection</span> <FiArrowRight className="text-lg opacity-90" />
+            {/* Buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="flex flex-col lg:flex-row gap-3.5 sm:gap-4 lg:gap-5 w-full lg:w-auto"
+            >
+              <Link to="/products"
+                className="bg-[#5A1028] hover:bg-[#4A0E22] text-white h-[52px] sm:h-[56px] lg:h-[54px] xl:h-[58px] px-6 sm:px-7 lg:px-8 xl:px-9 rounded-xl font-semibold transition-all duration-300 no-underline shadow-md hover:shadow-lg inline-flex items-center justify-center gap-2.5 sm:gap-3 text-[14px] sm:text-[15px] lg:text-[15px] xl:text-[16px] w-full lg:w-auto whitespace-nowrap"
+              >
+                <FiShoppingBag className="text-lg sm:text-xl flex-shrink-0" />
+                <span>Explore Collection</span>
+                <FiArrowRight className="text-lg sm:text-xl flex-shrink-0" />
               </Link>
-              <Link to="/portal" className="w-full sm:w-auto bg-transparent text-[#4A2C2A] hover:bg-[#D4AF37]/10 border border-[#D4AF37]/60 hover:border-[#D4AF37] px-6 sm:px-8 h-[52px] sm:h-[56px] rounded-xl font-bold transition-all duration-300 no-underline text-sm sm:text-base inline-flex items-center justify-center gap-2.5 min-w-[210px]">
-                <FiUser className="text-lg text-[#4A2C2A]" /> <span>Login / Register</span>
+              <Link to="/portal"
+                className="bg-white hover:bg-[#FFF8F0] text-[#4A2C2A] border-2 border-[#D4AF37]/35 hover:border-[#D4AF37]/70 h-[52px] sm:h-[56px] lg:h-[54px] xl:h-[58px] px-6 sm:px-7 lg:px-8 xl:px-9 rounded-xl font-semibold transition-all duration-300 no-underline shadow-sm inline-flex items-center justify-center gap-2.5 sm:gap-3 text-[14px] sm:text-[15px] lg:text-[15px] xl:text-[16px] w-full lg:w-auto whitespace-nowrap"
+              >
+                <FiUser className="text-lg sm:text-xl text-[#4A2C2A] flex-shrink-0" />
+                <span>Login / Register</span>
               </Link>
-            </div>
-          </motion.div>
-        </div>
+            </motion.div>
+          </div>
 
-        {/* Right Image Area */}
-        <div className="w-full lg:w-[45%] relative h-[320px] sm:h-[450px] lg:h-auto overflow-hidden">
-          {/* Main background image */}
-          <img 
-            src="https://images.pexels.com/photos/2814808/pexels-photo-2814808.jpeg?auto=compress&cs=tinysrgb&w=1200" 
-            alt="Exquisite Indian Silk Saree" 
-            className="absolute inset-0 w-full h-full object-cover object-center lg:object-[60%_50%] hover:scale-105 transition-transform duration-1000 ease-in-out" 
-          />
-          {/* Subtle gradient overlay to soften edges */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#FFF8F0]/30 to-transparent" />
-          {/* Gradient to blend with the left side on desktop */}
-          <div className="hidden lg:block absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#FFF8F0] to-transparent z-10" />
-          {/* Gradient to blend with top side on mobile */}
-          <div className="block lg:hidden absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-[#FFF8F0] to-transparent z-10" />
+          {/* ── Right: Hero Image ── */}
+          <div className="w-full lg:w-[45%] xl:w-[48%] lg:relative lg:self-stretch">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.97 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.7, delay: 0.2 }}
+              className="mx-5 sm:mx-7 md:mx-8 mb-6 sm:mb-8 lg:m-0 lg:absolute lg:inset-0 rounded-2xl lg:rounded-none overflow-hidden h-[300px] sm:h-[380px] md:h-[420px] lg:h-auto"
+            >
+              <img
+                src="/hero-saree.png"
+                alt="Premium Kanjivaram Silk Saree Collection"
+                className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-1000 ease-in-out"
+              />
+            </motion.div>
+          </div>
+
         </div>
       </section>
     </div>
@@ -251,35 +282,143 @@ function FestivalCollections() {
 
 /* ─── Portal CTA Strip ─── */
 function PortalCTASection() {
+  const portalItems = [
+    { to: '/login/user', icon: FiUser, title: 'User Portal', desc: 'Access your account' },
+    { to: '/login/shopkeeper', icon: FiShoppingBag, title: 'Shop Owner', desc: 'Manage your shop' },
+    { to: '/login/admin', icon: FiShield, title: 'Admin', desc: 'Administrative access' },
+  ];
+
   return (
-    <section className="relative z-30 max-w-[1320px] mx-auto px-4 sm:px-6 lg:px-12 w-full">
-      <div className="bg-gradient-to-r from-[#4A2C2A] via-[#5A1028] to-[#4A2C2A] p-5 sm:p-6 lg:px-8 lg:py-4.5 rounded-3xl shadow-2xl border-2 border-[#D4AF37]/40 flex flex-col lg:flex-row items-center justify-between gap-5 lg:gap-8 backdrop-blur-md">
-        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-5 text-center sm:text-left w-full lg:w-auto">
-          <div className="w-13 h-13 lg:w-13 lg:h-13 rounded-2xl bg-gradient-to-br from-[#D4AF37] to-[#E8C94A] text-[#4A2C2A] flex items-center justify-center text-2xl lg:text-2xl font-bold shadow-md flex-shrink-0 mx-auto sm:mx-0">
-            ✦
+    <section className="relative z-30 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 w-full mt-4 sm:mt-6">
+
+      {/* ── Desktop / Tablet: Compact horizontal strip ── */}
+      <div className="hidden lg:flex bg-gradient-to-r from-[#4A2C2A] via-[#5A1028] to-[#4A2C2A] px-7 py-4 rounded-[20px] shadow-2xl border border-[#D4AF37]/30 items-center justify-between gap-6 backdrop-blur-md">
+        <div className="flex items-center gap-5 text-left">
+          <div className="w-14 h-14 rounded-full border border-[#D4AF37]/30 flex items-center justify-center flex-shrink-0 bg-black/20 shadow-inner">
+            <svg viewBox="0 0 24 24" fill="currentColor" className="text-[#D4AF37] w-7 h-7" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z" />
+            </svg>
           </div>
-          <div>
-            <h3 className="text-[22px] sm:text-2xl lg:text-xl font-bold text-white m-0 leading-tight" style={{ fontFamily: 'Playfair Display' }}>
+          <div className="flex flex-col items-start">
+            <h3 className="text-[22px] font-bold text-white m-0 leading-tight tracking-wide" style={{ fontFamily: 'Playfair Display' }}>
               Vasthra Command & Access Portal
             </h3>
-            <p className="text-sm sm:text-base lg:text-xs xl:text-sm text-[#D4AF37] m-0 mt-1.5 lg:mt-1 font-medium tracking-wide">
+            <div className="flex items-center gap-2 mt-1.5 w-full justify-start opacity-80">
+              <div className="h-px bg-[#D4AF37]/40 max-w-[40px] flex-1" />
+              <span className="text-[10px] text-[#D4AF37]">✦</span>
+              <div className="h-px bg-[#D4AF37]/40 max-w-[150px] flex-1" />
+            </div>
+            <p className="text-[13px] text-[#D4AF37]/90 m-0 mt-1.5 font-medium tracking-wide">
               Dedicated Gateway for Customers, Master Weavers & Administration
             </p>
           </div>
         </div>
 
-        <div className="flex flex-row items-center justify-center gap-2 sm:gap-3 lg:gap-3 w-full lg:w-auto bg-[#3D1A24]/90 p-1.5 sm:p-2 lg:p-2 rounded-2xl border border-[#D4AF37]/30 shadow-inner overflow-x-auto sm:overflow-visible">
-          <Link to="/login/user" className="flex-1 lg:flex-initial px-3 sm:px-5 lg:px-5 py-2 sm:py-2.5 lg:py-2.5 h-[42px] sm:h-[44px] lg:h-[44px] rounded-xl bg-[#D4AF37] text-[#4A2C2A] font-bold text-xs sm:text-sm lg:text-sm hover:bg-[#E8C94A] transition-all no-underline text-center shadow-md flex items-center justify-center gap-1.5 sm:gap-2 whitespace-nowrap">
-            <FiUsers className="text-base sm:text-sm lg:text-base flex-shrink-0" /> User Portal
-          </Link>
-          <Link to="/login/shopkeeper" className="flex-1 lg:flex-initial px-3 sm:px-5 lg:px-5 py-2 sm:py-2.5 lg:py-2.5 h-[42px] sm:h-[44px] lg:h-[44px] rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm lg:text-sm transition-all no-underline text-center border border-[#D4AF37]/30 flex items-center justify-center gap-1.5 sm:gap-2 whitespace-nowrap">
-            <FiShoppingBag className="text-base sm:text-sm lg:text-base text-[#D4AF37] flex-shrink-0" /> Shop Owner
-          </Link>
-          <Link to="/login/admin" className="flex-1 lg:flex-initial px-3 sm:px-5 lg:px-5 py-2 sm:py-2.5 lg:py-2.5 h-[42px] sm:h-[44px] lg:h-[44px] rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm lg:text-sm transition-all no-underline text-center border border-[#D4AF37]/30 flex items-center justify-center gap-1.5 sm:gap-2 whitespace-nowrap">
-            <FiShield className="text-base sm:text-sm lg:text-base text-[#D4AF37] flex-shrink-0" /> Admin
-          </Link>
+        <div className="flex items-center gap-4">
+          {portalItems.map((item, idx) => {
+            const Icon = item.icon;
+            return (
+              <Link key={item.to} to={item.to} className={`px-5 py-2 h-[46px] rounded-xl transition-all no-underline flex items-center justify-center gap-4 whitespace-nowrap hover:-translate-y-0.5 group ${idx === 0
+                ? 'bg-gradient-to-r from-[#D4AF37] to-[#E8C94A] hover:from-[#E8C94A] hover:to-[#F5D75F] text-[#4A2C2A] font-bold text-[13px] shadow-[0_4px_14px_rgba(212,175,55,0.25)] hover:shadow-[0_6px_20px_rgba(212,175,55,0.4)] border border-[#D4AF37]/50'
+                : 'bg-[#3D1A24]/60 hover:bg-[#3D1A24] text-white font-semibold text-[13px] shadow-sm hover:shadow-md border border-[#D4AF37]/30 hover:border-[#D4AF37]/60'
+              }`}>
+                <span className="flex items-center gap-2.5">
+                  <Icon className={`text-[17px] ${idx === 0 ? 'opacity-90' : 'text-[#D4AF37] group-hover:text-[#E8C94A] transition-colors'}`} />
+                  {item.title}
+                </span>
+                <FiChevronRight className={`text-[15px] ${idx === 0 ? 'opacity-70 group-hover:opacity-100' : 'text-[#D4AF37]/70 group-hover:text-[#D4AF37]'} group-hover:translate-x-0.5 transition-all`} />
+              </Link>
+            );
+          })}
         </div>
       </div>
+
+      {/* ── Mobile / Small Tablet: Premium card layout ── */}
+      <div className="lg:hidden bg-gradient-to-b from-[#3D1A24] via-[#5A1028] to-[#4A2C2A] px-5 sm:px-7 pt-8 sm:pt-10 pb-6 sm:pb-8 rounded-[22px] shadow-2xl border border-[#D4AF37]/25 backdrop-blur-md relative overflow-hidden">
+        
+        {/* Decorative background pattern */}
+        <div className="absolute inset-0 opacity-[0.04] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 20% 30%, #D4AF37 1px, transparent 1px), radial-gradient(circle at 80% 70%, #D4AF37 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
+
+        {/* Header */}
+        <div className="relative flex flex-col items-center text-center mb-6 sm:mb-8">
+          {/* Star Icon */}
+          <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-[#D4AF37]/40 flex items-center justify-center bg-black/20 shadow-[0_0_20px_rgba(212,175,55,0.1)] mb-5 sm:mb-6">
+            <svg viewBox="0 0 24 24" fill="currentColor" className="text-[#D4AF37] w-7 h-7 sm:w-8 sm:h-8" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2L14.4 9.6L22 12L14.4 14.4L12 22L9.6 14.4L2 12L9.6 9.6L12 2Z" />
+            </svg>
+          </div>
+
+          {/* Heading */}
+          <h3 className="text-[26px] sm:text-[30px] font-bold text-white m-0 leading-[1.2] tracking-wide" style={{ fontFamily: 'Playfair Display' }}>
+            Vasthra Command &<br />Access Portal
+          </h3>
+
+          {/* Ornamental Divider */}
+          <div className="flex items-center gap-3 mt-3 sm:mt-4 w-full max-w-[260px]">
+            <div className="h-px bg-gradient-to-r from-transparent via-[#D4AF37]/50 to-[#D4AF37]/50 flex-1" />
+            <div className="flex items-center gap-1">
+              <span className="text-[8px] text-[#D4AF37]/60">✦</span>
+              <span className="text-[11px] text-[#D4AF37]">✦</span>
+              <span className="text-[8px] text-[#D4AF37]/60">✦</span>
+            </div>
+            <div className="h-px bg-gradient-to-l from-transparent via-[#D4AF37]/50 to-[#D4AF37]/50 flex-1" />
+          </div>
+
+          {/* Subtitle */}
+          <p className="text-[13px] sm:text-[14px] text-[#D4AF37]/85 m-0 mt-2.5 sm:mt-3 font-medium tracking-wide leading-relaxed">
+            Dedicated Gateway for Customers,<br />Master Weavers & Administration
+          </p>
+        </div>
+
+        {/* Portal Access Cards */}
+        <div className="relative flex flex-col gap-3 sm:gap-3.5">
+          {portalItems.map((item, idx) => {
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.to}
+                to={item.to}
+                className="flex items-center gap-4 sm:gap-5 px-4 sm:px-5 py-3.5 sm:py-4 rounded-[16px] sm:rounded-[18px] no-underline transition-all duration-300 active:scale-[0.98] group
+                  bg-gradient-to-r from-[#2D1118]/80 to-[#3D1A24]/60
+                  border border-[#D4AF37]/25 hover:border-[#D4AF37]/50
+                  shadow-[0_2px_10px_rgba(0,0,0,0.15)] hover:shadow-[0_4px_18px_rgba(0,0,0,0.25)]"
+              >
+                {/* Icon Container */}
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-[14px] bg-gradient-to-br from-[#D4AF37] to-[#E8C94A] flex items-center justify-center flex-shrink-0 shadow-[0_3px_10px_rgba(212,175,55,0.3)] group-hover:shadow-[0_4px_14px_rgba(212,175,55,0.45)] group-hover:scale-105 transition-all duration-300">
+                  <Icon className="text-[#4A2C2A] text-xl sm:text-2xl" />
+                </div>
+
+                {/* Text Content */}
+                <div className="flex-1 min-w-0">
+                  <p className="text-[15px] sm:text-[17px] font-bold text-white m-0 leading-tight tracking-wide">
+                    {item.title}
+                  </p>
+                  <p className="text-[12px] sm:text-[13px] text-[#D4AF37]/70 m-0 mt-0.5 font-medium tracking-wide">
+                    {item.desc}
+                  </p>
+                </div>
+
+                {/* Arrow */}
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border border-[#D4AF37]/30 group-hover:border-[#D4AF37]/60 flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:bg-[#D4AF37]/10">
+                  <FiChevronRight className="text-[#D4AF37]/70 group-hover:text-[#D4AF37] text-[16px] sm:text-[18px] group-hover:translate-x-0.5 transition-all duration-300" />
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* Bottom Ornament */}
+        <div className="flex items-center justify-center gap-3 mt-5 sm:mt-6">
+          <div className="h-px bg-gradient-to-r from-transparent to-[#D4AF37]/30 w-16" />
+          <div className="flex items-center gap-1.5">
+            <span className="text-[7px] text-[#D4AF37]/40">✦</span>
+            <span className="text-[9px] text-[#D4AF37]/50">✦</span>
+            <span className="text-[7px] text-[#D4AF37]/40">✦</span>
+          </div>
+          <div className="h-px bg-gradient-to-l from-transparent to-[#D4AF37]/30 w-16" />
+        </div>
+      </div>
+
     </section>
   );
 }
