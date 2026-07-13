@@ -62,7 +62,7 @@ export function AdminPendingProducts() {
                       </div>
                     </div>
                   </td>
-                  <td className="text-[#6B4A48] font-medium text-xs">{p.shopName || 'Weave House'}</td>
+                  <td className="text-[#6B4A48] font-medium text-xs">{p.shopName || ''}</td>
                   <td className="font-bold text-[#7B1E3A] text-sm">₹{(p.offerPrice || p.price || 14500).toLocaleString()}</td>
                   <td><span className="badge badge-warning">⏳ Pending Inspection</span></td>
                   <td className="text-right">
@@ -146,7 +146,7 @@ export function AdminApprovedProducts() {
                       </div>
                     </div>
                   </td>
-                  <td className="text-[#6B4A48] font-medium text-xs">{p.shopName || 'Weave House'}</td>
+                  <td className="text-[#6B4A48] font-medium text-xs">{p.shopName || ''}</td>
                   <td className="font-bold text-[#7B1E3A] text-sm">₹{(p.offerPrice || p.price || 14500).toLocaleString()}</td>
                   <td className="text-[#6B4A48] font-semibold text-xs">⭐ {p.rating || 4.9} <span className="text-[10px] text-[#6B4A48]/60">({p.reviews || 12} rev.)</span></td>
                   <td className="text-right">
@@ -229,8 +229,8 @@ export function AdminPendingShops() {
                   </td>
                   <td className="text-[#6B4A48] font-bold text-xs">{s.name}</td>
                   <td className="text-[#6B4A48] text-xs">
-                    <span className="block font-medium">📍 {s.address || 'Kanchipuram Cluster'}</span>
-                    <span className="text-[11px] text-[#D4AF37] font-mono">{s.phone || '+91 98765 43210'}</span>
+                    <span className="block font-medium">📍 {s.address || ''}</span>
+                    <span className="text-[11px] text-[#D4AF37] font-mono">{s.phone || ''}</span>
                   </td>
                   <td><span className="badge badge-warning">⏳ KYC Pending</span></td>
                   <td className="text-right">

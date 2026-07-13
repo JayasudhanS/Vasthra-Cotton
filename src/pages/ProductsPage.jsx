@@ -3,11 +3,9 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiFilter, FiX, FiRefreshCw, FiCheckCircle, FiMapPin, FiStar } from 'react-icons/fi';
 import ProductCard, { StarRating } from '../components/shared/ProductCard';
-import { products, categories, shops } from '../data';
+import { shops } from '../data';
 import { useProducts } from '../context/ProductContext';
 
-const colors = ['Red', 'Gold', 'Green', 'Blue', 'Pink', 'Maroon', 'Orange', 'White', 'Black'];
-const fabrics = ['Silk', 'Cotton', 'Georgette', 'Chiffon', 'Linen', 'Organza', 'Crepe', 'Tussar'];
 const sortOptions = [
   { label: 'Newest Arrivals', value: 'newest' },
   { label: 'Most Popular', value: 'popular' },
@@ -16,28 +14,46 @@ const sortOptions = [
 ];
 
 export default function ProductsPage() {
-  const { products: dynamicProducts } = useProducts();
+  const { approvedProducts } = useProducts();
   const [params] = useSearchParams();
   const [showFilter, setShowFilter] = useState(false);
-  const [filters, setFilters] = useState({ category: '', color: '', fabric: '', sort: 'newest', minPrice: '', maxPrice: '' });
+  const [filters, setFilters] = useState({ category: params.get('category') || '', color: '', fabric: '', sort: 'newest', minPrice: '', maxPrice: '' });
 
-  const shopId = params.get('shop') ? +params.get('shop') : null;
-  const shop = shopId ? shops.find(s => s.id === shopId) : null;
+  // Extract unique filter options from Firestore data
+  const dynamicCategories = useMemo(() => {
+    const cats = new Set(approvedProducts.map(p => p.category).filter(Boolean));
+    return Array.from(cats).sort();
+  }, [approvedProducts]);
+
+  const dynamicFabrics = useMemo(() => {
+    const fabs = new Set(approvedProducts.map(p => p.fabric).filter(Boolean));
+    return Array.from(fabs).sort();
+  }, [approvedProducts]);
+
+  const dynamicColors = useMemo(() => {
+    const cols = new Set(approvedProducts.map(p => p.color).filter(Boolean));
+    return Array.from(cols).sort();
+  }, [approvedProducts]);
+
+  const shopId = params.get('shop') ? params.get('shop') : null;
+  const shop = shopId ? shops.find(s => String(s.id) === String(shopId)) : null;
 
   const filtered = useMemo(() => {
-    let list = [...products.filter(p => p.status === 'approved'), ...dynamicProducts.filter(p => p.status === 'approved')];
-    if (shopId) list = list.filter(p => p.shopId === shopId);
+    let list = [...approvedProducts];
+    if (shopId) list = list.filter(p => String(p.shopId) === String(shopId) || String(p.ownerId) === String(shopId));
     if (params.get('filter') === 'featured') list = list.filter(p => p.featured);
-    if (filters.category) list = list.filter(p => p.category === filters.category);
-    if (filters.color) list = list.filter(p => p.color === filters.color);
-    if (filters.fabric) list = list.filter(p => p.fabric === filters.fabric);
-    if (filters.minPrice) list = list.filter(p => p.offerPrice >= +filters.minPrice);
-    if (filters.maxPrice) list = list.filter(p => p.offerPrice <= +filters.maxPrice);
-    if (filters.sort === 'price-asc') list.sort((a, b) => a.offerPrice - b.offerPrice);
-    else if (filters.sort === 'price-desc') list.sort((a, b) => b.offerPrice - a.offerPrice);
-    else if (filters.sort === 'popular') list.sort((a, b) => b.rating - a.rating);
+    if (filters.category) list = list.filter(p => p.category?.toLowerCase() === filters.category?.toLowerCase());
+    if (filters.color) list = list.filter(p => p.color?.toLowerCase() === filters.color?.toLowerCase());
+    if (filters.fabric) list = list.filter(p => p.fabric?.toLowerCase() === filters.fabric?.toLowerCase());
+    if (filters.minPrice) list = list.filter(p => (p.offerPrice || p.price || 0) >= +filters.minPrice);
+    if (filters.maxPrice) list = list.filter(p => (p.offerPrice || p.price || 0) <= +filters.maxPrice);
+    
+    if (filters.sort === 'price-asc') list.sort((a, b) => (a.offerPrice || a.price || 0) - (b.offerPrice || b.price || 0));
+    else if (filters.sort === 'price-desc') list.sort((a, b) => (b.offerPrice || b.price || 0) - (a.offerPrice || a.price || 0));
+    else if (filters.sort === 'popular') list.sort((a, b) => ((b.rating || 0) * (b.reviews || 1) + (b.salesCount || 0)) - ((a.rating || 0) * (a.reviews || 1) + (a.salesCount || 0)));
+    else if (filters.sort === 'newest') list.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
     return list;
-  }, [filters, params, shopId]);
+  }, [approvedProducts, filters, params, shopId]);
 
   const clearFilters = () => {
     setFilters({ category: '', color: '', fabric: '', sort: 'newest', minPrice: '', maxPrice: '' });
@@ -143,7 +159,7 @@ export default function ProductsPage() {
               <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block">Category / Weave</label>
               <select value={filters.category} onChange={e => setFilters({ ...filters, category: e.target.value })} className="select-field !h-[44px] sm:!h-[46px] !text-xs sm:!text-sm !px-3.5 !rounded-xl bg-[#FFF8F0]/60">
                 <option value="">All Categories</option>
-                {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
+                {dynamicCategories.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
 
@@ -151,7 +167,7 @@ export default function ProductsPage() {
               <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block">Color Palette</label>
               <select value={filters.color} onChange={e => setFilters({ ...filters, color: e.target.value })} className="select-field !h-[44px] sm:!h-[46px] !text-xs sm:!text-sm !px-3.5 !rounded-xl bg-[#FFF8F0]/60">
                 <option value="">All Colors</option>
-                {colors.map(c => <option key={c} value={c}>{c}</option>)}
+                {dynamicColors.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
 
@@ -159,7 +175,7 @@ export default function ProductsPage() {
               <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block">Fabric Type</label>
               <select value={filters.fabric} onChange={e => setFilters({ ...filters, fabric: e.target.value })} className="select-field !h-[44px] sm:!h-[46px] !text-xs sm:!text-sm !px-3.5 !rounded-xl bg-[#FFF8F0]/60">
                 <option value="">All Fabrics</option>
-                {fabrics.map(f => <option key={f} value={f}>{f}</option>)}
+                {dynamicFabrics.map(f => <option key={f} value={f}>{f}</option>)}
               </select>
             </div>
 
@@ -205,13 +221,13 @@ export default function ProductsPage() {
 
         {/* Products Grid */}
         <div className="flex-1 w-full">
-          {products.length === 0 ? (
+          {approvedProducts.length === 0 ? (
             <div className="card-base p-16 text-center max-w-lg mx-auto my-8 bg-[#FFF8F0]/30 border-dashed">
               <div className="w-16 h-16 rounded-full bg-[#7B1E3A]/10 text-[#7B1E3A] flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
                 ✦
               </div>
               <h3 className="text-xl font-bold text-[#7B1E3A] mb-2" style={{ fontFamily: 'Playfair Display' }}>
-                No products available.
+                No Products Available
               </h3>
             </div>
           ) : filtered.length === 0 ? (

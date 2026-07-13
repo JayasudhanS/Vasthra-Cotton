@@ -12,8 +12,8 @@ export default function ShopkeeperProfile() {
     navigate('/');
   };
 
-  const displayName = user?.name || 'Ramesh';
-  const displayShopName = user?.shopName || user?.name || 'Ramesh Silks';
+  const displayName = user?.name || '';
+  const displayShopName = user?.shopName || user?.name || '';
 
   return (
     <div className="space-y-6">

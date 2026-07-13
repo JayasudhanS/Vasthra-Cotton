@@ -201,7 +201,7 @@ export default function Navbar() {
               if (link.isDropdown) {
                 const active = location.pathname.startsWith('/login');
                 const activeChild = link.children?.find(c => location.pathname === c.path);
-                const displayLabel = user ? (user.name || (role === 'admin' ? 'Administrator' : role === 'shopkeeper' ? 'Ramesh' : 'Jayasudhan')) : (activeChild ? activeChild.name : link.name);
+                const displayLabel = user ? (user.name || 'Account') : (activeChild ? activeChild.name : link.name);
                 return (
                   <div
                     key={link.name}

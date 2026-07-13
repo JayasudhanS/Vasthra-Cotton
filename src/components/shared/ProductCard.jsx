@@ -34,7 +34,7 @@ export default function ProductCard({ product, index = 0 }) {
       {/* Image Container */}
       <div className="relative overflow-hidden aspect-[3/4] bg-[#F5EDE0] w-full" style={{ minHeight: '220px' }}>
         <img
-          src={product?.image || ''}
+          src={product?.image || product?.imageUrl || product?.images?.[0] || product?.thumbnail || ''}
           alt={product?.name || ''}
           loading="lazy"
           className="w-full h-full object-cover group-hover:scale-[1.08] transition-transform duration-700 ease-out"
@@ -76,13 +76,20 @@ export default function ProductCard({ product, index = 0 }) {
       {/* Info Section */}
       <div className="flex flex-col flex-1 p-3.5 sm:p-4 md:p-5 justify-between bg-white gap-1.5">
         <div>
-          <div className="flex items-center justify-between gap-2 mb-1.5">
+          <div className="flex items-center justify-between gap-1.5 mb-1.5">
             <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-[#D4AF37] font-bold truncate min-h-[1rem] inline-block">
               {product?.shopName || ''}
             </span>
-            <span className="text-[10px] sm:text-[11px] text-[#6B4A48] bg-[#FFF8F0] px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md truncate font-medium min-h-[1.25rem] inline-block">
-              {product?.category || ''}
-            </span>
+            <div className="flex items-center gap-1 flex-shrink-0">
+              {product?.fabric && (
+                <span className="text-[9px] sm:text-[10px] text-[#7B1E3A] font-semibold bg-[#7B1E3A]/10 px-2 py-0.5 rounded-md truncate max-w-[80px]">
+                  {product.fabric}
+                </span>
+              )}
+              <span className="text-[10px] sm:text-[11px] text-[#6B4A48] bg-[#FFF8F0] px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md truncate font-medium min-h-[1.25rem] inline-block">
+                {product?.category || ''}
+              </span>
+            </div>
           </div>
 
           <Link to={`/product/${product?.id || ''}`} className="no-underline block group-hover:text-[#7B1E3A] transition-colors">
@@ -92,8 +99,8 @@ export default function ProductCard({ product, index = 0 }) {
           </Link>
 
           <div className="flex items-center gap-1.5 mb-2 min-h-[1rem]">
-            <StarRating rating={product?.rating || 0} size={13} />
-            <span className="text-[11px] sm:text-xs text-[#6B4A48] font-medium">{typeof product?.reviews === 'number' && product.reviews > 0 ? `(${product.reviews})` : ''}</span>
+            <StarRating rating={product?.rating || 4.9} size={13} />
+            <span className="text-[11px] sm:text-xs text-[#6B4A48] font-medium">({product?.reviews || 12})</span>
           </div>
         </div>
 

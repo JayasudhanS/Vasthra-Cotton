@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { FiUser, FiMail, FiLock, FiPhone, FiEye, FiEyeOff, FiUploadCloud } from 'react-icons/fi';
@@ -7,11 +7,19 @@ import { useAuth } from '../../context/AuthContext';
 export default function RegisterPage() {
   const { role } = useParams();
   const navigate = useNavigate();
-  const { login, registerShopkeeper } = useAuth();
+  const { register, signInWithGoogle } = useAuth();
   const isShopkeeper = role === 'shopkeeper';
+
+  // Prevent admin registration completely as per requirements
+  useEffect(() => {
+    if (role === 'admin') {
+      navigate('/login/admin', { replace: true });
+    }
+  }, [role, navigate]);
 
   const [showPass, setShowPass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -25,28 +33,56 @@ export default function RegisterPage() {
 
   const upd = (k) => (e) => setForm({ ...form, [k]: e.target.value });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (form.password && form.confirmPassword && form.password !== form.confirmPassword) {
       alert('Passwords do not match. Please verify your password.');
       return;
     }
-    if (isShopkeeper) {
-      registerShopkeeper({
-        name: form.name || 'Ramesh',
-        email: form.email || 'ramesh@vasthracotton.com',
-        phone: form.phone || '',
-        shopName: form.shopName || form.name || 'Ramesh Silks',
-        address: form.address || '',
-        description: form.description || '',
-      });
-      alert('Your registration has been submitted successfully. Your account is currently under review by our administrator. You will be able to access your dashboard once your account has been approved.');
-      navigate('/login/shopkeeper');
-      return;
+    setLoading(true);
+    try {
+      const res = await register(form, role);
+      if (res && res.success === false) {
+        alert(res.message);
+        setLoading(false);
+        return;
+      }
+      if (res?.pending) {
+        alert(res.message);
+        navigate('/login/shopkeeper');
+        return;
+      }
+      navigate('/user/dashboard');
+    } catch (err) {
+      console.error('Registration error:', err);
+      alert('An error occurred during registration.');
+      setLoading(false);
     }
-    login({ email: form.email || 'jayasudhan@vasthracotton.com', name: form.name || 'Jayasudhan' }, role);
-    navigate('/user/dashboard');
   };
+
+  const handleGoogleSignUp = async () => {
+    setLoading(true);
+    try {
+      const res = await signInWithGoogle(role);
+      if (res && res.success === false) {
+        alert(res.message);
+        setLoading(false);
+        return;
+      }
+      if (res?.pending) {
+        alert(res.message);
+        navigate('/login/shopkeeper');
+        return;
+      }
+      navigate('/user/dashboard');
+    } catch (err) {
+      console.error('Google Sign-Up error:', err);
+      alert('An unexpected error occurred with Google Sign-Up.');
+      setLoading(false);
+    }
+  };
+
+  if (role === 'admin') return null;
 
   return (
     <section className="min-h-[88vh] flex items-center justify-center py-16 px-4 bg-[#FFF8F0]">
@@ -71,7 +107,7 @@ export default function RegisterPage() {
         {/* Heading & Subtitle */}
         <div className="text-center mb-10 space-y-3">
           <h1 className="text-[26px] sm:text-[28px] lg:text-[32px] font-bold text-[#7B1E3A] m-0 leading-tight" style={{ fontFamily: 'Playfair Display' }}>
-            Create Account
+            {isShopkeeper ? 'Weaver & Store Registration' : 'Create Account'}
           </h1>
           <p className="text-[18px] text-[#6B4A48] m-0 font-normal leading-relaxed">
             Create your account to continue.
@@ -143,7 +179,7 @@ export default function RegisterPage() {
               <input
                 type={showPass ? 'text' : 'password'}
                 required
-                placeholder="Password"
+                placeholder="Password (Min. 6 characters)"
                 value={form.password}
                 onChange={upd('password')}
                 style={{ paddingLeft: '60px', paddingRight: '60px', height: '58px' }}
@@ -226,7 +262,7 @@ export default function RegisterPage() {
               </div>
 
               <div
-                onClick={() => alert('Demo: File upload simulation ready.')}
+                onClick={() => alert('Certificate upload section ready.')}
                 className="flex items-center justify-center gap-4 p-5 rounded-[12px] border-2 border-dashed border-[#D4AF37]/60 bg-[#FFF8F0]/40 hover:bg-[#FFF8F0]/70 transition-colors cursor-pointer text-center group shadow-sm"
               >
                 <FiUploadCloud size={28} className="text-[#D4AF37] group-hover:scale-110 transition-transform flex-shrink-0" />
@@ -241,10 +277,25 @@ export default function RegisterPage() {
           <div className="pt-3">
             <button
               type="submit"
+              disabled={loading}
               style={{ height: '58px' }}
-              className="w-full rounded-[12px] bg-gradient-to-r from-[#D4AF37] to-[#E8C94A] hover:from-[#E8C94A] hover:to-[#D4AF37] text-[#4A2C2A] text-[18px] font-bold cursor-pointer shadow-md hover:shadow-lg transition-all flex items-center justify-center"
+              className="w-full rounded-[12px] bg-gradient-to-r from-[#D4AF37] to-[#E8C94A] hover:from-[#E8C94A] hover:to-[#D4AF37] text-[#4A2C2A] text-[18px] font-bold cursor-pointer shadow-md hover:shadow-lg transition-all flex items-center justify-center disabled:opacity-70"
             >
-              Create Account
+              {loading ? 'Creating Account...' : 'Create Account'}
+            </button>
+          </div>
+
+          {/* Google Sign-Up */}
+          <div className="pt-2">
+            <button
+              type="button"
+              disabled={loading}
+              onClick={handleGoogleSignUp}
+              style={{ height: '58px' }}
+              className="w-full rounded-[12px] border border-[#D4AF37]/45 bg-white hover:bg-[#FFF8F0] text-[#4A2C2A] text-[16px] font-semibold cursor-pointer shadow-sm transition-all flex items-center justify-center gap-3 disabled:opacity-70"
+            >
+              <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5" />
+              Sign Up with Google
             </button>
           </div>
         </form>

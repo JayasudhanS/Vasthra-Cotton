@@ -29,7 +29,7 @@ export default function AdminLayout() {
       <aside className="hidden lg:flex flex-col w-[270px] bg-gradient-to-b from-[#4A2C2A] to-[#2D1A19] p-6 sticky top-[100px] h-[calc(100vh-100px)] overflow-y-auto">
         <div className="mb-6 px-2">
           <p className="text-xs uppercase tracking-wider text-[#D4AF37] font-semibold">Admin Panel</p>
-          <p className="text-sm font-bold text-white truncate mt-1">{user?.name || 'Administrator'}</p>
+          <p className="text-sm font-bold text-white truncate mt-1">{user?.name || ''}</p>
         </div>
         <nav className="space-y-2 flex-1">
           {links.map(l => (

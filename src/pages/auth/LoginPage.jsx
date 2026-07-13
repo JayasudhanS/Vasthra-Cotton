@@ -7,26 +7,58 @@ import { useAuth } from '../../context/AuthContext';
 export default function LoginPage() {
   const { role } = useParams();
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, forgotPassword, signInWithGoogle } = useAuth();
   const [showPass, setShowPass] = useState(false);
   const [form, setForm] = useState({ email: '', password: '' });
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = login(
-      {
-        email: form.email || (role === 'admin' ? 'admin@vasthracotton.com' : role === 'shopkeeper' ? 'ramesh@vasthracotton.com' : 'jayasudhan@vasthracotton.com'),
-        name: role === 'admin' ? 'Administrator' : role === 'shopkeeper' ? 'Ramesh' : 'Jayasudhan',
-      },
-      role
-    );
-    if (res && res.success === false) {
-      alert(res.message);
+    setLoading(true);
+    try {
+      const res = await login(form.email, form.password, role);
+      if (res && res.success === false) {
+        alert(res.message);
+        setLoading(false);
+        return;
+      }
+      if (res?.role === 'admin' || role === 'admin') navigate('/admin/dashboard');
+      else if (res?.role === 'shopkeeper' || role === 'shopkeeper') navigate('/shopkeeper/dashboard');
+      else navigate('/user/dashboard');
+    } catch (err) {
+      console.error('Login error:', err);
+      alert('An unexpected error occurred during login.');
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    try {
+      const res = await signInWithGoogle(role);
+      if (res && res.success === false) {
+        alert(res.message);
+        setLoading(false);
+        return;
+      }
+      if (res?.role === 'admin' || role === 'admin') navigate('/admin/dashboard');
+      else if (res?.role === 'shopkeeper' || role === 'shopkeeper') navigate('/shopkeeper/dashboard');
+      else navigate('/user/dashboard');
+    } catch (err) {
+      console.error('Google Sign-In error:', err);
+      alert('An unexpected error occurred with Google Sign-In.');
+      setLoading(false);
+    }
+  };
+
+  const handleForgot = async (e) => {
+    e.preventDefault();
+    if (!form.email) {
+      alert('Please enter your Email Address first above to receive a password reset link.');
       return;
     }
-    if (role === 'admin') navigate('/admin/dashboard');
-    else if (role === 'shopkeeper') navigate('/shopkeeper/dashboard');
-    else navigate('/user/dashboard');
+    const res = await forgotPassword(form.email);
+    alert(res.message || 'Password reset link processed.');
   };
 
   return (
@@ -52,7 +84,7 @@ export default function LoginPage() {
         {/* Heading & Subtitle */}
         <div className="text-center mb-10 space-y-3">
           <h1 className="text-[26px] sm:text-[28px] lg:text-[32px] font-bold text-[#7B1E3A] m-0 leading-tight" style={{ fontFamily: 'Playfair Display' }}>
-            Log In
+            {role === 'admin' ? 'Admin Log In' : role === 'shopkeeper' ? 'Shop Owner Log In' : 'Log In'}
           </h1>
           <p className="text-[18px] text-[#6B4A48] m-0 font-normal leading-relaxed">
             Welcome back. Please sign in to continue.
@@ -106,8 +138,8 @@ export default function LoginPage() {
             <div className="flex justify-end pt-1">
               <a
                 href="#forgot"
-                onClick={e => { e.preventDefault(); alert('Demo: Use any password to log in!'); }}
-                className="text-[16px] font-semibold text-[#7B1E3A] hover:underline no-underline transition-colors"
+                onClick={handleForgot}
+                className="text-[16px] font-semibold text-[#7B1E3A] hover:underline no-underline transition-colors cursor-pointer"
               >
                 Forgot Password?
               </a>
@@ -118,12 +150,29 @@ export default function LoginPage() {
           <div className="pt-3">
             <button
               type="submit"
+              disabled={loading}
               style={{ height: '58px' }}
-              className="w-full rounded-[12px] bg-gradient-to-r from-[#D4AF37] to-[#E8C94A] hover:from-[#E8C94A] hover:to-[#D4AF37] text-[#4A2C2A] text-[18px] font-bold cursor-pointer shadow-md hover:shadow-lg transition-all flex items-center justify-center"
+              className="w-full rounded-[12px] bg-gradient-to-r from-[#D4AF37] to-[#E8C94A] hover:from-[#E8C94A] hover:to-[#D4AF37] text-[#4A2C2A] text-[18px] font-bold cursor-pointer shadow-md hover:shadow-lg transition-all flex items-center justify-center disabled:opacity-70"
             >
-              Log In
+              {loading ? 'Logging In...' : 'Log In'}
             </button>
           </div>
+
+          {/* Google Sign-In */}
+          {role !== 'admin' && (
+            <div className="pt-2">
+              <button
+                type="button"
+                disabled={loading}
+                onClick={handleGoogleSignIn}
+                style={{ height: '58px' }}
+                className="w-full rounded-[12px] border border-[#D4AF37]/45 bg-white hover:bg-[#FFF8F0] text-[#4A2C2A] text-[16px] font-semibold cursor-pointer shadow-sm transition-all flex items-center justify-center gap-3 disabled:opacity-70"
+              >
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" className="w-5 h-5" />
+                Continue with Google
+              </button>
+            </div>
+          )}
         </form>
 
         {/* Links */}

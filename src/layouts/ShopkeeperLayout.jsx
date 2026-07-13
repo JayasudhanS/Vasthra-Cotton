@@ -27,7 +27,7 @@ export default function ShopkeeperLayout() {
       <aside className="hidden lg:flex flex-col w-[270px] bg-white border-r border-[#D4AF37]/15 p-6 sticky top-[100px] h-[calc(100vh-100px)] overflow-y-auto shadow-sm">
         <div className="mb-6 px-2">
           <p className="text-xs uppercase tracking-wider text-[#D4AF37] font-bold">✦ Shopkeeper Panel</p>
-          <p className="text-sm font-bold text-[#7B1E3A] truncate mt-1">{user?.name || 'Ramesh'}</p>
+          <p className="text-sm font-bold text-[#7B1E3A] truncate mt-1">{user?.name || ''}</p>
         </div>
         <nav className="space-y-2 flex-1">
           {links.map(l => (

@@ -25,7 +25,7 @@ export default function UserDashboard() {
         />
         <div className="relative z-10 w-full flex items-center">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white m-0 leading-tight min-h-[2.5rem]" style={{ fontFamily: 'Playfair Display' }}>
-            Welcome back, {user?.name || 'Jayasudhan'}!
+            Welcome back, {user?.name || ''}!
           </h1>
         </div>
       </motion.div>

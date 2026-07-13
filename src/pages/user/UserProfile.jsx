@@ -12,7 +12,7 @@ export default function UserProfile() {
     navigate('/');
   };
 
-  const displayName = user?.name || 'Jayasudhan';
+  const displayName = user?.name || '';
 
   return (
     <div className="space-y-6">

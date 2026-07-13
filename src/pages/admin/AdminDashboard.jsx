@@ -20,7 +20,7 @@ export default function AdminDashboard() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#D4AF37]/20">
         <div>
           <span className="text-xs uppercase font-bold tracking-widest text-[#D4AF37] block mb-1">
-            ✦ Welcome back, {user?.name || 'Administrator'}!
+            ✦ Welcome back, {user?.name || ''}!
           </span>
           <h1 className="text-2xl sm:text-3xl font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>
             Admin Command Center

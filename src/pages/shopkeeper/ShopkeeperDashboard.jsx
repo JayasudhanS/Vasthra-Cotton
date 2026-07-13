@@ -13,7 +13,7 @@ const cards = [
 
 export default function ShopkeeperDashboard() {
   const { user } = useAuth();
-  const displayName = user?.name || 'Ramesh';
+  const displayName = user?.name || '';
   const recent = products.slice(-6).reverse();
   return (
     <div className="space-y-8">

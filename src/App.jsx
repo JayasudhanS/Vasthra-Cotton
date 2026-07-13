@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/shared/Navbar';
 import Footer from './components/shared/Footer';
 import ScrollToTop from './components/shared/ScrollToTop';
+import ProtectedRoute from './components/shared/ProtectedRoute';
 
 // Pages
 import LandingPage from './pages/LandingPage';
@@ -54,29 +55,31 @@ export default function App() {
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/product/:id" element={<ProductDetailPage />} />
           <Route path="/categories" element={<CategoriesPage />} />
-          <Route path="/wishlist" element={<WishlistPage />} />
-          <Route path="/cart" element={<CartPage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/shops" element={<ShopsPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
-          <Route path="/order-summary" element={<OrderSummaryPage />} />
-          <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
 
           {/* Auth */}
           <Route path="/portal" element={<PortalPage />} />
           <Route path="/login/:role" element={<LoginPage />} />
           <Route path="/register/:role" element={<RegisterPage />} />
 
-          {/* User */}
-          <Route path="/user" element={<UserLayout />}>
+          {/* Protected: Requires any authenticated user */}
+          <Route path="/wishlist" element={<ProtectedRoute><WishlistPage /></ProtectedRoute>} />
+          <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
+          <Route path="/order-summary" element={<ProtectedRoute><OrderSummaryPage /></ProtectedRoute>} />
+          <Route path="/order-confirmation" element={<ProtectedRoute><OrderConfirmationPage /></ProtectedRoute>} />
+
+          {/* User Dashboard - role: user */}
+          <Route path="/user" element={<ProtectedRoute allowedRoles={['user']}><UserLayout /></ProtectedRoute>}>
             <Route path="dashboard" element={<UserDashboard />} />
             <Route path="orders" element={<UserOrders />} />
             <Route path="profile" element={<UserProfile />} />
           </Route>
 
-          {/* Shopkeeper */}
-          <Route path="/shopkeeper" element={<ShopkeeperLayout />}>
+          {/* Shopkeeper Dashboard - role: shopkeeper */}
+          <Route path="/shopkeeper" element={<ProtectedRoute allowedRoles={['shopkeeper']}><ShopkeeperLayout /></ProtectedRoute>}>
             <Route path="dashboard" element={<ShopkeeperDashboard />} />
             <Route path="products" element={<ShopkeeperProducts />} />
             <Route path="add-product" element={<AddProduct />} />
@@ -84,8 +87,8 @@ export default function App() {
             <Route path="profile" element={<ShopkeeperProfile />} />
           </Route>
 
-          {/* Admin */}
-          <Route path="/admin" element={<AdminLayout />}>
+          {/* Admin Dashboard - role: admin */}
+          <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout /></ProtectedRoute>}>
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="orders" element={<AdminOrders />} />
             <Route path="pending-products" element={<AdminPendingProducts />} />

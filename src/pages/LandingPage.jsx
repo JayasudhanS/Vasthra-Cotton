@@ -7,7 +7,8 @@ import { Autoplay, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import ProductCard, { StarRating } from '../components/shared/ProductCard';
-import { products, categories, shops, testimonials, festivalBanners } from '../data';
+import { categories, shops, testimonials, festivalBanners } from '../data';
+import { useProducts } from '../context/ProductContext';
 
 /* ─── Hero ─── */
 function Hero() {
@@ -172,25 +173,106 @@ function FeaturedCategories() {
   );
 }
 
-/* ─── Featured Products ─── */
-function FeaturedProducts() {
+/* ─── Trending Royal Weaves ─── */
+function TrendingRoyalWeaves({ approvedProducts }) {
+  // Display the most popular or highest-selling products first. If unavailable, use newest.
+  const sorted = [...approvedProducts].sort((a, b) => {
+    const popA = (a.rating || 0) * (a.reviews || 1) + (a.salesCount || 0);
+    const popB = (b.rating || 0) * (b.reviews || 1) + (b.salesCount || 0);
+    if (popB !== popA) return popB - popA;
+    return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+  });
+
   return (
     <section className="py-14 sm:py-20 lg:py-24 bg-white border-y border-[#D4AF37]/10 w-full overflow-hidden">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
-        <h2 className="section-title">Featured Sarees</h2>
-        <p className="section-subtitle">Handpicked selections representing India's finest craftsmanship</p>
+        <h2 className="section-title">Trending Royal Weaves</h2>
+        <p className="section-subtitle">Most popular and sought-after heirloom masterpieces</p>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6 lg:gap-8">
-          {products.filter(p => p.featured).slice(0, 8).map((p, i) => (
-            <ProductCard key={p.id} product={p} index={i} />
-          ))}
-        </div>
+        {sorted.length === 0 ? (
+          <div className="card-base p-16 text-center max-w-lg mx-auto my-8 bg-[#FFF8F0]/30 border-dashed">
+            <h3 className="text-xl font-bold text-[#7B1E3A] mb-2" style={{ fontFamily: 'Playfair Display' }}>
+              No Products Available
+            </h3>
+            <p className="text-sm text-[#6B4A48] m-0">Check back soon for new artisan uploads and verified weaves.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6 lg:gap-8">
+            {sorted.slice(0, 8).map((p, i) => (
+              <ProductCard key={p.id} product={p} index={i} />
+            ))}
+          </div>
+        )}
 
         <div className="text-center mt-12 lg:mt-16">
           <Link to="/products" className="btn-maroon !px-8 !py-3.5 no-underline shadow-md">
             View All Collection <FiArrowRight className="text-base" />
           </Link>
         </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── New Artisan Arrivals ─── */
+function NewArtisanArrivals({ approvedProducts }) {
+  // Display recently approved products sorted by newest first
+  const sorted = [...approvedProducts].sort((a, b) => {
+    return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+  });
+
+  return (
+    <section className="py-14 sm:py-20 lg:py-24 bg-[#FFF8F0]/60 border-b border-[#D4AF37]/10 w-full overflow-hidden">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
+        <h2 className="section-title">New Artisan Arrivals</h2>
+        <p className="section-subtitle">Freshly verified additions directly from weaver clusters across India</p>
+
+        {sorted.length === 0 ? (
+          <div className="card-base p-16 text-center max-w-lg mx-auto my-8 bg-white/70 border-dashed">
+            <h3 className="text-xl font-bold text-[#7B1E3A] mb-2" style={{ fontFamily: 'Playfair Display' }}>
+              No Products Available
+            </h3>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6 lg:gap-8">
+            {sorted.slice(0, 8).map((p, i) => (
+              <ProductCard key={p.id} product={p} index={i} />
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+/* ─── Curated For Your Wardrobe ─── */
+function CuratedForYourWardrobe({ approvedProducts }) {
+  // Display mixed selection, avoiding duplicate products already shown in top slots whenever possible
+  const sortedTrendingIds = new Set([...approvedProducts].sort((a, b) => ((b.rating || 0) - (a.rating || 0))).slice(0, 4).map(p => p.id));
+  const sortedNewestIds = new Set([...approvedProducts].sort((a, b) => (new Date(b.createdAt || 0) - new Date(a.createdAt || 0))).slice(0, 4).map(p => p.id));
+  
+  const uniqueSelection = approvedProducts.filter(p => !sortedTrendingIds.has(p.id) && !sortedNewestIds.has(p.id));
+  const displayList = uniqueSelection.length > 0 ? uniqueSelection : approvedProducts;
+
+  return (
+    <section className="py-14 sm:py-20 lg:py-24 bg-white border-b border-[#D4AF37]/10 w-full overflow-hidden">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
+        <h2 className="section-title">Curated For Your Wardrobe</h2>
+        <p className="section-subtitle">Exclusive selections customized for weddings, celebrations, and festive gatherings</p>
+
+        {displayList.length === 0 ? (
+          <div className="card-base p-16 text-center max-w-lg mx-auto my-8 bg-[#FFF8F0]/30 border-dashed">
+            <h3 className="text-xl font-bold text-[#7B1E3A] mb-2" style={{ fontFamily: 'Playfair Display' }}>
+              No Products Available
+            </h3>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6 lg:gap-8">
+            {displayList.slice(0, 8).map((p, i) => (
+              <ProductCard key={p.id} product={p} index={i} />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
@@ -361,6 +443,7 @@ function Testimonials() {
 /* ─── Main Landing Page ─── */
 export default function LandingPage() {
   const { user, role } = useAuth();
+  const { approvedProducts } = useProducts();
 
   if (user) {
     const dashboardPath = role === 'admin' ? '/admin/dashboard' : role === 'shopkeeper' ? '/shopkeeper/dashboard' : '/user/dashboard';
@@ -372,7 +455,9 @@ export default function LandingPage() {
       <Hero />
       <StatisticsSection />
       <FeaturedCategories />
-      <FeaturedProducts />
+      <TrendingRoyalWeaves approvedProducts={approvedProducts} />
+      <NewArtisanArrivals approvedProducts={approvedProducts} />
+      <CuratedForYourWardrobe approvedProducts={approvedProducts} />
       <TrendingShops />
       <FestivalCollections />
       <WhyChooseUs />

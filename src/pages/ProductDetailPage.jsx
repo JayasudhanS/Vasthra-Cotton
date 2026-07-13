@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { FiHeart, FiShoppingBag, FiShare2, FiTruck, FiShield, FiRefreshCw, FiAward, FiCheckCircle } from 'react-icons/fi';
 import { StarRating } from '../components/shared/ProductCard';
 import ProductCard from '../components/shared/ProductCard';
-import { products, shops } from '../data';
+import { shops } from '../data';
+import { useProducts } from '../context/ProductContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -13,29 +14,18 @@ import BreadcrumbBack from '../components/shared/BreadcrumbBack';
 export default function ProductDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const product = products.find(p => p.id === +id) || {
-    id: '',
-    name: '',
-    price: 0,
-    offerPrice: 0,
-    rating: 0,
-    reviews: 0,
-    images: ['/images/placeholder.png'],
-    image: '/images/placeholder.png',
-    color: '',
-    fabric: '',
-    description: '',
-    specifications: { Fabric: '', Color: '', Length: '', Blouse: '', Wash: '', Weight: '' },
-    shopName: '',
-    category: '',
-    shopId: ''
-  };
-  const shop = shops.find(s => s.id === product?.shopId) || { id: '', name: '', owner: '', location: '', logo: '/images/placeholder.png', products: '', rating: '' };
-  const related = products.filter(p => p.categoryId === product?.categoryId && p.id !== product?.id).slice(0, 4);
+  const { products: allProducts, approvedProducts } = useProducts();
+  const { user, role } = useAuth();
+
+  const product = allProducts.find(p => String(p.id) === String(id));
+  const isAuthorized = product && (product.status === 'approved' || role === 'admin' || String(product.ownerId) === String(user?.uid));
+
+  const shop = shops.find(s => String(s.id) === String(product?.shopId)) || { id: '', name: product?.shopName || 'Artisan Weave House', owner: product?.ownerName || 'Master Weaver', location: 'India', logo: product?.image || '/images/placeholder.png', products: 'Handloom Cluster', rating: product?.rating || 4.9 };
+  const related = approvedProducts.filter(p => (p.category === product?.category || p.fabric === product?.fabric) && String(p.id) !== String(product?.id)).slice(0, 4);
   const [selectedImg, setSelectedImg] = useState(0);
   const { isInWishlist, toggleWishlist } = useWishlist();
   const { addToCart } = useCart();
-  const { user } = useAuth();
+
   const liked = product?.id ? isInWishlist(product.id) : false;
   const discount = typeof product?.price === 'number' && product.price > 0 && typeof product?.offerPrice === 'number' ? Math.round(((product.price - product.offerPrice) / product.price) * 100) : 0;
 
@@ -61,6 +51,28 @@ export default function ProductDetailPage() {
     // Navigate to cart to show the added item in the new Cart experience
     navigate('/cart');
   };
+
+  if (!product || !isAuthorized) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 py-24 text-center">
+        <div className="card-base p-12 bg-white border border-[#D4AF37]/20 shadow-sm max-w-lg mx-auto">
+          <div className="w-16 h-16 rounded-full bg-[#7B1E3A]/10 text-[#7B1E3A] flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+            ✦
+          </div>
+          <h2 className="text-2xl font-bold text-[#7B1E3A] mb-3" style={{ fontFamily: 'Playfair Display' }}>
+            Saree Not Found
+          </h2>
+          <p className="text-sm text-[#6B4A48] mb-6 font-light">
+            This saree is currently unavailable, undergoing Silk Mark verification, or has been sold out from the weaver cluster.
+          </p>
+          <Link to="/products" className="btn-golden !py-3 !px-8 !text-xs no-underline inline-block">
+            Browse Live Catalogue
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-7xl mx-auto px-4 lg:px-8 py-8 sm:py-12">
       {/* Breadcrumb & Back */}
