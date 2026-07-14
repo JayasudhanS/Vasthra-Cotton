@@ -37,14 +37,15 @@ export default function Footer() {
           </p>
           <form onSubmit={handleSubscribe} className="flex items-center gap-2 sm:gap-3 max-w-md mx-auto">
             <div className="relative flex-1">
-              <FiMail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/40" size={16} />
+              <FiMail className="absolute top-1/2 -translate-y-1/2 text-white/40 pointer-events-none" style={{ left: '18px' }} size={18} />
               <input
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 placeholder="Enter your email"
                 required
-                className="w-full h-11 sm:h-12 pl-10 pr-4 bg-white/10 border border-white/20 rounded-xl text-sm text-white placeholder-white/40 focus:outline-none focus:border-[#D4AF37]/60 focus:ring-2 focus:ring-[#D4AF37]/15 transition-all"
+                style={{ paddingLeft: '58px' }}
+                className="w-full h-11 sm:h-12 pr-4 bg-white/10 border border-white/20 rounded-xl text-sm text-white placeholder-white/40 focus:outline-none focus:border-[#D4AF37]/60 focus:ring-2 focus:ring-[#D4AF37]/15 transition-all"
               />
             </div>
             <button type="submit" className="h-11 sm:h-12 px-5 sm:px-6 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#E8C94A] text-[#4A2C2A] font-bold text-xs sm:text-sm flex items-center gap-1.5 hover:shadow-lg hover:-translate-y-0.5 transition-all cursor-pointer border-none flex-shrink-0">
@@ -69,7 +70,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-[13px] sm:text-sm leading-relaxed text-white/60 mb-5 max-w-sm">
-              India's premier multi-vendor saree marketplace. Celebrating our rich textile heritage by bringing authentic Kanjivaram, Banarasi, and handloom masterpieces directly from weavers to your doorstep.
+              India's premier multi-vendor saree marketplace. Celebrating our rich textile heritage by bringing authentic Kanjivaram, Banarasi, and handloom weaves directly from weavers to your doorstep.
             </p>
 
             <div className="flex gap-2.5">
@@ -132,7 +133,7 @@ export default function Footer() {
             <div className="space-y-3.5">
               {[
                 { icon: <FiMapPin size={15} className="text-[#D4AF37] flex-shrink-0 mt-0.5" />, text: '2nd Street, Kamaraj Nagar, Aundipatty - 625512, Tamil Nadu' },
-                { icon: <FiPhone size={15} className="text-[#D4AF37] flex-shrink-0" />, text: '+91 98765 43210 (Mon-Sat, 10am-7pm)' },
+                { icon: <FiPhone size={15} className="text-[#D4AF37] flex-shrink-0" />, text: '+91 63821 34040 (Mon-Sat, 10am-7pm)' },
                 { icon: <FiMail size={15} className="text-[#D4AF37] flex-shrink-0" />, text: 'support@vasthracotton.com' },
               ].map((c, i) => (
                 <div key={i} className="flex items-start gap-2.5 text-[13px] sm:text-sm text-white/60 leading-snug">

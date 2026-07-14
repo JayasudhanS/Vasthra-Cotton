@@ -37,7 +37,7 @@ export default function SearchPage() {
             <FiSearch className="text-[#D4AF37]" /> Search Results
           </h1>
           <p className="text-xs sm:text-sm text-[#6B4A48] m-0 mt-1 font-light">
-            Found <span className="font-bold text-[#7B1E3A]">{results.length}</span> handloom masterpieces matching "<span className="font-semibold text-[#7B1E3A]">{query}</span>"
+            Found <span className="font-bold text-[#7B1E3A]">{results.length}</span> handloom weaves matching "<span className="font-semibold text-[#7B1E3A]">{query}</span>"
           </p>
         </div>
         <Link to="/products" className="btn-outline-maroon !py-2 !px-5 !text-xs no-underline font-semibold flex items-center gap-1.5 w-fit">

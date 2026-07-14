@@ -35,7 +35,7 @@ export default function CategoriesPage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-90 group-hover:opacity-100 transition-opacity" />
                 <div className="relative z-10 p-5 sm:p-6 transform group-hover:-translate-y-1 transition-transform duration-300">
                   <span className="text-[10px] uppercase tracking-widest text-[#D4AF37] font-bold block mb-1">
-                    ✦ {typeof cat?.count === 'number' ? `${cat.count} Masterpieces` : ''}
+                    ✦ {typeof cat?.count === 'number' ? `${cat.count} Weaves` : ''}
                   </span>
                   <h3 className="text-white text-xl sm:text-2xl font-bold mb-1 group-hover:text-[#D4AF37] transition-colors" style={{ fontFamily: 'Playfair Display' }}>
                     {cat?.name || ''}

@@ -102,7 +102,7 @@ export default function ProductsPage() {
             </span>
           )}
           <h2 className="text-2xl lg:text-3xl font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>
-            {shop ? `${shop.name} Collection` : params.get('filter') === 'featured' ? 'Featured Masterpieces' : 'All Sarees Collection'}
+            {shop ? `${shop.name} Collection` : params.get('filter') === 'featured' ? 'Featured Weaves' : 'All Sarees Collection'}
           </h2>
           <p className="text-sm text-[#6B4A48] mt-1 m-0 font-medium">
             Showing <span className="font-bold text-[#7B1E3A]">{filtered.length}</span> handpicked sarees

@@ -13,7 +13,7 @@ export default function UserDashboard() {
 
   return (
     <div className="space-y-6 sm:space-y-8">
-      {/* Welcome banner - Simplified */}
+      {/* Dashboard Overview Banner */}
       <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
@@ -23,10 +23,11 @@ export default function UserDashboard() {
           className="absolute inset-0 opacity-20 bg-black/30"
           style={{ backgroundImage: 'url("https://images.pexels.com/photos/2814808/pexels-photo-2814808.jpeg?auto=compress&cs=tinysrgb&w=800")', backgroundSize: 'cover', backgroundPosition: 'center' }}
         />
-        <div className="relative z-10 w-full flex items-center">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white m-0 leading-tight min-h-[2.5rem]" style={{ fontFamily: 'Playfair Display' }}>
-            Welcome back, {user?.name || ''}!
-          </h1>
+        <div className="relative z-10 w-full flex flex-col justify-center">
+          <span className="text-[10px] sm:text-xs uppercase tracking-widest font-bold text-[#D4AF37] block mb-1">✦ Wardrobe Overview</span>
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white m-0 leading-tight" style={{ fontFamily: 'Playfair Display' }}>
+            Curated Weaves & Exclusive Member Perks
+          </h2>
         </div>
       </motion.div>
 

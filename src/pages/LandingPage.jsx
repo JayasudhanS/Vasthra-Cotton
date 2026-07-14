@@ -150,7 +150,7 @@ function FeaturedCategories() {
         </Link>
       </div>
       <h2 className="section-title !text-left !mb-1 sm:!mb-2" style={{ fontFamily: 'Playfair Display' }}>Explore Royal Collections</h2>
-      <p className="section-subtitle !text-left !mb-8 sm:!mb-10 text-[#4A2C2A]/80">Browse through our handpicked regional weaves and heritage masterpieces</p>
+      <p className="section-subtitle !text-left !mb-8 sm:!mb-10 text-[#4A2C2A]/80">Browse through our handpicked regional collections and heritage weaves</p>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-8">
         {categories.slice(0, 8).map((cat, i) => (
@@ -163,7 +163,7 @@ function FeaturedCategories() {
                 <h3 className="text-[#4A2C2A] text-base sm:text-lg font-bold mb-0.5 tracking-wide group-hover:text-[#7B1E3A] transition-colors leading-tight" style={{ fontFamily: 'Playfair Display' }}>
                   {cat.name}
                 </h3>
-                <p className="text-[#7B1E3A] text-xs font-semibold m-0">{cat.count} Masterpieces</p>
+                <p className="text-[#7B1E3A] text-xs font-semibold m-0">{cat.count} Weaves</p>
               </div>
             </Link>
           </motion.div>
@@ -187,7 +187,7 @@ function TrendingRoyalWeaves({ approvedProducts }) {
     <section className="py-14 sm:py-20 lg:py-24 bg-white border-y border-[#D4AF37]/10 w-full overflow-hidden">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12">
         <h2 className="section-title">Trending Royal Weaves</h2>
-        <p className="section-subtitle">Most popular and sought-after heirloom masterpieces</p>
+        <p className="section-subtitle">Most popular and sought-after heirloom weaves</p>
 
         {sorted.length === 0 ? (
           <div className="card-base p-16 text-center max-w-lg mx-auto my-8 bg-[#FFF8F0]/30 border-dashed">

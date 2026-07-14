@@ -28,7 +28,7 @@ export default function WishlistPage() {
           </h1>
         </div>
         <span className="badge badge-warning !text-xs font-bold px-3.5 py-1.5">
-          {enrichedWishlist.length} Masterpieces
+          {enrichedWishlist.length} Weaves
         </span>
       </div>
 

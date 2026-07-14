@@ -36,7 +36,7 @@ export default function ContactPage() {
             <div className="space-y-4">
               {[
                 { icon: <FiMapPin size={18} />, title: 'Vasthra Cotton Bazaar', text: '2nd Street, Kamaraj Nagar, Aundipatty - 625512, Tamil Nadu' },
-                { icon: <FiPhone size={18} />, title: 'Bridal Helpline & WhatsApp', text: '+91 98765 43210 (Mon-Sat, 9am - 8pm)' },
+                { icon: <FiPhone size={18} />, title: 'Bridal Helpline & WhatsApp', text: '+91 63821 34040 (Mon-Sat, 9am - 8pm)' },
                 { icon: <FiMail size={18} />, title: 'Concierge Email Support', text: 'concierge@vasthracotton.com' },
                 { icon: <FiClock size={18} />, title: 'Artisan Support Hours', text: 'Monday to Saturday: 9:00 AM – 8:00 PM IST' }
               ].map((c, i) => (
@@ -78,21 +78,21 @@ export default function ContactPage() {
                 <h3 className="text-xl sm:text-2xl font-bold text-[#7B1E3A] m-0 pb-3 border-b border-[#D4AF37]/15" style={{ fontFamily: 'Playfair Display' }}>
                   Send an Inquiry to Our Stylists
                 </h3>
-                
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
                     <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block mb-1.5">Your Full Name *</label>
-                    <input type="text" required placeholder="e.g. Customer Name" value={form.name} onChange={e => setForm({...form, name: e.target.value})} className="input-field !h-12 !text-sm" />
+                    <input type="text" required placeholder="e.g. Customer Name" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} className="input-field !h-12 !text-sm" />
                   </div>
                   <div>
                     <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block mb-1.5">Email Address *</label>
-                    <input type="email" required placeholder="e.g. customer@example.com" value={form.email} onChange={e => setForm({...form, email: e.target.value})} className="input-field !h-12 !text-sm" />
+                    <input type="email" required placeholder="e.g. customer@example.com" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className="input-field !h-12 !text-sm" />
                   </div>
                 </div>
 
                 <div>
                   <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block mb-1.5">Inquiry Subject *</label>
-                  <select value={form.subject} onChange={e => setForm({...form, subject: e.target.value})} className="select-field !h-12 !text-sm">
+                  <select value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })} className="select-field !h-12 !text-sm">
                     <option value="Bridal Styling">Bridal Saree & Trousseau Styling</option>
                     <option value="Silk Mark">Silk Mark Authenticity & Zari Purity</option>
                     <option value="Weaver Onboarding">Weaver House Onboarding & KYC</option>
@@ -103,7 +103,7 @@ export default function ContactPage() {
 
                 <div>
                   <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block mb-1.5">Your Message / Specifications *</label>
-                  <textarea required placeholder="Please describe your requirements, saree preferences, or order details..." value={form.message} onChange={e => setForm({...form, message: e.target.value})} rows={5}
+                  <textarea required placeholder="Please describe your requirements, saree preferences, or order details..." value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} rows={5}
                     className="textarea-field !text-sm" />
                 </div>
 

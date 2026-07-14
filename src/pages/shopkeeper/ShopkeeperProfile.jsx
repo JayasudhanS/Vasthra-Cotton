@@ -44,7 +44,7 @@ export default function ShopkeeperProfile() {
             { icon: <FiMail />, label: 'Official Business Email', value: user?.email || '' },
             { icon: <FiPhone />, label: 'Artisan Helpline', value: user?.phone || '' },
             { icon: <FiMapPin />, label: 'Loom Cluster Location', value: user?.address || '' },
-            { icon: <FiPackage />, label: 'Live Masterpieces in Vasthra Cotton', value: '0 Sarees Active' },
+            { icon: <FiPackage />, label: 'Live Weaves in Vasthra Cotton', value: '0 Sarees Active' },
             { icon: <FiStar />, label: 'Connoisseur Rating', value: '0.0 ★ (0 Verified Orders)' }
           ].map((f, i) => (
             <div key={i} className="flex items-start gap-4 p-4 bg-[#FFF8F0]/60 rounded-xl border border-[#D4AF37]/15">

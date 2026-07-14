@@ -318,7 +318,7 @@ export default function AddProduct() {
           <FiCheckCircle />
         </div>
         <h2 className="text-2xl sm:text-3xl font-bold text-[#7B1E3A] mb-2" style={{ fontFamily: 'Playfair Display' }}>
-          Masterpiece Submitted!
+          Weave Submitted!
         </h2>
         <span className="badge badge-warning text-xs font-bold px-4 py-1.5 mt-2">
           ⏳ Pending Quality Check & Silk Mark Verification
@@ -367,7 +367,7 @@ export default function AddProduct() {
           </h3>
           <div className="space-y-4">
             <div>
-              <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block mb-1.5">Saree Title / Masterpiece Name *</label>
+              <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block mb-1.5">Saree Title / Weave Name *</label>
               <input type="text" required value={form.name} onChange={upd('name')} placeholder="e.g. Traditional Pure Kanjivaram Bridal Silk Saree with Crimson Zari Border" className="input-field !h-12 !text-sm" />
             </div>
 

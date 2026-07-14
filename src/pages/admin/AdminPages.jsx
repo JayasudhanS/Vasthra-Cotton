@@ -114,7 +114,7 @@ export function AdminApprovedProducts() {
           <h1 className="text-2xl sm:text-3xl font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>Verified & Approved Sarees</h1>
         </div>
         <span className="badge badge-success !text-xs font-bold px-3.5 py-1.5">
-          {approved.length} Masterpieces Live
+          {approved.length} Weaves Live
         </span>
       </div>
 
@@ -122,7 +122,7 @@ export function AdminApprovedProducts() {
         <table className="table-base w-full">
           <thead>
             <tr>
-              <th className="!text-xs uppercase tracking-wider">Saree Masterpiece</th>
+              <th className="!text-xs uppercase tracking-wider">Saree Weave</th>
               <th className="!text-xs uppercase tracking-wider">Weave House / Shop</th>
               <th className="!text-xs uppercase tracking-wider">Offer Price</th>
               <th className="!text-xs uppercase tracking-wider">Customer Rating</th>
@@ -351,7 +351,7 @@ export function AdminCategories() {
               <input type="text" required placeholder="e.g. Chanderi Handloom" value={newCat.name} onChange={e => setNewCat({ ...newCat, name: e.target.value })} className="input-field !h-10 !text-xs bg-white" />
             </div>
             <div>
-              <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block mb-1.5">Est. Masterpieces Count</label>
+              <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block mb-1.5">Est. Weaves Count</label>
               <input type="number" required placeholder="100" value={newCat.count} onChange={e => setNewCat({ ...newCat, count: e.target.value })} className="input-field !h-10 !text-xs bg-white" />
             </div>
           </div>

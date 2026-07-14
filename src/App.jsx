@@ -67,17 +67,19 @@ export default function App() {
           <Route path="/login/:role" element={<LoginPage />} />
           <Route path="/register/:role" element={<RegisterPage />} />
 
-          {/* Protected: Requires any authenticated user */}
-          <Route path="/wishlist" element={<ProtectedRoute><WishlistPage /></ProtectedRoute>} />
-          <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
-          <Route path="/order-summary" element={<ProtectedRoute><OrderSummaryPage /></ProtectedRoute>} />
-          <Route path="/order-confirmation" element={<ProtectedRoute><OrderConfirmationPage /></ProtectedRoute>} />
-
-          {/* User Dashboard - role: user */}
-          <Route path="/user" element={<ProtectedRoute allowedRoles={['user']}><UserLayout /></ProtectedRoute>}>
-            <Route path="dashboard" element={<UserDashboard />} />
-            <Route path="orders" element={<UserOrders />} />
-            <Route path="profile" element={<UserProfile />} />
+          {/* Persistent User Dashboard Layout across every logged-in User page */}
+          <Route element={<ProtectedRoute><UserLayout /></ProtectedRoute>}>
+            <Route path="/user/dashboard" element={<UserDashboard />} />
+            <Route path="/wishlist" element={<WishlistPage />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/user/orders" element={<UserOrders />} />
+            <Route path="/user/orders/:id" element={<UserOrders />} />
+            <Route path="/user/profile" element={<UserProfile />} />
+            <Route path="/user/address" element={<UserProfile />} />
+            <Route path="/user/notifications" element={<UserProfile />} />
+            <Route path="/user/settings" element={<UserProfile />} />
+            <Route path="/order-summary" element={<OrderSummaryPage />} />
+            <Route path="/order-confirmation" element={<OrderConfirmationPage />} />
           </Route>
 
           {/* Shopkeeper Dashboard - role: shopkeeper */}

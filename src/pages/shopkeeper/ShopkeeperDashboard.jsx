@@ -5,7 +5,7 @@ import { products } from '../../data';
 import { useAuth } from '../../context/AuthContext';
 
 const cards = [
-  { title: 'Total Masterpieces', value: products.length || 0, icon: <FiPackage size={22} />, color: 'from-[#7B1E3A] to-[#9B2E4A]', change: 'Active Catalogue' },
+  { title: 'Total Weaves', value: products.length || 0, icon: <FiPackage size={22} />, color: 'from-[#7B1E3A] to-[#9B2E4A]', change: 'Active Catalogue' },
   { title: 'Weave Categories', value: 0, icon: <FiTrendingUp size={22} />, color: 'from-[#D4AF37] to-[#E8C94A]', change: 'Dynamic Categories' },
   { title: 'Total Drape Views', value: 0, icon: <FiTrendingUp size={22} />, color: 'from-[#2D8F5E] to-[#3AAF6E]', change: 'Live Analytics' },
   { title: 'Verified Weavers', value: '0%', icon: <FiPackage size={22} />, color: 'from-[#5A1028] to-[#7B1E3A]', change: 'Silk Mark Certified' },
@@ -73,7 +73,7 @@ export default function ShopkeeperDashboard() {
           <table className="table-base w-full">
             <thead>
               <tr>
-                <th className="!text-xs uppercase tracking-wider">Saree Masterpiece</th>
+                <th className="!text-xs uppercase tracking-wider">Saree Weave</th>
                 <th className="!text-xs uppercase tracking-wider">Weave Category</th>
                 <th className="!text-xs uppercase tracking-wider">Offer Price</th>
                 <th className="!text-xs uppercase tracking-wider">Stock Status</th>

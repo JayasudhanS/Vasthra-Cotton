@@ -45,7 +45,7 @@ export default function AboutPage() {
       {/* Stat Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {[{ icon: <FiUsers size={26} />, num: '10,000+', label: 'Connoisseur Members' }, { icon: <FiShield size={26} />, num: '100%', label: 'Silk Mark Certified' },
-          { icon: <FiStar size={26} />, num: '500+', label: 'Masterpiece Weaves' }, { icon: <FiHeart size={26} />, num: '4.9 ★', label: 'Artisan Rating' }].map((s, i) => (
+          { icon: <FiStar size={26} />, num: '500+', label: 'Heirloom Weaves' }, { icon: <FiHeart size={26} />, num: '4.9 ★', label: 'Artisan Rating' }].map((s, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
             className="card-base p-6 text-center bg-white border border-[#D4AF37]/20 shadow-sm hover:shadow-md transition-all">
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#7B1E3A] to-[#9B2E4A] text-white flex items-center justify-center mx-auto mb-4 shadow-md">{s.icon}</div>

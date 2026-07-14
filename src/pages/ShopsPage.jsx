@@ -58,7 +58,7 @@ export default function ShopsPage() {
               <div className="pt-4 border-t border-[#D4AF37]/15">
                 <div className="flex items-center justify-between mb-4 text-xs font-medium text-[#6B4A48]">
                   <span>Catalogue Size</span>
-                  <span className="font-bold text-[#7B1E3A]">{typeof shop?.products === 'number' ? `${shop.products} Masterpieces` : ''}</span>
+                  <span className="font-bold text-[#7B1E3A]">{typeof shop?.products === 'number' ? `${shop.products} Weaves` : ''}</span>
                 </div>
                 <Link to={`/products?shop=${shop.id}`} className="btn-golden !py-2.5 !px-6 !text-xs w-full justify-center no-underline shadow-sm block">
                   Explore Weaves
