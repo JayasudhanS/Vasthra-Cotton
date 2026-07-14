@@ -31,7 +31,7 @@ export const PREDEFINED_WEAVES = [
 export default function AddProduct() {
   const { addProduct } = useProducts();
   const { user } = useAuth();
-  
+
   // File upload refs & states
   const fileInputRef = useRef(null);
   const replaceInputRef = useRef(null);
@@ -232,8 +232,8 @@ export default function AddProduct() {
   // Calculate total combined upload progress
   const totalProgress = selectedFiles.length > 0
     ? Math.round(
-        selectedFiles.reduce((acc, item) => acc + (uploadProgresses[item.id] || 0), 0) / selectedFiles.length
-      )
+      selectedFiles.reduce((acc, item) => acc + (uploadProgresses[item.id] || 0), 0) / selectedFiles.length
+    )
     : 0;
 
   const handleSubmit = async (e) => {
@@ -359,7 +359,7 @@ export default function AddProduct() {
 
       <motion.form initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} onSubmit={handleSubmit}
         className="card-base p-8 sm:p-10 space-y-8 bg-white border border-[#D4AF37]/20 shadow-lg">
-        
+
         {/* Basic Details */}
         <div>
           <h3 className="text-base font-bold text-[#7B1E3A] uppercase tracking-wider mb-4 pb-2 border-b border-[#D4AF37]/15">
@@ -385,9 +385,8 @@ export default function AddProduct() {
                     setDropdownOpen(!dropdownOpen);
                   }}
                   onKeyDown={handleKeyDown}
-                  className={`input-field !h-12 !text-sm flex items-center justify-between cursor-pointer select-none bg-white transition-all ${
-                    dropdownOpen ? 'border-[#7B1E3A] ring-2 ring-[#7B1E3A]/15' : ''
-                  }`}
+                  className={`input-field !h-12 !text-sm flex items-center justify-between cursor-pointer select-none bg-white transition-all ${dropdownOpen ? 'border-[#7B1E3A] ring-2 ring-[#7B1E3A]/15' : ''
+                    }`}
                 >
                   <span className={form.category ? 'text-[#4A2C2A] font-medium truncate' : 'text-gray-400'}>
                     {form.category || 'Select Weave Option'}
@@ -415,13 +414,12 @@ export default function AddProduct() {
                             aria-selected={isSelected}
                             onClick={() => handleSelectWeave(weaveName)}
                             onMouseEnter={() => setActiveIdx(index)}
-                            className={`px-4 py-2.5 text-sm sm:text-[15px] cursor-pointer transition-colors flex items-center justify-between font-medium leading-normal ${
-                              isSelected
+                            className={`px-4 py-2.5 text-sm sm:text-[15px] cursor-pointer transition-colors flex items-center justify-between font-medium leading-normal ${isSelected
                                 ? 'bg-[#1976D2] text-white font-semibold'
                                 : isHighlighted
                                   ? 'bg-[#1976D2] text-white'
                                   : 'text-[#4A2C2A] hover:bg-[#1976D2] hover:text-white'
-                            }`}
+                              }`}
                           >
                             <span className="truncate">{weaveName}</span>
                           </li>
@@ -614,17 +612,15 @@ export default function AddProduct() {
                 onDragLeave={handleDragLeave}
                 onDragOver={handleDragOver}
                 onDrop={handleDrop}
-                className={`flex flex-col items-center justify-center gap-3.5 p-8 sm:p-12 rounded-2xl border-2 border-dashed transition-all cursor-pointer text-center group ${
-                  isDragging
+                className={`flex flex-col items-center justify-center gap-3.5 p-8 sm:p-12 rounded-2xl border-2 border-dashed transition-all cursor-pointer text-center group ${isDragging
                     ? 'border-[#7B1E3A] bg-[#7B1E3A]/5 scale-[1.01]'
                     : 'border-[#D4AF37]/40 bg-[#FFF8F0]/30 hover:bg-[#FFF8F0]/70 hover:border-[#D4AF37]'
-                }`}
+                  }`}
               >
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-transform shadow-sm ${
-                  isDragging
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-transform shadow-sm ${isDragging
                     ? 'bg-[#7B1E3A]/10 text-[#7B1E3A] scale-110 rotate-3'
                     : 'bg-[#D4AF37]/10 text-[#D4AF37] group-hover:scale-110 group-hover:rotate-3'
-                }`}>
+                  }`}>
                   <FiUploadCloud size={28} />
                 </div>
                 <div>
@@ -672,7 +668,7 @@ export default function AddProduct() {
               ) : submitting ? (
                 <><span className="inline-block w-4 h-4 border-2 border-[#4A2C2A]/30 border-t-[#4A2C2A] rounded-full animate-spin mr-2" /> Saving...</>
               ) : (
-                <><FiSave size={18} /> Submit Masterpiece for Review</>
+                <><FiSave size={18} /> Submit Saree for Review</>
               )}
             </button>
           </div>

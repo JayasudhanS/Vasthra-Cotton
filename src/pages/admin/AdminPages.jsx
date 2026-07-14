@@ -38,7 +38,7 @@ export function AdminPendingProducts() {
         <table className="table-base w-full">
           <thead>
             <tr>
-              <th className="!text-xs uppercase tracking-wider">Saree Masterpiece</th>
+              <th className="!text-xs uppercase tracking-wider">Saree </th>
               <th className="!text-xs uppercase tracking-wider">Weave House / Shop</th>
               <th className="!text-xs uppercase tracking-wider">Offer Price</th>
               <th className="!text-xs uppercase tracking-wider">Verification Status</th>

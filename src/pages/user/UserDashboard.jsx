@@ -37,7 +37,7 @@ export default function UserDashboard() {
             <FiShoppingBag className="w-6 h-6 sm:w-7 sm:h-7" />
           </div>
           <span className="text-xs sm:text-sm font-bold text-[#7B1E3A] tracking-tight m-0">
-            Free Shipping
+            Shipping
           </span>
         </div>
 

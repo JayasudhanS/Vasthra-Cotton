@@ -13,6 +13,7 @@ import WishlistPage from './pages/WishlistPage';
 import CartPage from './pages/CartPage';
 import SearchPage from './pages/SearchPage';
 import ShopsPage from './pages/ShopsPage';
+import ShopStorePage from './pages/ShopStorePage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import OrderSummaryPage from './pages/OrderSummaryPage';
@@ -57,6 +58,7 @@ export default function App() {
           <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/shops" element={<ShopsPage />} />
+          <Route path="/store/:ownerId" element={<ShopStorePage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
 

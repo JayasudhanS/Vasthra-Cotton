@@ -3,11 +3,19 @@ import { FiHeart, FiTrash2, FiShoppingBag, FiArrowRight } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import { useWishlist } from '../context/WishlistContext';
 import { useCart } from '../context/CartContext';
+import { useProducts } from '../context/ProductContext';
 import BreadcrumbBack from '../components/shared/BreadcrumbBack';
 
 export default function WishlistPage() {
   const { wishlist, removeFromWishlist } = useWishlist();
   const { addToCart } = useCart();
+  const { approvedProducts } = useProducts();
+
+  // Enrich wishlist items with full product data from Firestore
+  const enrichedWishlist = wishlist.map(item => {
+    const fullProduct = approvedProducts.find(p => String(p.id) === String(item.id));
+    return fullProduct || item;
+  });
 
   return (
     <div className="max-w-7xl mx-auto px-4 lg:px-8 py-10">
@@ -20,11 +28,11 @@ export default function WishlistPage() {
           </h1>
         </div>
         <span className="badge badge-warning !text-xs font-bold px-3.5 py-1.5">
-          {wishlist.length} Masterpieces
+          {enrichedWishlist.length} Masterpieces
         </span>
       </div>
 
-      {wishlist.length === 0 ? (
+      {enrichedWishlist.length === 0 ? (
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} className="card-base text-center py-20 px-6 max-w-lg mx-auto bg-white border-dashed">
           <div className="w-20 h-20 rounded-full bg-[#7B1E3A]/10 text-[#7B1E3A] flex items-center justify-center mx-auto mb-6 text-3xl shadow-inner">
             <FiHeart />
@@ -41,24 +49,30 @@ export default function WishlistPage() {
         </motion.div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {wishlist.map((product, i) => (
+          {enrichedWishlist.map((product, i) => (
             <motion.div key={product.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
               className="card-base bg-white border border-[#D4AF37]/20 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
               <div>
                 <Link to={`/product/${product.id}`} className="block aspect-[4/5] overflow-hidden relative bg-[#FFF8F0] rounded-t-2xl">
-                  <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
+                  <img src={product.image || product.imageUrl || product.images?.[0] || ''} alt={product.name || ''} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
                   <span className="absolute top-3.5 left-3.5 bg-black/60 backdrop-blur-xs text-white text-[10px] font-bold px-3 py-1.5 rounded-full border border-white/20">
-                    {product.category || 'Pure Silk'}
+                    {product.category || 'Saree'}
                   </span>
                 </Link>
                 <div className="p-5 sm:p-6">
-                  <p className="text-[10px] uppercase tracking-widest text-[#D4AF37] font-bold mb-1 block">{product.shopName}</p>
+                  {product.shopName && (
+                    <p className="text-[10px] uppercase tracking-widest text-[#D4AF37] font-bold mb-1 block">{product.shopName}</p>
+                  )}
                   <Link to={`/product/${product.id}`} className="text-base font-bold text-[#7B1E3A] hover:text-[#D4AF37] transition-colors no-underline line-clamp-1 block" style={{ fontFamily: 'Playfair Display' }}>
-                    {product.name}
+                    {product.name || 'Saree'}
                   </Link>
                   <div className="flex items-center gap-2 mt-2">
-                    <span className="text-lg font-bold text-[#7B1E3A]">₹{product.offerPrice.toLocaleString()}</span>
-                    <span className="text-xs text-[#6B4A48] line-through font-light">₹{product.price.toLocaleString()}</span>
+                    {typeof product.offerPrice === 'number' && product.offerPrice > 0 && (
+                      <span className="text-lg font-bold text-[#7B1E3A]">₹{product.offerPrice.toLocaleString()}</span>
+                    )}
+                    {typeof product.price === 'number' && product.price > 0 && product.price !== product.offerPrice && (
+                      <span className="text-xs text-[#6B4A48] line-through font-light">₹{product.price.toLocaleString()}</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -81,4 +95,3 @@ export default function WishlistPage() {
     </div>
   );
 }
-

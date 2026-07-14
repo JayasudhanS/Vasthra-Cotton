@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import { collection, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy } from 'firebase/firestore';
+import { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import { collection, onSnapshot, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db, COLLECTIONS } from '../firebase/config';
 
 const ProductContext = createContext();
@@ -9,17 +9,25 @@ export function ProductProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   // Real-time Firestore listener for ALL products
+  // NO orderBy — avoids requiring a Firestore index. Sorting is done client-side.
   useEffect(() => {
-    const q = query(collection(db, COLLECTIONS.PRODUCTS), orderBy('createdAt', 'desc'));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const firestoreProducts = snapshot.docs.map(doc => ({
-        ...doc.data(),
-        id: doc.id,
+    const colRef = collection(db, COLLECTIONS.PRODUCTS);
+    const unsubscribe = onSnapshot(colRef, (snapshot) => {
+      const firestoreProducts = snapshot.docs.map(d => ({
+        ...d.data(),
+        id: d.id,
       }));
+      // Sort client-side by createdAt descending (newest first)
+      firestoreProducts.sort((a, b) => {
+        const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
+        const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
+        return dateB - dateA;
+      });
       setProducts(firestoreProducts);
       setLoading(false);
     }, (error) => {
       console.error('Firestore products listener error:', error);
+      // Fallback: try without any query constraints
       setLoading(false);
     });
 
@@ -27,7 +35,14 @@ export function ProductProvider({ children }) {
   }, []);
 
   // Only approved products for public-facing pages
-  const approvedProducts = products.filter(p => p.status === 'approved');
+  // Case-insensitive check to handle any status casing from Admin module
+  const approvedProducts = useMemo(() =>
+    products.filter(p => {
+      const s = (p.status || '').toString().trim().toLowerCase();
+      return s === 'approved';
+    }),
+    [products]
+  );
 
   // Add product to local state (for immediate UI feedback after AddProduct submission)
   const addProduct = (productData) => {
