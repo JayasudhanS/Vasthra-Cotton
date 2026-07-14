@@ -3,13 +3,19 @@ import { Link } from 'react-router-dom';
 import { FiArrowRight, FiHeart, FiShoppingBag, FiAward } from 'react-icons/fi';
 import ProductCard from '../../components/shared/ProductCard';
 import { useAuth } from '../../context/AuthContext';
-import { products } from '../../data';
+import { useProducts } from '../../context/ProductContext';
 
 export default function UserDashboard() {
   const { user } = useAuth();
-  const trending = products.filter(p => p.trending).slice(0, 4);
-  const newArrivals = products.filter(p => p.newArrival).slice(0, 4);
-  const recommended = products.filter(p => p.featured).slice(0, 4);
+  const { approvedProducts } = useProducts();
+
+  const trending = [...approvedProducts].sort((a, b) => ((b.rating || 0) * (b.reviews || 1) + (b.salesCount || 0)) - ((a.rating || 0) * (a.reviews || 1) + (a.salesCount || 0))).slice(0, 4);
+  const newArrivals = [...approvedProducts].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)).slice(0, 4);
+  
+  const sortedTrendingIds = new Set(trending.map(p => p.id));
+  const sortedNewestIds = new Set(newArrivals.map(p => p.id));
+  const uniqueSelection = approvedProducts.filter(p => !sortedTrendingIds.has(p.id) && !sortedNewestIds.has(p.id));
+  const recommended = (uniqueSelection.length > 0 ? uniqueSelection : approvedProducts).slice(0, 4);
 
   return (
     <div className="space-y-6 sm:space-y-8">
@@ -76,7 +82,7 @@ export default function UserDashboard() {
           </div>
           {sec.data.length === 0 ? (
             <div className="card-base p-12 text-center bg-[#FFF8F0]/30 border-dashed border border-[#D4AF37]/20">
-              <p className="text-sm font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>No products available.</p>
+              <h3 className="text-xl font-bold text-[#7B1E3A] mb-2" style={{ fontFamily: 'Playfair Display' }}>No Products Available</h3>
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">

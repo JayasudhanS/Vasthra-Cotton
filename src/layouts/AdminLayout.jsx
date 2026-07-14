@@ -25,8 +25,8 @@ export default function AdminLayout() {
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-80px)]">
-      <aside className="hidden lg:flex flex-col w-[270px] bg-gradient-to-b from-[#4A2C2A] to-[#2D1A19] p-6 sticky top-[100px] h-[calc(100vh-100px)] overflow-y-auto">
+    <div className="flex items-start min-h-[calc(100vh-80px)] w-full max-w-full relative">
+      <aside className="hidden lg:flex flex-col w-[270px] flex-shrink-0 bg-gradient-to-b from-[#4A2C2A] to-[#2D1A19] p-6 sticky top-[100px] h-[calc(100vh-100px)] overflow-y-auto z-20">
         <div className="mb-6 px-2">
           <p className="text-xs uppercase tracking-wider text-[#D4AF37] font-semibold">Admin Panel</p>
           <p className="text-sm font-bold text-white truncate mt-1">{user?.name || ''}</p>
@@ -61,7 +61,7 @@ export default function AdminLayout() {
         </button>
       </div>
 
-      <main className="flex-1 p-4 sm:p-6 md:p-8 lg:p-10 pb-28 lg:pb-10 bg-[#FFF8F0]">
+      <main className="flex-1 min-w-0 w-full p-4 sm:p-6 md:p-8 lg:p-10 pb-28 lg:pb-10 bg-[#FFF8F0] overflow-x-hidden block">
         <BreadcrumbBack />
         <Outlet />
       </main>

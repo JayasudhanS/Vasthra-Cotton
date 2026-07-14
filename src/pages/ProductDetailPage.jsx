@@ -338,50 +338,69 @@ export default function ProductDetailPage() {
             </div>
           </div>
 
-          {/* ═══════ SHOP INFO CARD ═══════ */}
-          <div className="card-base p-6 sm:p-8 bg-gradient-to-br from-white via-[#FFF8F0]/40 to-white border border-[#D4AF37]/25">
-            <div className="flex items-start gap-4 sm:gap-5">
-              {/* Shop Logo */}
-              <div className="relative flex-shrink-0">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-3 border-[#D4AF37]/40 shadow-md bg-[#F5EDE0]">
-                  <img src={shopInfo.logo} alt={shopInfo.name} className="w-full h-full object-cover" />
-                </div>
-                <span className="absolute -bottom-1 -right-1 bg-[#2D8F5E] text-white p-1 rounded-full text-xs shadow-sm" title="Verified Weaver">
-                  <FiCheckCircle size={14} />
-                </span>
-              </div>
-
-              {/* Shop Details */}
-              <div className="flex-1 min-w-0">
-                <span className="text-[10px] uppercase font-bold text-[#D4AF37] tracking-widest block mb-1">Sold by Verified Weaver</span>
-                <h3 className="text-xl sm:text-2xl font-bold text-[#7B1E3A] m-0 mb-1 truncate" style={{ fontFamily: 'Playfair Display' }}>
-                  {shopInfo.name}
-                </h3>
-                {shopInfo.owner && (
-                  <p className="text-xs text-[#6B4A48] m-0 mb-2 font-medium">by {shopInfo.owner}</p>
-                )}
-                <div className="flex flex-wrap items-center gap-3 text-xs text-[#6B4A48]">
-                  <span className="flex items-center gap-1 font-semibold">
-                    <FiStar className="text-[#D4AF37]" size={13} /> {shopInfo.rating}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <FiMapPin size={12} /> {shopInfo.location}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <FiPackage size={12} /> {shopProductCount} Products
-                  </span>
-                </div>
+          {/* ═══════ SHOP INFO CARD — Seller is Primary Identity ═══════ */}
+          <div className="card-base p-0 overflow-hidden bg-white border-2 border-[#D4AF37]/30 shadow-lg">
+            {/* Shop Banner Gradient */}
+            <div className="h-20 sm:h-24 bg-gradient-to-r from-[#7B1E3A] via-[#9B2E4A] to-[#7B1E3A] relative">
+              <div className="absolute inset-0 opacity-20" style={{
+                backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23D4AF37\' fill-opacity=\'0.3\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
+              }} />
+              <div className="absolute bottom-2 right-4 text-[10px] text-white/50 font-medium">
+                Sold via Vasthra Cotton Marketplace
               </div>
             </div>
 
-            {/* Visit Store Button */}
-            <div className="mt-5 pt-5 border-t border-[#D4AF37]/15">
-              <Link
-                to={`/store/${shopInfo.id}`}
-                className="btn-outline-gold w-full !py-3 !text-xs no-underline text-center justify-center flex items-center gap-2"
-              >
-                Visit Store →
-              </Link>
+            <div className="px-6 sm:px-8 pb-6 sm:pb-8 -mt-12 sm:-mt-14 relative z-10">
+              <div className="flex flex-col sm:flex-row items-start sm:items-end gap-4 sm:gap-6">
+                {/* Large Shop Logo */}
+                <div className="relative flex-shrink-0">
+                  <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border-4 border-white shadow-xl bg-[#F5EDE0]">
+                    <img src={shopInfo.logo} alt={shopInfo.name} className="w-full h-full object-cover" />
+                  </div>
+                  <span className="absolute -bottom-1 -right-1 bg-[#2D8F5E] text-white p-1.5 rounded-full shadow-md" title="Verified Seller">
+                    <FiCheckCircle size={16} />
+                  </span>
+                </div>
+
+                {/* Shop Details — Primary Identity */}
+                <div className="flex-1 min-w-0 pt-1 sm:pt-2">
+                  <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                    <span className="text-[10px] uppercase font-bold text-white bg-[#2D8F5E] px-2.5 py-0.5 rounded-full tracking-wider shadow-sm flex items-center gap-1">
+                      <FiCheckCircle size={10} /> Verified Seller
+                    </span>
+                    <span className="text-[10px] uppercase font-bold text-[#D4AF37] bg-[#FFF8F0] px-2.5 py-0.5 rounded-full border border-[#D4AF37]/30 tracking-wider">
+                      ✦ Silk Mark Certified
+                    </span>
+                  </div>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-[#7B1E3A] m-0 mb-1 leading-tight" style={{ fontFamily: 'Playfair Display' }}>
+                    {shopInfo.name}
+                  </h2>
+                  {shopInfo.owner && (
+                    <p className="text-sm text-[#6B4A48] m-0 mb-2.5 font-medium">by {shopInfo.owner}</p>
+                  )}
+                  <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-sm text-[#6B4A48]">
+                    <span className="flex items-center gap-1.5 font-semibold bg-[#FFF8F0] px-3 py-1.5 rounded-lg border border-[#D4AF37]/20">
+                      <FiStar className="text-[#D4AF37]" size={14} /> {shopInfo.rating}
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <FiMapPin size={14} className="text-[#D4AF37]" /> {shopInfo.location}
+                    </span>
+                    <span className="flex items-center gap-1.5 font-semibold">
+                      <FiPackage size={14} className="text-[#D4AF37]" /> {shopProductCount} Products
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Visit Store CTA */}
+              <div className="mt-6 pt-5 border-t border-[#D4AF37]/15">
+                <Link
+                  to={`/store/${shopInfo.id}`}
+                  className="btn-golden w-full !py-3.5 !text-sm no-underline text-center justify-center flex items-center gap-2 shadow-md"
+                >
+                  Visit Store →
+                </Link>
+              </div>
             </div>
           </div>
         </motion.div>

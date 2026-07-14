@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useMemo } from 'react';
-import { collection, onSnapshot, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, onSnapshot, doc, updateDoc, deleteDoc, setDoc, getDoc } from 'firebase/firestore';
 import { db, COLLECTIONS } from '../firebase/config';
 
 const ProductContext = createContext();
@@ -35,11 +35,12 @@ export function ProductProvider({ children }) {
   }, []);
 
   // Only approved products for public-facing pages
-  // Case-insensitive check to handle any status casing from Admin module
+  // Case-insensitive check to handle any status casing or schema flag from Admin module
   const approvedProducts = useMemo(() =>
     products.filter(p => {
-      const s = (p.status || '').toString().trim().toLowerCase();
-      return s === 'approved';
+      const s = (p.status || p.publishStatus || '').toString().trim().toLowerCase();
+      const isApp = p.isApproved === true || p.approved === true;
+      return s === 'approved' || isApp;
     }),
     [products]
   );
@@ -87,13 +88,77 @@ export function ProductProvider({ children }) {
     }
   };
 
-  // Edit product fields in Firestore
+  // Edit product fields in Firestore (generic, used by admin for immediate updates)
   const editProduct = async (id, updatedData) => {
     try {
       await updateDoc(doc(db, COLLECTIONS.PRODUCTS, id), updatedData);
     } catch (error) {
       console.error('Error editing product:', error);
       setProducts(prev => prev.map(p => p.id === id ? { ...p, ...updatedData } : p));
+    }
+  };
+
+  // Admin direct edit: immediately updates the live product (no approval required)
+  const adminEditProduct = async (id, updatedData) => {
+    try {
+      await updateDoc(doc(db, COLLECTIONS.PRODUCTS, id), {
+        ...updatedData,
+        lastEditedBy: 'admin',
+        lastEditedAt: new Date().toISOString(),
+      });
+    } catch (error) {
+      console.error('Error in admin edit:', error);
+      setProducts(prev => prev.map(p => p.id === id ? { ...p, ...updatedData } : p));
+    }
+  };
+
+  // Shopkeeper edit: stores pending changes on the product document for admin review
+  // The live product remains unchanged until admin approves
+  const submitProductEdit = async (id, pendingChanges, shopkeeperName) => {
+    try {
+      await updateDoc(doc(db, COLLECTIONS.PRODUCTS, id), {
+        pendingEdit: {
+          ...pendingChanges,
+          submittedBy: shopkeeperName || 'Shop Owner',
+          submittedAt: new Date().toISOString(),
+          editStatus: 'pending',
+        },
+      });
+      return { success: true, message: 'Edit submitted for admin review. Your live product remains unchanged until approved.' };
+    } catch (error) {
+      console.error('Error submitting product edit:', error);
+      return { success: false, message: error.message || 'Failed to submit edit.' };
+    }
+  };
+
+  // Admin approves pending edit: merges pendingEdit into live product fields
+  const approvePendingEdit = async (id) => {
+    try {
+      const productRef = doc(db, COLLECTIONS.PRODUCTS, id);
+      const productSnap = await getDoc(productRef);
+      if (!productSnap.exists()) return;
+
+      const data = productSnap.data();
+      if (!data.pendingEdit) return;
+
+      const { submittedBy, submittedAt, editStatus, ...editFields } = data.pendingEdit;
+      await updateDoc(productRef, {
+        ...editFields,
+        pendingEdit: null,
+        lastEditedBy: submittedBy,
+        lastEditedAt: new Date().toISOString(),
+      });
+    } catch (error) {
+      console.error('Error approving pending edit:', error);
+    }
+  };
+
+  // Admin rejects pending edit: removes the pendingEdit from the product
+  const rejectPendingEdit = async (id) => {
+    try {
+      await updateDoc(doc(db, COLLECTIONS.PRODUCTS, id), { pendingEdit: null });
+    } catch (error) {
+      console.error('Error rejecting pending edit:', error);
     }
   };
 
@@ -106,7 +171,11 @@ export function ProductProvider({ children }) {
       approveProduct,
       rejectProduct,
       deleteProduct,
-      editProduct
+      editProduct,
+      adminEditProduct,
+      submitProductEdit,
+      approvePendingEdit,
+      rejectPendingEdit
     }}>
       {children}
     </ProductContext.Provider>

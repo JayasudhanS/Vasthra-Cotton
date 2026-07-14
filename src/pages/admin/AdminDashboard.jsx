@@ -1,83 +1,242 @@
+import { useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { FiPackage, FiClock, FiShoppingBag, FiUsers, FiTrendingUp, FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
-import { products, shops } from '../../data';
+import { FiPackage, FiClock, FiShoppingBag, FiUsers, FiTrendingUp, FiCheckCircle } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-
-const stats = [
-  { title: 'Pending Saree Weaves', value: products.filter(p => p.status === 'pending').length, icon: <FiClock size={22} />, color: 'from-[#D4AF37] to-[#E8C94A]', badge: 'Action Required' },
-  { title: 'Live Saree Catalogue', value: products.filter(p => p.status === 'approved').length, icon: <FiPackage size={22} />, color: 'from-[#2D8F5E] to-[#3AAF6E]', badge: 'Verified Silk' },
-  { title: 'Pending Weaver Applications', value: shops.filter(s => s.status === 'pending').length, icon: <FiShoppingBag size={22} />, color: 'from-amber-500 to-amber-400', badge: 'KYC Check' },
-  { title: 'Registered Connoisseurs', value: 0, icon: <FiUsers size={22} />, color: 'from-[#7B1E3A] to-[#9B2E4A]', badge: 'Dynamic Users' },
-];
-
-const activities = [];
+import { useProducts } from '../../context/ProductContext';
 
 export default function AdminDashboard() {
-  const { user } = useAuth();
+  const { user, pendingShops = [], allUsers = [], allShops = [] } = useAuth();
+  const { products = [], approvedProducts = [] } = useProducts();
+
+  const pendingWeavesCount = useMemo(() => 
+    products.filter(p => (p.status || '').toString().trim().toLowerCase() === 'pending').length, 
+  [products]);
+
+  const liveCatalogueCount = approvedProducts.length;
+
+  const pendingWeaversCount = useMemo(() => 
+    pendingShops.filter(s => (s.status || '').toString().trim().toLowerCase() === 'pending').length, 
+  [pendingShops]);
+
+  const registeredUsersCount = useMemo(() => 
+    allUsers.filter(u => u.role === 'user' || (!u.role && u.email !== 'admin@vasthracotton.com')).length, 
+  [allUsers]);
+
+  const stats = [
+    { 
+      title: 'Pending Saree Weaves', 
+      value: pendingWeavesCount, 
+      icon: <FiClock size={24} />, 
+      color: 'from-[#D4AF37] to-[#E8C94A]', 
+      badge: pendingWeavesCount > 0 ? `${pendingWeavesCount} Awaiting Review` : 'Queue Clear',
+      action: pendingWeavesCount > 0 ? 'Inspect Queue →' : 'Review Queue →',
+      path: '/admin/pending-products'
+    },
+    { 
+      title: 'Live Saree Catalogue', 
+      value: liveCatalogueCount, 
+      icon: <FiPackage size={24} />, 
+      color: 'from-[#2D8F5E] to-[#3AAF6E]', 
+      badge: liveCatalogueCount > 0 ? `${liveCatalogueCount} Published Online` : 'No Live Weaves',
+      action: 'View Catalogue →',
+      path: '/admin/approved-products'
+    },
+    { 
+      title: 'Pending Weaver Applications', 
+      value: pendingWeaversCount, 
+      icon: <FiShoppingBag size={24} />, 
+      color: 'from-amber-500 to-amber-400', 
+      badge: pendingWeaversCount > 0 ? `${pendingWeaversCount} KYC Pending` : 'All Verified',
+      action: 'Verify Applications →',
+      path: '/admin/pending-shops'
+    },
+    { 
+      title: 'Registered Connoisseurs', 
+      value: registeredUsersCount, 
+      icon: <FiUsers size={24} />, 
+      color: 'from-[#7B1E3A] to-[#9B2E4A]', 
+      badge: registeredUsersCount > 0 ? `${registeredUsersCount} Active Accounts` : 'Directory Ready',
+      action: 'Manage Users →',
+      path: '/admin/users'
+    },
+  ];
+
+  const formatRelativeTime = (isoString) => {
+    if (!isoString) return 'Recently';
+    const date = new Date(isoString);
+    if (isNaN(date.getTime()) || date.getTime() === 0) return 'Recently';
+    const diffSec = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+    if (diffSec < 60) return 'Just now';
+    if (diffSec < 3600) return `${Math.floor(diffSec / 60)}m ago`;
+    if (diffSec < 86400) return `${Math.floor(diffSec / 3600)}h ago`;
+    if (diffSec < 604800) return `${Math.floor(diffSec / 86400)}d ago`;
+    return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+  };
+
+  const dynamicActivities = useMemo(() => {
+    const list = [];
+    
+    products.forEach(p => {
+      const timeVal = p.updatedAt || p.createdAt || new Date(0).toISOString();
+      const ts = new Date(timeVal).getTime() || 0;
+      const s = (p.status || '').toString().trim().toLowerCase();
+      
+      if (s === 'pending') {
+        list.push({
+          type: 'product',
+          text: `New Product Submitted: "${p.name || 'Saree Weave'}" by ${p.shopName || p.ownerName || 'Weaver Studio'}`,
+          time: formatRelativeTime(timeVal),
+          timestamp: ts,
+          badgeColor: 'bg-[#D4AF37]'
+        });
+      } else if (s === 'approved') {
+        list.push({
+          type: 'product',
+          text: `Product Approved: "${p.name || 'Saree Weave'}" (${p.shopName || p.ownerName || 'Weaver Studio'})`,
+          time: formatRelativeTime(timeVal),
+          timestamp: ts,
+          badgeColor: 'bg-[#2D8F5E]'
+        });
+      } else if (s === 'rejected') {
+        list.push({
+          type: 'product',
+          text: `Product Rejected: "${p.name || 'Saree Weave'}"`,
+          time: formatRelativeTime(timeVal),
+          timestamp: ts,
+          badgeColor: 'bg-red-500'
+        });
+      }
+      
+      if (p.pendingEdit) {
+        const editTime = p.pendingEdit.submittedAt || timeVal;
+        list.push({
+          type: 'product',
+          text: `Product Edited: "${p.name || 'Saree Weave'}" modification submitted for review`,
+          time: formatRelativeTime(editTime),
+          timestamp: new Date(editTime).getTime() || ts,
+          badgeColor: 'bg-blue-500'
+        });
+      }
+    });
+
+    allUsers.forEach(u => {
+      const timeVal = u.updatedAt || u.createdAt || new Date(0).toISOString();
+      const ts = new Date(timeVal).getTime() || 0;
+      const isShop = u.role === 'shopOwner' || u.role === 'shopkeeper';
+      const s = (u.status || '').toString().trim().toLowerCase();
+      
+      if (isShop) {
+        if (s === 'pending') {
+          list.push({
+            type: 'shop',
+            text: `New Shop Registered: "${u.shopName || u.name || 'Weaver Partner'}" awaiting verification`,
+            time: formatRelativeTime(timeVal),
+            timestamp: ts,
+            badgeColor: 'bg-amber-500'
+          });
+        } else if (s === 'active' || s === 'approved') {
+          list.push({
+            type: 'shop',
+            text: `Shop Approved: "${u.shopName || u.name || 'Weaver Partner'}" verified & onboarded`,
+            time: formatRelativeTime(timeVal),
+            timestamp: ts,
+            badgeColor: 'bg-[#2D8F5E]'
+          });
+        }
+      } else if (u.role === 'user' || (!u.role && u.email !== 'admin@vasthracotton.com')) {
+        list.push({
+          type: 'user',
+          text: `New Customer Registered: ${u.name || 'Connoisseur'} (${u.email || ''})`,
+          time: formatRelativeTime(timeVal),
+          timestamp: ts,
+          badgeColor: 'bg-[#7B1E3A]'
+        });
+      }
+    });
+
+    return list.sort((a, b) => b.timestamp - a.timestamp).slice(0, 15);
+  }, [products, allUsers]);
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 sm:space-y-10 w-full min-w-0 max-w-full flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#D4AF37]/20">
-        <div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#D4AF37]/20 w-full min-w-0">
+        <div className="min-w-0">
           <span className="text-xs uppercase font-bold tracking-widest text-[#D4AF37] block mb-1">
-            ✦ Welcome back, {user?.name || ''}!
+            ✦ Welcome back, {user?.name || 'Administrator'}!
           </span>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#7B1E3A] m-0 break-words" style={{ fontFamily: 'Playfair Display' }}>
             Admin Command Center
           </h1>
         </div>
-        <span className="badge badge-success !text-xs font-bold px-3.5 py-1.5 flex items-center gap-1.5 w-fit">
-          <FiCheckCircle /> Ecosystem Healthy · 100% Verified Sellers
+        <span className="badge badge-success !text-xs font-bold px-3.5 py-1.5 flex items-center gap-1.5 w-fit flex-shrink-0">
+          <FiCheckCircle /> Ecosystem Healthy · Live Sync
         </span>
       </div>
 
-      {/* Stat Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-12">
+      {/* Stat Cards - Responsive Grid strictly contained inside viewport */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-4 gap-6 sm:gap-8 mb-12 w-full min-w-0 max-w-full items-stretch">
         {stats.map((s, i) => (
-          <motion.div key={i} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}
-            className="card-base p-6 sm:p-7 flex flex-col justify-between bg-white border border-[#D4AF37]/25 shadow-sm hover:shadow-md transition-all rounded-2xl">
-            <div className="flex items-start justify-between mb-5 gap-4">
-              <div>
-                <p className="text-3xl sm:text-4xl font-bold text-[#7B1E3A] font-mono tracking-tight m-0 mb-1">{s.value}</p>
-                <p className="text-xs font-bold text-[#6B4A48] uppercase tracking-wider m-0">{s.title}</p>
+          <motion.div 
+            key={i} 
+            initial={{ opacity: 0, y: 20 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ delay: i * 0.08 }}
+            className="h-full w-full min-w-0 max-w-full flex flex-col overflow-hidden"
+          >
+            <Link
+              to={s.path}
+              className="card-base group p-6 sm:p-7 flex flex-col justify-between bg-white border border-[#D4AF37]/25 shadow-sm hover:shadow-md hover:border-[#D4AF37] transition-all rounded-2xl no-underline h-full w-full min-w-0 max-w-full relative overflow-hidden block"
+            >
+              <div className="flex items-start justify-between gap-4 mb-6 min-w-0">
+                <div className="flex-1 min-w-0 overflow-hidden">
+                  <p className="text-3xl sm:text-4xl font-bold text-[#7B1E3A] font-mono tracking-tight m-0 mb-1.5 leading-none group-hover:scale-[1.02] transition-transform origin-left truncate">
+                    {s.value}
+                  </p>
+                  <p className="text-xs font-bold text-[#6B4A48] uppercase tracking-wider m-0 leading-snug break-words">
+                    {s.title}
+                  </p>
+                </div>
+                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${s.color} text-white flex items-center justify-center shadow-md flex-shrink-0 group-hover:scale-105 transition-transform`}>
+                  {s.icon}
+                </div>
               </div>
-              <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${s.color} text-white flex items-center justify-center shadow-md flex-shrink-0`}>
-                {s.icon}
+
+              <div className="pt-4 border-t border-[#D4AF37]/15 flex items-center justify-between gap-2 text-xs text-[#6B4A48]/90 font-semibold mt-auto w-full min-w-0 overflow-hidden">
+                <div className="flex items-center gap-1.5 min-w-0 flex-1 overflow-hidden">
+                  <span className="text-[#D4AF37] font-bold truncate block">{s.badge}</span>
+                </div>
+                <span className="text-[#7B1E3A] font-bold flex items-center gap-1 group-hover:translate-x-1 transition-transform flex-shrink-0 ml-2">
+                  {s.action}
+                </span>
               </div>
-            </div>
-            <div className="pt-3.5 border-t border-[#D4AF37]/15 flex items-center justify-between text-xs text-[#6B4A48]/90 font-semibold">
-              <span>Status</span>
-              <span className="text-[#D4AF37] font-bold">{s.badge}</span>
-            </div>
+            </Link>
           </motion.div>
         ))}
       </div>
 
-      {/* Activities Feed */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold text-[#7B1E3A] m-0 flex items-center gap-2" style={{ fontFamily: 'Playfair Display' }}>
-            <FiTrendingUp className="text-[#D4AF37]" /> Live Ecosystem Activities
+      {/* Activities Feed - Strictly Below Cards */}
+      <div className="space-y-4 w-full min-w-0 max-w-full flex flex-col pt-4 overflow-hidden">
+        <div className="flex items-center justify-between w-full min-w-0 gap-4 flex-wrap">
+          <h2 className="text-xl font-bold text-[#7B1E3A] m-0 flex items-center gap-2 break-words" style={{ fontFamily: 'Playfair Display' }}>
+            <FiTrendingUp className="text-[#D4AF37] flex-shrink-0" /> Live Ecosystem Activities
           </h2>
-          <span className="text-xs text-[#6B4A48] font-mono">Real-time Feed</span>
+          <span className="text-xs text-[#6B4A48] font-mono flex-shrink-0">Real-time Feed</span>
         </div>
 
-        {activities.length === 0 ? (
-          <div className="card-base p-12 text-center bg-white shadow-sm border border-[#D4AF37]/20 border-dashed">
+        {dynamicActivities.length === 0 ? (
+          <div className="card-base p-12 text-center bg-white shadow-sm border border-[#D4AF37]/20 border-dashed w-full min-w-0 block">
             <p className="text-sm font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>No recent activities found.</p>
           </div>
         ) : (
-          <div className="card-base bg-white shadow-sm border border-[#D4AF37]/20 divide-y divide-[#D4AF37]/15">
-            {activities.map((a, i) => (
+          <div className="card-base bg-white shadow-sm border border-[#D4AF37]/20 divide-y divide-[#D4AF37]/15 w-full min-w-0 max-w-full block overflow-hidden">
+            {dynamicActivities.map((a, i) => (
               <motion.div key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.08 }}
-                className="p-5 flex items-center justify-between hover:bg-[#FFF8F0]/50 transition-colors">
-                <div className="flex items-center gap-3.5">
-                  <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 shadow-xs ${
-                    a.type === 'shop' ? 'bg-[#D4AF37]' :
-                    a.type === 'product' ? 'bg-[#7B1E3A]' :
-                    a.type === 'review' ? 'bg-[#2D8F5E]' : 'bg-blue-500'
-                  }`} />
-                  <span className="text-xs sm:text-sm text-[#4A2C2A] font-medium leading-relaxed">{a.text}</span>
+                className="p-5 flex items-center justify-between hover:bg-[#FFF8F0]/50 transition-colors w-full min-w-0 gap-4">
+                <div className="flex items-center gap-3.5 min-w-0 flex-1">
+                  <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 shadow-xs ${a.badgeColor || 'bg-[#D4AF37]'}`} />
+                  <span className="text-xs sm:text-sm text-[#4A2C2A] font-medium leading-relaxed break-words min-w-0">{a.text}</span>
                 </div>
                 <span className="text-xs text-[#6B4A48]/70 flex-shrink-0 ml-4 font-mono">{a.time}</span>
               </motion.div>
@@ -88,4 +247,3 @@ export default function AdminDashboard() {
     </div>
   );
 }
-

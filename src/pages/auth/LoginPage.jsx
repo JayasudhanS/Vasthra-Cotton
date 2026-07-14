@@ -36,9 +36,20 @@ export default function LoginPage() {
     setLoading(true);
     try {
       const res = await signInWithGoogle(role);
-      if (res && res.success === false) {
+      if (!res) { setLoading(false); return; }
+      
+      // If redirecting (mobile/production fallback), the page will navigate away
+      if (res.redirecting) return;
+
+      if (res.success === false) {
         alert(res.message);
         setLoading(false);
+        return;
+      }
+      if (res.pending) {
+        alert(res.message);
+        setLoading(false);
+        navigate('/portal');
         return;
       }
       if (res?.role === 'admin' || role === 'admin') navigate('/admin/dashboard');
@@ -46,7 +57,7 @@ export default function LoginPage() {
       else navigate('/user/dashboard');
     } catch (err) {
       console.error('Google Sign-In error:', err);
-      alert('An unexpected error occurred with Google Sign-In.');
+      alert('An unexpected error occurred with Google Sign-In. Please try again.');
       setLoading(false);
     }
   };

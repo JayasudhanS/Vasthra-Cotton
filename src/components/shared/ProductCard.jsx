@@ -77,7 +77,7 @@ export default function ProductCard({ product, index = 0 }) {
         <div>
           <div className="flex items-center justify-between gap-1.5 mb-1.5">
             <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-[#D4AF37] font-bold truncate min-h-[1rem] inline-block">
-              {product?.shopName || ''}
+              {product?.shopName || product?.ownerName || ''}
             </span>
             <div className="flex items-center gap-1 flex-shrink-0">
               {product?.fabric && (
@@ -85,9 +85,11 @@ export default function ProductCard({ product, index = 0 }) {
                   {product.fabric}
                 </span>
               )}
-              <span className="text-[10px] sm:text-[11px] text-[#6B4A48] bg-[#FFF8F0] px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md truncate font-medium min-h-[1.25rem] inline-block">
-                {product?.category || ''}
-              </span>
+              {(product?.regionalWeave || product?.zariType || product?.category) && (
+                <span className="text-[10px] sm:text-[11px] text-[#6B4A48] bg-[#FFF8F0] px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md truncate font-medium min-h-[1.25rem] inline-block max-w-[100px]">
+                  {product?.regionalWeave || product?.zariType || product?.category}
+                </span>
+              )}
             </div>
           </div>
 
@@ -96,8 +98,12 @@ export default function ProductCard({ product, index = 0 }) {
           </h3>
 
           <div className="flex items-center gap-1.5 mb-2 min-h-[1rem]">
-            <StarRating rating={product?.rating || 4.9} size={12} />
-            <span className="text-[10px] sm:text-[11px] text-[#6B4A48] font-medium">({product?.reviews || 0})</span>
+            {typeof product?.rating === 'number' && product.rating > 0 && (
+              <>
+                <StarRating rating={product.rating} size={12} />
+                <span className="text-[10px] sm:text-[11px] text-[#6B4A48] font-medium">({product?.reviews || 0})</span>
+              </>
+            )}
           </div>
         </div>
 

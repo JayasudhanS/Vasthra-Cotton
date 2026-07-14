@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { 
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
@@ -6,7 +6,9 @@ import {
   onAuthStateChanged, 
   sendPasswordResetEmail, 
   GoogleAuthProvider, 
-  signInWithPopup 
+  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult
 } from 'firebase/auth';
 import { 
   doc, 
@@ -27,6 +29,8 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(null); // 'user' | 'shopkeeper' | 'admin'
   const [pendingShops, setPendingShops] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
+  const [allShops, setAllShops] = useState([]);
   const [loading, setLoading] = useState(true);
 
   // Subscribe to auth state changes & load user document from Firestore
@@ -114,30 +118,61 @@ export function AuthProvider({ children }) {
     return () => unsubscribe();
   }, []);
 
-  // Listen for pending/all shopkeeper applications from Firestore for Admin
+  // Listen for all users and shops from Firestore when Admin is logged in
   useEffect(() => {
     if (role !== 'admin') {
       setPendingShops([]);
+      setAllUsers([]);
+      setAllShops([]);
       return;
     }
 
-    const q = query(
-      collection(db, COLLECTIONS.USERS),
-      where('role', 'in', ['shopOwner', 'shopkeeper'])
-    );
+    let usersList = [];
+    let shopsList = [];
 
-    const unsubShops = onSnapshot(q, (snapshot) => {
-      const shopsData = snapshot.docs.map(docSnap => ({
+    const updateCombinedShops = (uList, sList) => {
+      const shopkeepersFromUsers = uList.filter(u => u.role === 'shopOwner' || u.role === 'shopkeeper').map(docData => ({
+        ...docData,
+        status: (docData.status || 'Pending').toLowerCase()
+      }));
+      const shopsFromShopsCol = sList.map(docData => ({
+        ...docData,
+        status: (docData.status || 'Pending').toLowerCase()
+      }));
+
+      const map = new Map();
+      shopsFromShopsCol.forEach(s => map.set(s.id || s.uid, s));
+      shopkeepersFromUsers.forEach(s => map.set(s.id || s.uid, { ...(map.get(s.id || s.uid) || {}), ...s }));
+      setPendingShops(Array.from(map.values()));
+    };
+
+    const unsubUsers = onSnapshot(collection(db, COLLECTIONS.USERS), (snapshot) => {
+      usersList = snapshot.docs.map(docSnap => ({
         ...docSnap.data(),
         id: docSnap.id,
-        status: (docSnap.data().status || 'Pending').toLowerCase()
+        uid: docSnap.data().uid || docSnap.id
       }));
-      setPendingShops(shopsData);
+      setAllUsers(usersList);
+      updateCombinedShops(usersList, shopsList);
     }, (error) => {
-      console.error('Error listening to pending shops:', error);
+      console.error('Error listening to all users:', error);
     });
 
-    return () => unsubShops();
+    const unsubShops = onSnapshot(collection(db, COLLECTIONS.SHOPS), (snapshot) => {
+      shopsList = snapshot.docs.map(docSnap => ({
+        ...docSnap.data(),
+        id: docSnap.id
+      }));
+      setAllShops(shopsList);
+      updateCombinedShops(usersList, shopsList);
+    }, (error) => {
+      console.error('Error listening to shops collection:', error);
+    });
+
+    return () => {
+      unsubUsers();
+      unsubShops();
+    };
   }, [role]);
 
   // Firebase Email/Password Login
@@ -264,13 +299,85 @@ export function AuthProvider({ children }) {
     return register(shopData, 'shopkeeper');
   };
 
-  // Google Sign-In
-  const signInWithGoogle = async (expectedRole) => {
-    try {
-      const provider = new GoogleAuthProvider();
-      const userCredential = await signInWithPopup(auth, provider);
-      const firebaseUser = userCredential.user;
+  // Google Sign-In: popup first, fallback to redirect for mobile/deployed environments
+  const pendingGoogleRole = useRef(null);
 
+  // Handle Google redirect result on mount (when returning from redirect flow)
+  useEffect(() => {
+    const handleRedirectResult = async () => {
+      try {
+        const result = await getRedirectResult(auth);
+        if (!result || !result.user) return; // No redirect result pending
+
+        const firebaseUser = result.user;
+        const expectedRole = pendingGoogleRole.current || sessionStorage.getItem('googleSignInRole') || 'user';
+        sessionStorage.removeItem('googleSignInRole');
+
+        const userRef = doc(db, COLLECTIONS.USERS, firebaseUser.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+          const docData = userSnap.data();
+          const isShop = docData.role === 'shopOwner' || docData.role === 'shopkeeper';
+          const normalizedRole = docData.role === 'admin' ? 'admin' : isShop ? 'shopkeeper' : 'user';
+
+          if (expectedRole === 'admin' && docData.role !== 'admin') {
+            await signOut(auth);
+            return;
+          }
+
+          if (isShop && (docData.status === 'Pending' || docData.status === 'pending')) {
+            await signOut(auth);
+            return;
+          }
+
+          setUser({ ...docData, id: firebaseUser.uid, uid: firebaseUser.uid });
+          setRole(normalizedRole);
+        } else {
+          if (expectedRole === 'admin') {
+            await signOut(auth);
+            return;
+          }
+
+          const isShop = expectedRole === 'shopkeeper';
+          const newUserData = {
+            uid: firebaseUser.uid,
+            name: firebaseUser.displayName || 'User',
+            email: firebaseUser.email || '',
+            phone: firebaseUser.phoneNumber || '',
+            role: isShop ? 'shopOwner' : 'user',
+            status: isShop ? 'Pending' : 'Active',
+            createdAt: new Date().toISOString(),
+            profileImage: firebaseUser.photoURL || '/images/placeholder.png'
+          };
+
+          await setDoc(doc(db, COLLECTIONS.USERS, firebaseUser.uid), newUserData);
+
+          if (isShop) {
+            await signOut(auth);
+            return;
+          }
+
+          setUser({ ...newUserData, id: firebaseUser.uid });
+          setRole('user');
+        }
+      } catch (error) {
+        // Silently handle - redirect result only exists when returning from redirect flow
+        if (error.code !== 'auth/redirect-cancelled-by-user') {
+          console.error('Google redirect result error:', error);
+        }
+      }
+    };
+
+    handleRedirectResult();
+  }, []);
+
+  const signInWithGoogle = async (expectedRole) => {
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+
+    // Helper to process Google sign-in result (shared by popup and redirect paths)
+    const processGoogleUser = async (firebaseUser) => {
       const userRef = doc(db, COLLECTIONS.USERS, firebaseUser.uid);
       const userSnap = await getDoc(userRef);
 
@@ -290,6 +397,11 @@ export function AuthProvider({ children }) {
             success: false,
             message: 'Your account is currently under review by our administrator.'
           };
+        }
+
+        if (isShop && (docData.status === 'Rejected' || docData.status === 'rejected')) {
+          await signOut(auth);
+          return { success: false, message: 'Your shop owner account application was not approved.' };
         }
 
         setUser({ ...docData, id: firebaseUser.uid, uid: firebaseUser.uid });
@@ -328,9 +440,43 @@ export function AuthProvider({ children }) {
         setRole('user');
         return { success: true, role: 'user' };
       }
-    } catch (error) {
-      console.error('Google Sign-In error:', error);
-      return { success: false, message: error.message || 'Google Sign-In failed.' };
+    };
+
+    try {
+      // Try popup first (works on desktop and some mobile browsers)
+      const userCredential = await signInWithPopup(auth, provider);
+      return await processGoogleUser(userCredential.user);
+    } catch (popupError) {
+      // If popup blocked or fails on mobile/production, fallback to redirect
+      if (
+        popupError.code === 'auth/popup-blocked' ||
+        popupError.code === 'auth/popup-closed-by-user' ||
+        popupError.code === 'auth/cancelled-popup-request' ||
+        popupError.code === 'auth/internal-error' ||
+        popupError.code === 'auth/network-request-failed'
+      ) {
+        try {
+          // Store expected role in sessionStorage so we can retrieve it after redirect
+          pendingGoogleRole.current = expectedRole;
+          sessionStorage.setItem('googleSignInRole', expectedRole || 'user');
+          await signInWithRedirect(auth, provider);
+          // Page will redirect away, so this return won't execute
+          return { success: true, redirecting: true };
+        } catch (redirectError) {
+          console.error('Google Sign-In redirect error:', redirectError);
+          return { success: false, message: 'Google Sign-In failed. Please try again or use email/password login.' };
+        }
+      }
+
+      console.error('Google Sign-In error:', popupError);
+      // Provide user-friendly messages for common errors
+      let msg = 'Google Sign-In failed. Please try again.';
+      if (popupError.code === 'auth/account-exists-with-different-credential') {
+        msg = 'An account with this email already exists using a different sign-in method. Please use email/password login.';
+      } else if (popupError.code === 'auth/unauthorized-domain') {
+        msg = 'This domain is not authorized for Google Sign-In. Please contact the administrator.';
+      }
+      return { success: false, message: msg };
     }
   };
 
@@ -406,6 +552,8 @@ export function AuthProvider({ children }) {
       user,
       role,
       pendingShops,
+      allUsers,
+      allShops,
       loading,
       register,
       registerShopkeeper,

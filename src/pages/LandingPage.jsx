@@ -442,13 +442,7 @@ function Testimonials() {
 
 /* ─── Main Landing Page ─── */
 export default function LandingPage() {
-  const { user, role } = useAuth();
   const { approvedProducts } = useProducts();
-
-  if (user) {
-    const dashboardPath = role === 'admin' ? '/admin/dashboard' : role === 'shopkeeper' ? '/shopkeeper/dashboard' : '/user/dashboard';
-    return <Navigate to={dashboardPath} replace />;
-  }
 
   return (
     <div className="w-full max-w-full overflow-x-hidden bg-[#FFF8F0] flex flex-col gap-4 sm:gap-6 lg:gap-8 pb-8 sm:pb-12">

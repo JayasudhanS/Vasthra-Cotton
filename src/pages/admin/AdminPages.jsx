@@ -1,18 +1,19 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FiCheck, FiX, FiPlus, FiSave, FiEdit2, FiTrash2, FiShield, FiSliders, FiBell, FiLock } from 'react-icons/fi';
+import { FiCheck, FiX, FiPlus, FiSave, FiEdit2, FiTrash2, FiShield, FiSliders, FiBell, FiLock, FiAlertCircle } from 'react-icons/fi';
 import { products as staticProducts, shops, categories as initialCategories } from '../../data';
 import { useProducts } from '../../context/ProductContext';
 import { useAuth } from '../../context/AuthContext';
 
 export function AdminPendingProducts() {
-  const { products, approveProduct, rejectProduct, deleteProduct, editProduct } = useProducts();
-  const items = products.filter(p => p.status === 'pending');
+  const { products, approveProduct, rejectProduct, deleteProduct, adminEditProduct, approvePendingEdit, rejectPendingEdit } = useProducts();
+  const pendingNew = products.filter(p => p.status === 'pending');
+  const pendingEdits = products.filter(p => p.pendingEdit && p.pendingEdit.editStatus === 'pending');
 
   const handleEdit = (p) => {
     const newPrice = prompt('Enter new offer price for ' + p.name + ':', p.offerPrice || p.price);
     if (newPrice !== null && !isNaN(newPrice)) {
-      editProduct(p.id, { offerPrice: Number(newPrice) });
+      adminEditProduct(p.id, { offerPrice: Number(newPrice) });
     }
   };
 
@@ -23,86 +24,148 @@ export function AdminPendingProducts() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between pb-4 border-b border-[#D4AF37]/20">
-        <div>
-          <span className="text-xs uppercase font-bold tracking-widest text-[#D4AF37] block mb-1">✦ Verification Queue</span>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>Pending Saree Approvals</h1>
+    <div className="space-y-8">
+      {/* New Product Approvals */}
+      <div className="space-y-6">
+        <div className="flex items-center justify-between pb-4 border-b border-[#D4AF37]/20">
+          <div>
+            <span className="text-xs uppercase font-bold tracking-widest text-[#D4AF37] block mb-1">✦ Verification Queue</span>
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>Pending Saree Approvals</h1>
+          </div>
+          <span className="badge badge-warning !text-xs font-bold px-3.5 py-1.5">
+            {pendingNew.length} Awaiting Inspection
+          </span>
         </div>
-        <span className="badge badge-warning !text-xs font-bold px-3.5 py-1.5">
-          {items.length} Awaiting Inspection
-        </span>
+
+        <div className="table-container bg-white shadow-sm border border-[#D4AF37]/20">
+          <table className="table-base w-full">
+            <thead>
+              <tr>
+                <th className="!text-xs uppercase tracking-wider">Saree </th>
+                <th className="!text-xs uppercase tracking-wider">Weave House / Shop</th>
+                <th className="!text-xs uppercase tracking-wider">Offer Price</th>
+                <th className="!text-xs uppercase tracking-wider">Verification Status</th>
+                <th className="!text-xs uppercase tracking-wider text-right">Silk Mark Decision</th>
+              </tr>
+            </thead>
+            <tbody>
+              {pendingNew.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="py-12 text-center text-[#6B4A48] italic">No products available.</td>
+                </tr>
+              ) : (
+                pendingNew.map(p => (
+                  <tr key={p.id} className="hover:bg-[#FFF8F0]/50 transition-colors">
+                    <td className="font-medium text-[#4A2C2A]">
+                      <div className="flex items-center gap-3.5">
+                        <img src={p.image} alt="" className="w-12 h-14 rounded-xl object-cover border border-[#D4AF37]/30 shadow-xs flex-shrink-0" />
+                        <div>
+                          <span className="font-bold text-[#7B1E3A] block text-sm">{p.name}</span>
+                          <span className="text-[11px] text-[#6B4A48]/70">ID: #VC-{p.id} · {p.category}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="text-[#6B4A48] font-medium text-xs">{p.shopName || ''}</td>
+                    <td className="font-bold text-[#7B1E3A] text-sm">₹{(p.offerPrice || p.price || 14500).toLocaleString()}</td>
+                    <td><span className="badge badge-warning">⏳ Pending Inspection</span></td>
+                    <td className="text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <button onClick={() => act(p.id, 'approved')} title="Approve & Certify"
+                          className="w-9 h-9 rounded-xl bg-green-100 text-green-700 flex items-center justify-center cursor-pointer border border-green-300 hover:bg-green-600 hover:text-white transition-all shadow-xs">
+                          <FiCheck size={18} />
+                        </button>
+                        <button onClick={() => act(p.id, 'rejected')} title="Reject Weave"
+                          className="w-9 h-9 rounded-xl bg-red-100 text-red-700 flex items-center justify-center cursor-pointer border border-red-300 hover:bg-red-600 hover:text-white transition-all shadow-xs">
+                          <FiX size={18} />
+                        </button>
+                        <button onClick={() => handleEdit(p)} title="Edit Price/Details"
+                          className="w-9 h-9 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center cursor-pointer border border-blue-300 hover:bg-blue-600 hover:text-white transition-all shadow-xs">
+                          <FiEdit2 size={16} />
+                        </button>
+                        <button onClick={() => { if (window.confirm('Delete this saree completely?')) deleteProduct(p.id); }} title="Delete Saree"
+                          className="w-9 h-9 rounded-xl bg-gray-100 text-gray-700 flex items-center justify-center cursor-pointer border border-gray-300 hover:bg-gray-600 hover:text-white transition-all shadow-xs">
+                          <FiTrash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      <div className="table-container bg-white shadow-sm border border-[#D4AF37]/20">
-        <table className="table-base w-full">
-          <thead>
-            <tr>
-              <th className="!text-xs uppercase tracking-wider">Saree </th>
-              <th className="!text-xs uppercase tracking-wider">Weave House / Shop</th>
-              <th className="!text-xs uppercase tracking-wider">Offer Price</th>
-              <th className="!text-xs uppercase tracking-wider">Verification Status</th>
-              <th className="!text-xs uppercase tracking-wider text-right">Silk Mark Decision</th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="py-12 text-center text-[#6B4A48] italic">No products available.</td>
-              </tr>
-            ) : (
-              items.map(p => (
-                <tr key={p.id} className="hover:bg-[#FFF8F0]/50 transition-colors">
-                  <td className="font-medium text-[#4A2C2A]">
-                    <div className="flex items-center gap-3.5">
-                      <img src={p.image} alt="" className="w-12 h-14 rounded-xl object-cover border border-[#D4AF37]/30 shadow-xs flex-shrink-0" />
-                      <div>
-                        <span className="font-bold text-[#7B1E3A] block text-sm">{p.name}</span>
-                        <span className="text-[11px] text-[#6B4A48]/70">ID: #VC-{p.id} · {p.category}</span>
+      {/* Pending Edit Reviews from Shopkeepers */}
+      {pendingEdits.length > 0 && (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between pb-4 border-b border-amber-300/40">
+            <div>
+              <span className="text-xs uppercase font-bold tracking-widest text-amber-600 block mb-1">✦ Shopkeeper Edit Requests</span>
+              <h2 className="text-xl sm:text-2xl font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>Pending Product Edits</h2>
+            </div>
+            <span className="badge badge-warning !text-xs font-bold px-3.5 py-1.5">
+              {pendingEdits.length} Edit{pendingEdits.length !== 1 ? 's' : ''} Pending
+            </span>
+          </div>
+
+          <div className="space-y-4">
+            {pendingEdits.map(p => (
+              <div key={p.id} className="card-base p-5 sm:p-6 bg-white border border-amber-200 shadow-sm">
+                <div className="flex items-start gap-4 mb-4">
+                  <img src={p.image} alt="" className="w-14 h-16 rounded-xl object-cover border border-[#D4AF37]/30 shadow-xs flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-bold text-[#7B1E3A] text-sm m-0">{p.name}</h4>
+                    <p className="text-[11px] text-[#6B4A48] m-0">by {p.shopName} · #{p.id}</p>
+                    <p className="text-[10px] text-amber-600 m-0 mt-1 font-semibold">
+                      Edit submitted by: {p.pendingEdit.submittedBy} · {new Date(p.pendingEdit.submittedAt).toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="bg-amber-50/60 rounded-xl p-4 border border-amber-200/50 mb-4">
+                  <span className="text-[10px] uppercase tracking-wider text-amber-700 font-bold block mb-2">Proposed Changes</span>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {Object.entries(p.pendingEdit).filter(([k]) => !['submittedBy', 'submittedAt', 'editStatus'].includes(k)).map(([key, val]) => (
+                      <div key={key} className="bg-white rounded-lg p-2.5 border border-amber-200/30">
+                        <span className="text-[10px] uppercase text-[#D4AF37] font-bold block">{key}</span>
+                        <span className="text-xs text-[#4A2C2A] font-semibold">{typeof val === 'number' ? `₹${val.toLocaleString()}` : String(val)}</span>
                       </div>
-                    </div>
-                  </td>
-                  <td className="text-[#6B4A48] font-medium text-xs">{p.shopName || ''}</td>
-                  <td className="font-bold text-[#7B1E3A] text-sm">₹{(p.offerPrice || p.price || 14500).toLocaleString()}</td>
-                  <td><span className="badge badge-warning">⏳ Pending Inspection</span></td>
-                  <td className="text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <button onClick={() => act(p.id, 'approved')} title="Approve & Certify"
-                        className="w-9 h-9 rounded-xl bg-green-100 text-green-700 flex items-center justify-center cursor-pointer border border-green-300 hover:bg-green-600 hover:text-white transition-all shadow-xs">
-                        <FiCheck size={18} />
-                      </button>
-                      <button onClick={() => act(p.id, 'rejected')} title="Reject Weave"
-                        className="w-9 h-9 rounded-xl bg-red-100 text-red-700 flex items-center justify-center cursor-pointer border border-red-300 hover:bg-red-600 hover:text-white transition-all shadow-xs">
-                        <FiX size={18} />
-                      </button>
-                      <button onClick={() => handleEdit(p)} title="Edit Price/Details"
-                        className="w-9 h-9 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center cursor-pointer border border-blue-300 hover:bg-blue-600 hover:text-white transition-all shadow-xs">
-                        <FiEdit2 size={16} />
-                      </button>
-                      <button onClick={() => { if (window.confirm('Delete this saree completely?')) deleteProduct(p.id); }} title="Delete Saree"
-                        className="w-9 h-9 rounded-xl bg-gray-100 text-gray-700 flex items-center justify-center cursor-pointer border border-gray-300 hover:bg-gray-600 hover:text-white transition-all shadow-xs">
-                        <FiTrash2 size={16} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => { approvePendingEdit(p.id); alert('Edit approved and live product updated.'); }}
+                    className="btn-golden !py-2 !px-5 !text-xs cursor-pointer flex items-center gap-1.5"
+                  >
+                    <FiCheck size={14} /> Approve Edit
+                  </button>
+                  <button
+                    onClick={() => { rejectPendingEdit(p.id); alert('Edit rejected. Live product unchanged.'); }}
+                    className="btn-outline-maroon !py-2 !px-5 !text-xs cursor-pointer flex items-center gap-1.5"
+                  >
+                    <FiX size={14} /> Reject Edit
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
 export function AdminApprovedProducts() {
-  const { products, deleteProduct, editProduct, rejectProduct } = useProducts();
+  const { products, deleteProduct, adminEditProduct, rejectProduct } = useProducts();
   const approved = products.filter(p => p.status === 'approved');
 
   const handleEdit = (p) => {
     const newPrice = prompt('Enter new offer price for ' + p.name + ':', p.offerPrice || p.price);
     if (newPrice !== null && !isNaN(newPrice)) {
-      editProduct(p.id, { offerPrice: Number(newPrice) });
+      adminEditProduct(p.id, { offerPrice: Number(newPrice) });
     }
   };
 
@@ -256,7 +319,9 @@ export function AdminPendingShops() {
 }
 
 export function AdminUsers() {
-  const users = [];
+  const { allUsers = [] } = useAuth();
+  const users = allUsers.filter(u => u.role === 'user' || (!u.role && u.email !== 'admin@vasthracotton.com'));
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between pb-4 border-b border-[#D4AF37]/20">
@@ -287,23 +352,23 @@ export function AdminUsers() {
               </tr>
             ) : (
               users.map((u, i) => (
-                <tr key={i} className="hover:bg-[#FFF8F0]/50 transition-colors">
+                <tr key={u.id || i} className="hover:bg-[#FFF8F0]/50 transition-colors">
                   <td className="font-bold text-[#4A2C2A] text-sm">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full bg-[#7B1E3A]/10 text-[#7B1E3A] flex items-center justify-center font-bold text-xs">
-                        {u.name.charAt(0)}
+                        {(u.name || 'U').charAt(0)}
                       </div>
-                      {u.name}
+                      {u.name || 'Connoisseur'}
                     </div>
                   </td>
-                  <td className="text-[#6B4A48] font-mono text-xs">{u.email}</td>
+                  <td className="text-[#6B4A48] font-mono text-xs">{u.email || ''}</td>
                   <td>
-                    <span className={`badge ${u.tier.includes('Platinum') || u.tier.includes('Gold') ? 'badge-warning' : 'badge-success'}`}>
-                      ✦ {u.tier}
+                    <span className={`badge ${(u.tier || '').includes('Platinum') || (u.tier || '').includes('Gold') || (u.orders || 0) > 5 ? 'badge-warning' : 'badge-success'}`}>
+                      ✦ {u.tier || ((u.orders || 0) > 5 ? 'Gold Member' : 'Silver Connoisseur')}
                     </span>
                   </td>
-                  <td className="text-[#6B4A48] text-xs font-medium">{u.joined}</td>
-                  <td className="font-bold text-[#7B1E3A] text-sm text-right">{u.orders} Orders</td>
+                  <td className="text-[#6B4A48] text-xs font-medium">{u.joined || (u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'Recently')}</td>
+                  <td className="font-bold text-[#7B1E3A] text-sm text-right">{u.orders || u.ordersCount || 0} Orders</td>
                 </tr>
               ))
             )}

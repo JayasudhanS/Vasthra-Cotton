@@ -6,12 +6,7 @@ export default function BreadcrumbBack({ items, title }) {
   const location = useLocation();
   const { user, role } = useAuth();
 
-  const getHomePath = () => {
-    if (!user) return '/';
-    if (role === 'admin') return '/admin/dashboard';
-    if (role === 'shopkeeper') return '/shopkeeper/dashboard';
-    return '/user/dashboard';
-  };
+  const getHomePath = () => '/';
 
   // Generate breadcrumbs if items not explicitly provided
 
