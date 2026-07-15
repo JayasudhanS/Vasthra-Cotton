@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { FiHome, FiHeart, FiPackage, FiUser, FiLogOut, FiCheckCircle } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
@@ -16,6 +16,71 @@ export default function UserLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [confirmingLogout, setConfirmingLogout] = useState(false);
+
+  const welcomeCardRef = useRef(null);
+  const navRef = useRef(null);
+  const [isSticky, setIsSticky] = useState(false);
+  const [navHeight, setNavHeight] = useState(0);
+
+  useEffect(() => {
+    if (navRef.current) {
+      setNavHeight(navRef.current.offsetHeight);
+    }
+  }, [isSticky]);
+
+  useEffect(() => {
+    const el = welcomeCardRef.current;
+    if (!el) return;
+
+    const getOffset = () => {
+      if (window.innerWidth >= 1024) return 76;
+      if (window.innerWidth >= 640) return 72;
+      return 64;
+    };
+
+    let observer = null;
+    const setupObserver = () => {
+      if (observer) observer.disconnect();
+      const offset = getOffset();
+      observer = new IntersectionObserver(
+        (entries) => {
+          const [entry] = entries;
+          if (!entry.isIntersecting && entry.boundingClientRect.bottom <= offset) {
+            setIsSticky(true);
+          } else {
+            setIsSticky(false);
+          }
+        },
+        {
+          root: null,
+          rootMargin: `-${offset}px 0px 0px 0px`,
+          threshold: 0,
+        }
+      );
+      observer.observe(el);
+    };
+
+    setupObserver();
+    window.addEventListener('resize', setupObserver);
+
+    const handleScroll = () => {
+      if (!welcomeCardRef.current) return;
+      const rect = welcomeCardRef.current.getBoundingClientRect();
+      const offset = getOffset();
+      if (rect.bottom <= offset) {
+        setIsSticky(true);
+      } else {
+        setIsSticky(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      if (observer) observer.disconnect();
+      window.removeEventListener('resize', setupObserver);
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   const handleLogout = () => {
     if (!confirmingLogout) {
@@ -53,11 +118,11 @@ export default function UserLayout() {
                          pathname === '/user/profile';
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10 w-full">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10 w-full overflow-visible">
       {showBreadcrumb && <BreadcrumbBack />}
 
       {/* Logged-in User Account Status & Identity Header */}
-      <div className="bg-gradient-to-r from-[#7B1E3A] via-[#5A1028] to-[#4A2C2A] rounded-2xl sm:rounded-3xl p-5 sm:p-6 md:p-7 mb-6 sm:mb-8 text-white border-2 border-[#D4AF37]/40 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div ref={welcomeCardRef} className="bg-gradient-to-r from-[#7B1E3A] via-[#5A1028] to-[#4A2C2A] rounded-2xl sm:rounded-3xl p-5 sm:p-6 md:p-7 mb-6 sm:mb-8 text-white border-2 border-[#D4AF37]/40 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white/10 border-2 border-[#D4AF37] flex items-center justify-center text-2xl sm:text-3xl font-bold text-[#D4AF37] shadow-inner flex-shrink-0" style={{ fontFamily: 'Playfair Display' }}>
             {user?.name ? user.name.charAt(0).toUpperCase() : '✦'}
@@ -90,8 +155,23 @@ export default function UserLayout() {
       </div>
 
       {/* Persistent User Dashboard Navigation Strip */}
-      <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 mb-6 sm:mb-8 border-2 border-[#D4AF37]/30 shadow-lg">
-        <div className="flex items-stretch justify-between gap-3 sm:gap-5 lg:gap-6 overflow-x-auto pb-2 sm:pb-0 scrollbar-hidden w-full">
+      {isSticky && (
+        <div
+          style={{ height: navHeight > 0 ? `${navHeight}px` : '104px' }}
+          className="w-full mb-6 sm:mb-8"
+          aria-hidden="true"
+        />
+      )}
+      <div
+        ref={navRef}
+        className={
+          isSticky
+            ? 'fixed top-[64px] sm:top-[72px] lg:top-[76px] left-0 right-0 z-40 bg-white border-b-2 border-[#D4AF37]/30 shadow-lg'
+            : 'w-full z-40 bg-white border-2 border-[#D4AF37]/30 shadow-lg rounded-2xl sm:rounded-3xl mb-6 sm:mb-8'
+        }
+      >
+        <div className={isSticky ? 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6' : 'py-4 sm:py-6 px-4 sm:px-6'}>
+          <div className="flex items-stretch justify-between gap-3 sm:gap-5 lg:gap-6 overflow-x-auto pb-2 sm:pb-0 scrollbar-hidden w-full">
           {links.map(l => {
             const isActive = isLinkActive(pathname, l.path);
             return (
@@ -130,6 +210,7 @@ export default function UserLayout() {
             </span>
           </button>
         </div>
+        </div>
       </div>
 
       {/* Page Content Area */}
@@ -139,4 +220,3 @@ export default function UserLayout() {
     </div>
   );
 }
-

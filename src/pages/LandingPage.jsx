@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link, Navigate } from 'react-router-dom';
 import { FiArrowRight, FiShield, FiStar, FiTruck, FiCheckCircle, FiHeart, FiAward, FiUsers, FiShoppingBag, FiUser, FiChevronRight } from 'react-icons/fi';
@@ -9,6 +10,8 @@ import 'swiper/css/pagination';
 import ProductCard, { StarRating } from '../components/shared/ProductCard';
 import { categories, shops, testimonials, festivalBanners } from '../data';
 import { useProducts } from '../context/ProductContext';
+import { collection, onSnapshot } from 'firebase/firestore';
+import { db, COLLECTIONS } from '../firebase/config';
 
 /* ─── Hero ─── */
 function Hero() {
@@ -113,13 +116,88 @@ function Hero() {
 
 /* ─── Statistics Section ─── */
 function StatisticsSection() {
+  const [approvedProductsCount, setApprovedProductsCount] = useState(0);
+  const [approvedShopsCount, setApprovedShopsCount] = useState(0);
+
+  useEffect(() => {
+    let usersList = [];
+    let shopsList = [];
+
+    // Listener 1: Products
+    const productsRef = collection(db, COLLECTIONS.PRODUCTS);
+    const unsubProducts = onSnapshot(productsRef, (snapshot) => {
+      let count = 0;
+      snapshot.docs.forEach((d) => {
+        const p = d.data();
+        const status = (p.status || p.publishStatus || '').toString().trim().toLowerCase();
+        const isApproved = status === 'approved' || status === 'published' || status === 'live' || p.isApproved === true || p.approved === true;
+        const isExcluded = status === 'pending' || status === 'rejected' || status === 'draft' || status === 'deleted' || p.isDeleted === true || p.isPublished === false;
+        if (isApproved && !isExcluded) {
+          count++;
+        }
+      });
+      setApprovedProductsCount(count);
+    }, (error) => {
+      console.error('Error in products statistic listener:', error);
+    });
+
+    // Helper to calculate total verified weavers from users & shops
+    const calculateWeavers = (uDocs, sDocs) => {
+      const map = new Map();
+      uDocs.forEach((d) => {
+        const data = d.data();
+        const st = (data.status || '').toString().trim().toLowerCase();
+        const isRoleShop = data.role === 'shopOwner' || data.role === 'shopkeeper' || data.isShop === true;
+        const isApproved = st === 'active' || st === 'approved' || st === 'verified' || data.isApproved === true || data.verified === true;
+        const isExcluded = st === 'pending' || st === 'rejected' || st === 'disabled' || st === 'inactive' || data.isDisabled === true;
+        if (isRoleShop && isApproved && !isExcluded) {
+          map.set(d.id || data.uid, true);
+        }
+      });
+      sDocs.forEach((d) => {
+        const data = d.data();
+        const st = (data.status || '').toString().trim().toLowerCase();
+        const isApproved = st === 'active' || st === 'approved' || st === 'verified' || data.isApproved === true || data.verified === true;
+        const isExcluded = st === 'pending' || st === 'rejected' || st === 'disabled' || st === 'inactive' || data.isDisabled === true;
+        if (isApproved && !isExcluded) {
+          map.set(d.id || data.uid, true);
+        }
+      });
+      setApprovedShopsCount(map.size);
+    };
+
+    // Listener 2: Users (to check for approved shopOwners)
+    const usersRef = collection(db, COLLECTIONS.USERS);
+    const unsubUsers = onSnapshot(usersRef, (snapshot) => {
+      usersList = snapshot.docs;
+      calculateWeavers(usersList, shopsList);
+    }, (error) => {
+      console.error('Error in users statistic listener:', error);
+    });
+
+    // Listener 3: Shops
+    const shopsRef = collection(db, COLLECTIONS.SHOPS);
+    const unsubShops = onSnapshot(shopsRef, (snapshot) => {
+      shopsList = snapshot.docs;
+      calculateWeavers(usersList, shopsList);
+    }, (error) => {
+      console.error('Error in shops statistic listener:', error);
+    });
+
+    return () => {
+      unsubProducts();
+      unsubUsers();
+      unsubShops();
+    };
+  }, []);
+
   return (
     <section className="bg-[#FFF8F0] pt-12 sm:pt-14 pb-12 sm:pb-14 px-5 sm:px-6 lg:px-12 border-b border-[#D4AF37]/15 w-full relative z-20">
       <div className="max-w-[1240px] mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-8 lg:gap-16 items-center">
         {[
-          { n: '5,000+', l: 'Authentic Sarees', icon: FiAward },
-          { n: '120+', l: 'Verified Weavers', icon: FiShield },
-          { n: '50K+', l: 'Happy Customers', icon: FiUsers }
+          { n: approvedProductsCount, l: 'Authentic Sarees', icon: FiAward },
+          { n: approvedShopsCount, l: 'Verified Weavers', icon: FiShield },
+          { n: '5K+', l: 'Happy Customers', icon: FiUsers }
         ].map((s, idx) => {
           const Icon = s.icon;
           return (
