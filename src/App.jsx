@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/shared/Navbar';
 import Footer from './components/shared/Footer';
 import ScrollToTop from './components/shared/ScrollToTop';
 import ProtectedRoute from './components/shared/ProtectedRoute';
+import SplashScreen from './components/shared/SplashScreen';
 
 // Pages
 import LandingPage from './pages/LandingPage';
@@ -45,8 +47,46 @@ import AdminOrders from './pages/admin/AdminOrders';
 import { AdminPendingProducts, AdminApprovedProducts, AdminPendingShops, AdminUsers, AdminCategories, AdminSettings } from './pages/admin/AdminPages';
 
 export default function App() {
+  const [splashState, setSplashState] = useState(() => {
+    try {
+      if (typeof window !== 'undefined' && sessionStorage.getItem('vasthraSplashShown')) {
+        return 'done';
+      }
+    } catch (e) {
+      // ignore storage errors
+    }
+    return 'active';
+  }); // 'active' (0-2s) | 'fading' (2-3s) | 'done'
+
+  const handleSplashFinish = () => {
+    try {
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('vasthraSplashShown', 'true');
+      }
+    } catch (e) {
+      // ignore storage errors
+    }
+    setSplashState('done');
+  };
+
+  if (splashState === 'active') {
+    return (
+      <SplashScreen
+        phase="active"
+        onStartFade={() => setSplashState('fading')}
+        onFinish={handleSplashFinish}
+      />
+    );
+  }
+
   return (
     <>
+      {splashState === 'fading' && (
+        <SplashScreen
+          phase="fading"
+          onFinish={handleSplashFinish}
+        />
+      )}
       <ScrollToTop />
       <Navbar />
       <main className="min-h-screen w-full max-w-full overflow-x-hidden flex flex-col flex-1">
