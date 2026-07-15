@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { FiArrowRight, FiHeart, FiShoppingBag, FiAward } from 'react-icons/fi';
 import ProductCard from '../../components/shared/ProductCard';
@@ -19,24 +18,6 @@ export default function UserDashboard() {
 
   return (
     <div className="space-y-6 sm:space-y-8">
-      {/* Dashboard Overview Banner */}
-      <motion.div
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="rounded-3xl bg-gradient-to-r from-[#7B1E3A] via-[#6B1A32] to-[#4A1020] py-6 sm:py-8 px-6 sm:px-10 text-white relative overflow-hidden shadow-md border border-[#D4AF37]/30 flex items-center min-h-[90px] sm:min-h-[110px]"
-      >
-        <div
-          className="absolute inset-0 opacity-20 bg-black/30"
-          style={{ backgroundImage: 'url("https://images.pexels.com/photos/2814808/pexels-photo-2814808.jpeg?auto=compress&cs=tinysrgb&w=800")', backgroundSize: 'cover', backgroundPosition: 'center' }}
-        />
-        <div className="relative z-10 w-full flex flex-col justify-center">
-          <span className="text-[10px] sm:text-xs uppercase tracking-widest font-bold text-[#D4AF37] block mb-1">✦ Wardrobe Overview</span>
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white m-0 leading-tight" style={{ fontFamily: 'Playfair Display' }}>
-            Curated Weaves & Exclusive Member Perks
-          </h2>
-        </div>
-      </motion.div>
-
       {/* Quick Perks - Flipkart Style Horizontal Feature Row */}
       <div className="flex items-stretch justify-between gap-3 sm:gap-5 lg:gap-6 overflow-x-auto pb-2 scrollbar-hidden w-full">
         <div className="flex-1 min-w-[120px] sm:min-w-[160px] bg-white border border-[#D4AF37]/30 rounded-2xl p-5 sm:p-6 flex flex-col items-center justify-center gap-3 sm:gap-3.5 text-center shadow-xs hover:shadow-md transition-all">

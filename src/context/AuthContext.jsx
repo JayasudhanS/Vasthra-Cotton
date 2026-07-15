@@ -524,7 +524,9 @@ export function AuthProvider({ children }) {
   const approveShop = async (id) => {
     try {
       const userRef = doc(db, COLLECTIONS.USERS, id);
-      await updateDoc(userRef, { status: 'Active' });
+      await updateDoc(userRef, { status: 'approved', approved: true });
+      const shopRef = doc(db, COLLECTIONS.SHOPS, id);
+      await updateDoc(shopRef, { status: 'approved', approved: true }).catch(() => {});
     } catch (error) {
       console.error('Error approving shop:', error);
     }
@@ -533,7 +535,9 @@ export function AuthProvider({ children }) {
   const rejectShop = async (id) => {
     try {
       const userRef = doc(db, COLLECTIONS.USERS, id);
-      await updateDoc(userRef, { status: 'Rejected' });
+      await updateDoc(userRef, { status: 'rejected', approved: false });
+      const shopRef = doc(db, COLLECTIONS.SHOPS, id);
+      await updateDoc(shopRef, { status: 'rejected', approved: false }).catch(() => {});
     } catch (error) {
       console.error('Error rejecting shop:', error);
     }
@@ -541,7 +545,8 @@ export function AuthProvider({ children }) {
 
   const deleteShop = async (id) => {
     try {
-      await deleteDoc(doc(db, COLLECTIONS.USERS, id));
+      await deleteDoc(doc(db, COLLECTIONS.USERS, id)).catch(() => {});
+      await deleteDoc(doc(db, COLLECTIONS.SHOPS, id)).catch(() => {});
     } catch (error) {
       console.error('Error deleting shop:', error);
     }

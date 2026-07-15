@@ -4,9 +4,11 @@ import { FiCheck, FiX, FiPlus, FiSave, FiEdit2, FiTrash2, FiShield, FiSliders, F
 import { products as staticProducts, shops, categories as initialCategories } from '../../data';
 import { useProducts } from '../../context/ProductContext';
 import { useAuth } from '../../context/AuthContext';
+import { AdminProductDisplayCard, resolveShopInfo } from './AdminProductCardHelper';
 
 export function AdminPendingProducts() {
   const { products, approveProduct, rejectProduct, deleteProduct, adminEditProduct, approvePendingEdit, rejectPendingEdit } = useProducts();
+  const { allShops = [], allUsers = [], pendingShops = [] } = useAuth();
   const pendingNew = products.filter(p => p.status === 'pending');
   const pendingEdits = products.filter(p => p.pendingEdit && p.pendingEdit.editStatus === 'pending');
 
@@ -25,7 +27,7 @@ export function AdminPendingProducts() {
 
   return (
     <div className="space-y-8">
-      {/* New Product Approvals */}
+      {/* New Product Approvals / Verification Queue */}
       <div className="space-y-6">
         <div className="flex items-center justify-between pb-4 border-b border-[#D4AF37]/20">
           <div>
@@ -37,63 +39,43 @@ export function AdminPendingProducts() {
           </span>
         </div>
 
-        <div className="table-container bg-white shadow-sm border border-[#D4AF37]/20">
-          <table className="table-base w-full">
-            <thead>
-              <tr>
-                <th className="!text-xs uppercase tracking-wider">Saree </th>
-                <th className="!text-xs uppercase tracking-wider">Weave House / Shop</th>
-                <th className="!text-xs uppercase tracking-wider">Offer Price</th>
-                <th className="!text-xs uppercase tracking-wider">Verification Status</th>
-                <th className="!text-xs uppercase tracking-wider text-right">Silk Mark Decision</th>
-              </tr>
-            </thead>
-            <tbody>
-              {pendingNew.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="py-12 text-center text-[#6B4A48] italic">No products available.</td>
-                </tr>
-              ) : (
-                pendingNew.map(p => (
-                  <tr key={p.id} className="hover:bg-[#FFF8F0]/50 transition-colors">
-                    <td className="font-medium text-[#4A2C2A]">
-                      <div className="flex items-center gap-3.5">
-                        <img src={p.image} alt="" className="w-12 h-14 rounded-xl object-cover border border-[#D4AF37]/30 shadow-xs flex-shrink-0" />
-                        <div>
-                          <span className="font-bold text-[#7B1E3A] block text-sm">{p.name}</span>
-                          <span className="text-[11px] text-[#6B4A48]/70">ID: #VC-{p.id} · {p.category}</span>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="text-[#6B4A48] font-medium text-xs">{p.shopName || ''}</td>
-                    <td className="font-bold text-[#7B1E3A] text-sm">₹{(p.offerPrice || p.price || 14500).toLocaleString()}</td>
-                    <td><span className="badge badge-warning">⏳ Pending Inspection</span></td>
-                    <td className="text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <button onClick={() => act(p.id, 'approved')} title="Approve & Certify"
-                          className="w-9 h-9 rounded-xl bg-green-100 text-green-700 flex items-center justify-center cursor-pointer border border-green-300 hover:bg-green-600 hover:text-white transition-all shadow-xs">
-                          <FiCheck size={18} />
-                        </button>
-                        <button onClick={() => act(p.id, 'rejected')} title="Reject Weave"
-                          className="w-9 h-9 rounded-xl bg-red-100 text-red-700 flex items-center justify-center cursor-pointer border border-red-300 hover:bg-red-600 hover:text-white transition-all shadow-xs">
-                          <FiX size={18} />
-                        </button>
-                        <button onClick={() => handleEdit(p)} title="Edit Price/Details"
-                          className="w-9 h-9 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center cursor-pointer border border-blue-300 hover:bg-blue-600 hover:text-white transition-all shadow-xs">
-                          <FiEdit2 size={16} />
-                        </button>
-                        <button onClick={() => { if (window.confirm('Delete this saree completely?')) deleteProduct(p.id); }} title="Delete Saree"
-                          className="w-9 h-9 rounded-xl bg-gray-100 text-gray-700 flex items-center justify-center cursor-pointer border border-gray-300 hover:bg-gray-600 hover:text-white transition-all shadow-xs">
-                          <FiTrash2 size={16} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+        {pendingNew.length === 0 ? (
+          <div className="card-base p-12 text-center bg-white shadow-sm border border-[#D4AF37]/20 border-dashed">
+            <p className="text-sm font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>No products available in pending approval queue.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {pendingNew.map(p => (
+              <AdminProductDisplayCard
+                key={p.id}
+                product={p}
+                allShops={allShops}
+                allUsers={allUsers}
+                pendingShops={pendingShops}
+                actions={
+                  <div className="flex items-center justify-end gap-2 w-full flex-wrap">
+                    <button onClick={() => act(p.id, 'approved')} title="Approve & Certify"
+                      className="px-3.5 py-2 rounded-xl bg-[#2D8F5E] text-white text-xs font-bold flex items-center justify-center cursor-pointer hover:bg-[#23744b] transition-all shadow-xs">
+                      <FiCheck size={14} className="mr-1" /> Approve
+                    </button>
+                    <button onClick={() => act(p.id, 'rejected')} title="Reject Weave"
+                      className="px-3.5 py-2 rounded-xl bg-red-600 text-white text-xs font-bold flex items-center justify-center cursor-pointer hover:bg-red-700 transition-all shadow-xs">
+                      <FiX size={14} className="mr-1" /> Reject
+                    </button>
+                    <button onClick={() => handleEdit(p)} title="Edit Price/Details"
+                      className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center cursor-pointer border border-blue-300 hover:bg-blue-600 hover:text-white transition-all shadow-xs">
+                      <FiEdit2 size={14} />
+                    </button>
+                    <button onClick={() => { if (window.confirm('Delete this saree completely?')) deleteProduct(p.id); }} title="Delete Saree"
+                      className="w-8 h-8 rounded-xl bg-gray-100 text-gray-700 flex items-center justify-center cursor-pointer border border-gray-300 hover:bg-gray-600 hover:text-white transition-all shadow-xs">
+                      <FiTrash2 size={14} />
+                    </button>
+                  </div>
+                }
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Pending Edit Reviews from Shopkeepers */}
@@ -109,48 +91,69 @@ export function AdminPendingProducts() {
             </span>
           </div>
 
-          <div className="space-y-4">
-            {pendingEdits.map(p => (
-              <div key={p.id} className="card-base p-5 sm:p-6 bg-white border border-amber-200 shadow-sm">
-                <div className="flex items-start gap-4 mb-4">
-                  <img src={p.image} alt="" className="w-14 h-16 rounded-xl object-cover border border-[#D4AF37]/30 shadow-xs flex-shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-bold text-[#7B1E3A] text-sm m-0">{p.name}</h4>
-                    <p className="text-[11px] text-[#6B4A48] m-0">by {p.shopName} · #{p.id}</p>
-                    <p className="text-[10px] text-amber-600 m-0 mt-1 font-semibold">
-                      Edit submitted by: {p.pendingEdit.submittedBy} · {new Date(p.pendingEdit.submittedAt).toLocaleString()}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="bg-amber-50/60 rounded-xl p-4 border border-amber-200/50 mb-4">
-                  <span className="text-[10px] uppercase tracking-wider text-amber-700 font-bold block mb-2">Proposed Changes</span>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    {Object.entries(p.pendingEdit).filter(([k]) => !['submittedBy', 'submittedAt', 'editStatus'].includes(k)).map(([key, val]) => (
-                      <div key={key} className="bg-white rounded-lg p-2.5 border border-amber-200/30">
-                        <span className="text-[10px] uppercase text-[#D4AF37] font-bold block">{key}</span>
-                        <span className="text-xs text-[#4A2C2A] font-semibold">{typeof val === 'number' ? `₹${val.toLocaleString()}` : String(val)}</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {pendingEdits.map(p => {
+              const { shopName, shopLogo, ownerName } = resolveShopInfo(p, allShops, allUsers, pendingShops);
+              return (
+                <div key={p.id} className="card-base p-5 bg-white border border-amber-200 shadow-sm flex flex-col justify-between rounded-2xl">
+                  <div>
+                    <div className="flex items-start gap-3.5 mb-4 pb-4 border-b border-[#D4AF37]/15">
+                      <img src={p.thumbnail || p.image || p.imageUrl} alt={p.name} className="w-16 h-20 rounded-xl object-cover border border-[#D4AF37]/30 shadow-xs flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <span className="inline-block text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border mb-1.5 bg-blue-600 text-white border-blue-600">
+                          Pending Edit Review
+                        </span>
+                        <h4 className="font-bold text-[#7B1E3A] text-base m-0 leading-snug break-words" style={{ fontFamily: 'Playfair Display' }}>{p.name}</h4>
+                        <p className="text-xs font-semibold text-[#6B4A48]/80 m-0 mt-1">ID: #{p.id} · {p.category}</p>
                       </div>
-                    ))}
+                    </div>
+
+                    <div className="bg-[#FFF8F0]/80 rounded-xl p-3.5 border border-[#D4AF37]/25 mb-4 space-y-2.5">
+                      <div className="flex items-center gap-3">
+                        <img src={shopLogo} alt={shopName} className="w-10 h-10 rounded-full object-cover border-2 border-[#D4AF37] shadow-xs flex-shrink-0 bg-white" />
+                        <div className="min-w-0 flex-1">
+                          <span className="text-sm sm:text-base font-bold text-[#7B1E3A] truncate block leading-tight">{shopName}</span>
+                          <span className="text-xs text-[#6B4A48] font-medium truncate block mt-0.5">
+                            Owner : <strong className="text-[#4A2C2A] font-bold text-xs sm:text-sm">{ownerName}</strong>
+                          </span>
+                        </div>
+                      </div>
+                      <div className="pt-2 border-t border-[#D4AF37]/15 flex items-center justify-between text-xs text-[#6B4A48]">
+                        <span className="text-[10px] uppercase font-bold text-[#D4AF37]">Submitted :</span>
+                        <span className="font-semibold text-[#4A2C2A]">{p.pendingEdit?.submittedAt ? new Date(p.pendingEdit.submittedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : 'Recently'}</span>
+                      </div>
+                    </div>
+
+                    <div className="bg-amber-50/60 rounded-xl p-4 border border-amber-200/50 mb-4">
+                      <span className="text-[10px] uppercase tracking-wider text-amber-700 font-bold block mb-2">Proposed Changes</span>
+                      <div className="grid grid-cols-2 gap-2">
+                        {Object.entries(p.pendingEdit || {}).filter(([k]) => !['submittedBy', 'submittedAt', 'editStatus'].includes(k)).map(([key, val]) => (
+                          <div key={key} className="bg-white rounded-lg p-2.5 border border-amber-200/30">
+                            <span className="text-[10px] uppercase text-[#D4AF37] font-bold block">{key}</span>
+                            <span className="text-xs text-[#4A2C2A] font-semibold">{typeof val === 'number' ? `₹${val.toLocaleString()}` : String(val)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2 pt-3 border-t border-[#D4AF37]/15 justify-end">
+                    <button
+                      onClick={() => { approvePendingEdit(p.id); alert('Edit approved and live product updated.'); }}
+                      className="px-4 py-2 rounded-xl bg-[#2D8F5E] text-white font-bold text-xs hover:bg-[#23744b] transition-colors flex items-center gap-1 cursor-pointer"
+                    >
+                      <FiCheck size={14} /> Approve Edit
+                    </button>
+                    <button
+                      onClick={() => { rejectPendingEdit(p.id); alert('Edit rejected. Live product unchanged.'); }}
+                      className="px-4 py-2 rounded-xl bg-red-600 text-white font-bold text-xs hover:bg-red-700 transition-colors flex items-center gap-1 cursor-pointer"
+                    >
+                      <FiX size={14} /> Reject Edit
+                    </button>
                   </div>
                 </div>
-
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => { approvePendingEdit(p.id); alert('Edit approved and live product updated.'); }}
-                    className="btn-golden !py-2 !px-5 !text-xs cursor-pointer flex items-center gap-1.5"
-                  >
-                    <FiCheck size={14} /> Approve Edit
-                  </button>
-                  <button
-                    onClick={() => { rejectPendingEdit(p.id); alert('Edit rejected. Live product unchanged.'); }}
-                    className="btn-outline-maroon !py-2 !px-5 !text-xs cursor-pointer flex items-center gap-1.5"
-                  >
-                    <FiX size={14} /> Reject Edit
-                  </button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
@@ -160,6 +163,7 @@ export function AdminPendingProducts() {
 
 export function AdminApprovedProducts() {
   const { products, deleteProduct, adminEditProduct, rejectProduct } = useProducts();
+  const { allShops = [], allUsers = [], pendingShops = [] } = useAuth();
   const approved = products.filter(p => p.status === 'approved');
 
   const handleEdit = (p) => {
@@ -181,59 +185,39 @@ export function AdminApprovedProducts() {
         </span>
       </div>
 
-      <div className="table-container bg-white shadow-sm border border-[#D4AF37]/20">
-        <table className="table-base w-full">
-          <thead>
-            <tr>
-              <th className="!text-xs uppercase tracking-wider">Saree Weave</th>
-              <th className="!text-xs uppercase tracking-wider">Weave House / Shop</th>
-              <th className="!text-xs uppercase tracking-wider">Offer Price</th>
-              <th className="!text-xs uppercase tracking-wider">Customer Rating</th>
-              <th className="!text-xs uppercase tracking-wider text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {approved.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="py-12 text-center text-[#6B4A48] italic">No products available.</td>
-              </tr>
-            ) : (
-              approved.map(p => (
-                <tr key={p.id} className="hover:bg-[#FFF8F0]/50 transition-colors">
-                  <td className="font-medium text-[#4A2C2A]">
-                    <div className="flex items-center gap-3.5">
-                      <img src={p.image} alt="" className="w-12 h-14 rounded-xl object-cover border border-[#D4AF37]/30 shadow-xs flex-shrink-0" />
-                      <div>
-                        <span className="font-bold text-[#7B1E3A] block text-sm">{p.name}</span>
-                        <span className="text-[11px] text-[#6B4A48]/70">ID: #VC-{p.id} · {p.category}</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="text-[#6B4A48] font-medium text-xs">{p.shopName || ''}</td>
-                  <td className="font-bold text-[#7B1E3A] text-sm">₹{(p.offerPrice || p.price || 14500).toLocaleString()}</td>
-                  <td className="text-[#6B4A48] font-semibold text-xs">⭐ {p.rating || 4.9} <span className="text-[10px] text-[#6B4A48]/60">({p.reviews || 12} rev.)</span></td>
-                  <td className="text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <button onClick={() => handleEdit(p)} title="Edit Price/Details"
-                        className="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center cursor-pointer border border-blue-300 hover:bg-blue-600 hover:text-white transition-all shadow-xs">
-                        <FiEdit2 size={14} />
-                      </button>
-                      <button onClick={() => rejectProduct(p.id)} title="Reject/Revoke Certification"
-                        className="w-8 h-8 rounded-lg bg-yellow-100 text-yellow-700 flex items-center justify-center cursor-pointer border border-yellow-300 hover:bg-yellow-600 hover:text-white transition-all shadow-xs">
-                        <FiX size={14} />
-                      </button>
-                      <button onClick={() => { if (window.confirm('Completely delete this saree?')) deleteProduct(p.id); }} title="Delete Saree"
-                        className="w-8 h-8 rounded-lg bg-red-100 text-red-700 flex items-center justify-center cursor-pointer border border-red-300 hover:bg-red-600 hover:text-white transition-all shadow-xs">
-                        <FiTrash2 size={14} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+      {approved.length === 0 ? (
+        <div className="card-base p-12 text-center bg-white shadow-sm border border-[#D4AF37]/20 border-dashed">
+          <p className="text-sm font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>No approved weaves available in live catalogue.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {approved.map(p => (
+            <AdminProductDisplayCard
+              key={p.id}
+              product={p}
+              allShops={allShops}
+              allUsers={allUsers}
+              pendingShops={pendingShops}
+              actions={
+                <div className="flex items-center justify-end gap-2 w-full flex-wrap">
+                  <button onClick={() => handleEdit(p)} title="Edit Price/Details"
+                    className="px-3 py-1.5 rounded-xl bg-blue-100 text-blue-700 text-xs font-bold flex items-center justify-center cursor-pointer border border-blue-300 hover:bg-blue-600 hover:text-white transition-all shadow-xs">
+                    <FiEdit2 size={14} className="mr-1" /> Edit Price
+                  </button>
+                  <button onClick={() => rejectProduct(p.id)} title="Revoke Certification / Reject"
+                    className="px-3 py-1.5 rounded-xl bg-yellow-100 text-yellow-800 text-xs font-bold flex items-center justify-center cursor-pointer border border-yellow-300 hover:bg-yellow-600 hover:text-white transition-all shadow-xs">
+                    <FiX size={14} className="mr-1" /> Revoke Live
+                  </button>
+                  <button onClick={() => { if (window.confirm('Completely delete this saree?')) deleteProduct(p.id); }} title="Delete Saree"
+                    className="w-8 h-8 rounded-xl bg-red-100 text-red-700 flex items-center justify-center cursor-pointer border border-red-300 hover:bg-red-600 hover:text-white transition-all shadow-xs">
+                    <FiTrash2 size={14} />
+                  </button>
+                </div>
+              }
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

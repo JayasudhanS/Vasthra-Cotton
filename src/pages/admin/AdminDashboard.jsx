@@ -1,13 +1,15 @@
-import { useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { FiPackage, FiClock, FiShoppingBag, FiUsers, FiTrendingUp, FiCheckCircle } from 'react-icons/fi';
+import { FiPackage, FiClock, FiShoppingBag, FiUsers, FiTrendingUp, FiCheckCircle, FiCheck, FiX, FiFilter, FiLayers } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useProducts } from '../../context/ProductContext';
+import { AdminProductDisplayCard } from './AdminProductCardHelper';
 
 export default function AdminDashboard() {
   const { user, pendingShops = [], allUsers = [], allShops = [] } = useAuth();
-  const { products = [], approvedProducts = [] } = useProducts();
+  const { products = [], approvedProducts = [], approveProduct, rejectProduct, approvePendingEdit, rejectPendingEdit } = useProducts();
+  const [activeTab, setActiveTab] = useState('pending');
 
   const pendingWeavesCount = useMemo(() => 
     products.filter(p => (p.status || '').toString().trim().toLowerCase() === 'pending').length, 
@@ -22,6 +24,22 @@ export default function AdminDashboard() {
   const registeredUsersCount = useMemo(() => 
     allUsers.filter(u => u.role === 'user' || (!u.role && u.email !== 'admin@vasthracotton.com')).length, 
   [allUsers]);
+
+  const pendingNewProducts = useMemo(() => 
+    products.filter(p => (p.status || '').toString().trim().toLowerCase() === 'pending'),
+  [products]);
+
+  const pendingEditProducts = useMemo(() => 
+    products.filter(p => p.pendingEdit && p.pendingEdit.editStatus === 'pending'),
+  [products]);
+
+  const liveProductsList = useMemo(() => 
+    approvedProducts.slice(0, 12),
+  [approvedProducts]);
+
+  const recentProductsList = useMemo(() => 
+    [...products].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)).slice(0, 12),
+  [products]);
 
   const stats = [
     { 
@@ -176,7 +194,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Stat Cards - Responsive Grid strictly contained inside viewport */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-4 gap-6 sm:gap-8 mb-12 w-full min-w-0 max-w-full items-stretch">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 2xl:grid-cols-4 gap-6 sm:gap-8 mb-4 w-full min-w-0 max-w-full items-stretch">
         {stats.map((s, i) => (
           <motion.div 
             key={i} 
@@ -214,6 +232,164 @@ export default function AdminDashboard() {
             </Link>
           </motion.div>
         ))}
+      </div>
+
+      {/* Shop Owner & Product Management Cards Section (Realtime resolution) */}
+      <div className="space-y-6 w-full min-w-0 max-w-full flex flex-col pt-4 overflow-hidden">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#D4AF37]/20 pb-4">
+          <div>
+            <span className="text-xs uppercase tracking-widest text-[#D4AF37] font-bold block mb-1">✦ Realtime Shop Owner Attribution</span>
+            <h2 className="text-xl sm:text-2xl font-bold text-[#7B1E3A] m-0 flex items-center gap-2" style={{ fontFamily: 'Playfair Display' }}>
+              <FiLayers className="text-[#D4AF37]" /> Product & Shop Verification Center
+            </h2>
+          </div>
+          <div className="flex items-center gap-2 flex-wrap">
+            {[
+              { key: 'pending', label: 'Pending Sarees / Approval Queue', count: pendingNewProducts.length },
+              { key: 'live', label: 'Live Catalogue', count: liveCatalogueCount },
+              { key: 'recent', label: 'Recently Added Products', count: recentProductsList.length },
+              { key: 'review', label: 'Pending Product Review', count: pendingEditProducts.length },
+            ].map(tab => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  activeTab === tab.key
+                    ? 'bg-[#7B1E3A] text-white shadow-md border border-[#D4AF37]'
+                    : 'bg-white text-[#6B4A48] hover:bg-[#FFF8F0] border border-[#D4AF37]/30'
+                }`}
+              >
+                <span>{tab.label}</span>
+                <span className={`px-1.5 py-0.5 rounded-md text-[10px] ${activeTab === tab.key ? 'bg-white/20 text-white' : 'bg-[#D4AF37]/20 text-[#7B1E3A]'}`}>
+                  {tab.count}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Product Cards Grid corresponding to active view */}
+        <div className="w-full min-w-0">
+          {activeTab === 'pending' && (
+            pendingNewProducts.length === 0 ? (
+              <div className="card-base p-12 text-center bg-white shadow-sm border border-[#D4AF37]/20 border-dashed">
+                <p className="text-sm font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>No pending sarees currently awaiting approval queue inspection.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {pendingNewProducts.map(p => (
+                  <AdminProductDisplayCard
+                    key={p.id}
+                    product={p}
+                    allShops={allShops}
+                    allUsers={allUsers}
+                    pendingShops={pendingShops}
+                    actions={
+                      <div className="flex items-center gap-2 w-full justify-end">
+                        <button
+                          onClick={() => { approveProduct(p.id); alert(`Product #${p.id} approved & live.`); }}
+                          className="px-4 py-2 rounded-xl bg-[#2D8F5E] text-white font-bold text-xs hover:bg-[#23744b] transition-colors flex items-center gap-1 cursor-pointer"
+                        >
+                          <FiCheck size={14} /> Approve Saree
+                        </button>
+                        <button
+                          onClick={() => { rejectProduct(p.id); alert(`Product #${p.id} rejected.`); }}
+                          className="px-4 py-2 rounded-xl bg-red-600 text-white font-bold text-xs hover:bg-red-700 transition-colors flex items-center gap-1 cursor-pointer"
+                        >
+                          <FiX size={14} /> Reject
+                        </button>
+                      </div>
+                    }
+                  />
+                ))}
+              </div>
+            )
+          )}
+
+          {activeTab === 'live' && (
+            liveProductsList.length === 0 ? (
+              <div className="card-base p-12 text-center bg-white shadow-sm border border-[#D4AF37]/20 border-dashed">
+                <p className="text-sm font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>No approved weaves in live catalogue.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {liveProductsList.map(p => (
+                  <AdminProductDisplayCard
+                    key={p.id}
+                    product={p}
+                    allShops={allShops}
+                    allUsers={allUsers}
+                    pendingShops={pendingShops}
+                    actions={
+                      <Link
+                        to="/admin/approved-products"
+                        className="text-xs font-bold text-[#7B1E3A] hover:text-[#D4AF37] no-underline transition-colors"
+                      >
+                        Manage in Catalogue →
+                      </Link>
+                    }
+                  />
+                ))}
+              </div>
+            )
+          )}
+
+          {activeTab === 'recent' && (
+            recentProductsList.length === 0 ? (
+              <div className="card-base p-12 text-center bg-white shadow-sm border border-[#D4AF37]/20 border-dashed">
+                <p className="text-sm font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>No recently added products available.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {recentProductsList.map(p => (
+                  <AdminProductDisplayCard
+                    key={p.id}
+                    product={p}
+                    allShops={allShops}
+                    allUsers={allUsers}
+                    pendingShops={pendingShops}
+                  />
+                ))}
+              </div>
+            )
+          )}
+
+          {activeTab === 'review' && (
+            pendingEditProducts.length === 0 ? (
+              <div className="card-base p-12 text-center bg-white shadow-sm border border-[#D4AF37]/20 border-dashed">
+                <p className="text-sm font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>No products currently pending product review / edit requests.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {pendingEditProducts.map(p => (
+                  <AdminProductDisplayCard
+                    key={p.id}
+                    product={p}
+                    allShops={allShops}
+                    allUsers={allUsers}
+                    pendingShops={pendingShops}
+                    actions={
+                      <div className="flex items-center gap-2 w-full justify-end">
+                        <button
+                          onClick={() => { approvePendingEdit(p.id); alert(`Edit approved for #${p.id}.`); }}
+                          className="px-4 py-2 rounded-xl bg-[#2D8F5E] text-white font-bold text-xs hover:bg-[#23744b] transition-colors flex items-center gap-1 cursor-pointer"
+                        >
+                          <FiCheck size={14} /> Approve Edit
+                        </button>
+                        <button
+                          onClick={() => { rejectPendingEdit(p.id); alert(`Edit rejected for #${p.id}.`); }}
+                          className="px-4 py-2 rounded-xl bg-red-600 text-white font-bold text-xs hover:bg-red-700 transition-colors flex items-center gap-1 cursor-pointer"
+                        >
+                          <FiX size={14} /> Reject Edit
+                        </button>
+                      </div>
+                    }
+                  />
+                ))}
+              </div>
+            )
+          )}
+        </div>
       </div>
 
       {/* Activities Feed - Strictly Below Cards */}

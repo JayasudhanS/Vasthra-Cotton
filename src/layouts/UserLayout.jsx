@@ -118,7 +118,7 @@ export default function UserLayout() {
                          pathname === '/user/profile';
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-10 w-full overflow-visible">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-28 sm:pt-8 sm:pb-32 lg:py-10 w-full overflow-visible">
       {showBreadcrumb && <BreadcrumbBack />}
 
       {/* Logged-in User Account Status & Identity Header */}
@@ -154,11 +154,11 @@ export default function UserLayout() {
         </div>
       </div>
 
-      {/* Persistent User Dashboard Navigation Strip */}
+      {/* Persistent User Dashboard Navigation Strip (Desktop Only: lg and above) */}
       {isSticky && (
         <div
           style={{ height: navHeight > 0 ? `${navHeight}px` : '104px' }}
-          className="w-full mb-6 sm:mb-8"
+          className="hidden lg:block w-full mb-6 sm:mb-8"
           aria-hidden="true"
         />
       )}
@@ -166,51 +166,95 @@ export default function UserLayout() {
         ref={navRef}
         className={
           isSticky
-            ? 'fixed top-[64px] sm:top-[72px] lg:top-[76px] left-0 right-0 z-40 bg-white border-b-2 border-[#D4AF37]/30 shadow-lg'
-            : 'w-full z-40 bg-white border-2 border-[#D4AF37]/30 shadow-lg rounded-2xl sm:rounded-3xl mb-6 sm:mb-8'
+            ? 'hidden lg:block fixed top-[64px] sm:top-[72px] lg:top-[76px] left-0 right-0 z-40 bg-white border-b-2 border-[#D4AF37]/30 shadow-lg'
+            : 'hidden lg:block w-full z-40 bg-white border-2 border-[#D4AF37]/30 shadow-lg rounded-2xl sm:rounded-3xl mb-6 sm:mb-8'
         }
       >
         <div className={isSticky ? 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6' : 'py-4 sm:py-6 px-4 sm:px-6'}>
           <div className="flex items-stretch justify-between gap-3 sm:gap-5 lg:gap-6 overflow-x-auto pb-2 sm:pb-0 scrollbar-hidden w-full">
-          {links.map(l => {
-            const isActive = isLinkActive(pathname, l.path);
-            return (
-              <Link
-                key={l.name}
-                to={l.path}
-                onClick={() => { if (confirmingLogout) setConfirmingLogout(false); }}
-                className={`flex-1 min-w-[75px] sm:min-w-[120px] flex flex-col items-center justify-center gap-2.5 sm:gap-3 py-4 sm:py-5 px-3.5 sm:px-5 rounded-2xl transition-all no-underline text-center select-none ${
-                  isActive
-                    ? 'bg-[#7B1E3A] text-white border-2 border-[#D4AF37] shadow-md sm:shadow-lg scale-[1.02]'
-                    : 'bg-[#FFF8F0]/70 hover:bg-[#FFF8F0] text-[#7B1E3A] border border-[#D4AF37]/30 hover:border-[#D4AF37] hover:shadow-md'
-                }`}
-              >
-                <div className={`flex items-center justify-center ${isActive ? 'text-[#D4AF37]' : 'text-[#7B1E3A]'}`}>
-                  {l.icon}
-                </div>
-                <span className="text-xs sm:text-base font-bold tracking-tight whitespace-nowrap">
-                  {l.name}
-                </span>
-              </Link>
-            );
-          })}
-          <button
-            onClick={handleLogout}
-            className={`flex-1 min-w-[75px] sm:min-w-[120px] flex flex-col items-center justify-center gap-2.5 sm:gap-3 py-4 sm:py-5 px-3.5 sm:px-5 rounded-2xl transition-all cursor-pointer text-center select-none ${
-              confirmingLogout
-                ? 'bg-red-600 text-white border-2 border-red-700 shadow-lg scale-[1.02]'
-                : 'bg-red-50/80 hover:bg-red-100 text-red-600 border border-red-200 hover:border-red-400 hover:shadow-md'
-            }`}
-          >
-            <div className={`flex items-center justify-center ${confirmingLogout ? 'text-white' : 'text-red-600'}`}>
-              <FiLogOut className="w-6 h-6 sm:w-8 sm:h-8" />
-            </div>
-            <span className="text-xs sm:text-base font-bold tracking-tight whitespace-nowrap">
-              {confirmingLogout ? 'Confirm?' : 'Logout'}
-            </span>
-          </button>
+            {links.map(l => {
+              const isActive = isLinkActive(pathname, l.path);
+              return (
+                <Link
+                  key={l.name}
+                  to={l.path}
+                  onClick={() => { if (confirmingLogout) setConfirmingLogout(false); }}
+                  className={`flex-1 min-w-[75px] sm:min-w-[120px] flex flex-col items-center justify-center gap-2.5 sm:gap-3 py-4 sm:py-5 px-3.5 sm:px-5 rounded-2xl transition-all no-underline text-center select-none ${
+                    isActive
+                      ? 'bg-[#7B1E3A] text-white border-2 border-[#D4AF37] shadow-md sm:shadow-lg scale-[1.02]'
+                      : 'bg-[#FFF8F0]/70 hover:bg-[#FFF8F0] text-[#7B1E3A] border border-[#D4AF37]/30 hover:border-[#D4AF37] hover:shadow-md'
+                  }`}
+                >
+                  <div className={`flex items-center justify-center ${isActive ? 'text-[#D4AF37]' : 'text-[#7B1E3A]'}`}>
+                    {l.icon}
+                  </div>
+                  <span className="text-xs sm:text-base font-bold tracking-tight whitespace-nowrap">
+                    {l.name}
+                  </span>
+                </Link>
+              );
+            })}
+            <button
+              onClick={handleLogout}
+              className={`flex-1 min-w-[75px] sm:min-w-[120px] flex flex-col items-center justify-center gap-2.5 sm:gap-3 py-4 sm:py-5 px-3.5 sm:px-5 rounded-2xl transition-all cursor-pointer text-center select-none ${
+                confirmingLogout
+                  ? 'bg-red-600 text-white border-2 border-red-700 shadow-lg scale-[1.02]'
+                  : 'bg-red-50/80 hover:bg-red-100 text-red-600 border border-red-200 hover:border-red-400 hover:shadow-md'
+              }`}
+            >
+              <div className={`flex items-center justify-center ${confirmingLogout ? 'text-white' : 'text-red-600'}`}>
+                <FiLogOut className="w-6 h-6 sm:w-8 sm:h-8" />
+              </div>
+              <span className="text-xs sm:text-base font-bold tracking-tight whitespace-nowrap">
+                {confirmingLogout ? 'Confirm?' : 'Logout'}
+              </span>
+            </button>
+          </div>
         </div>
-        </div>
+      </div>
+
+      {/* Fixed Bottom Navigation Strip for Mobile & Tablet (< lg) */}
+      <div
+        style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}
+        className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t-2 border-[#D4AF37]/30 shadow-[0_-4px_20px_rgba(0,0,0,0.12)] px-2 sm:px-4 pt-2 sm:pt-2.5 flex items-stretch justify-between gap-1 sm:gap-2 overflow-x-auto"
+      >
+        {links.map(l => {
+          const isActive = isLinkActive(pathname, l.path);
+          return (
+            <Link
+              key={l.name}
+              to={l.path}
+              onClick={() => { if (confirmingLogout) setConfirmingLogout(false); }}
+              className={`flex-1 min-w-[62px] sm:min-w-[75px] flex flex-col items-center justify-center gap-1 sm:gap-1.5 py-2 px-1 sm:px-2 rounded-xl transition-all no-underline text-center select-none ${
+                isActive
+                  ? 'bg-[#7B1E3A] text-white border border-[#D4AF37] shadow-sm scale-[1.02]'
+                  : 'bg-[#FFF8F0]/70 hover:bg-[#FFF8F0] text-[#7B1E3A] border border-[#D4AF37]/30 hover:border-[#D4AF37]'
+              }`}
+            >
+              <div className={`flex items-center justify-center [&>svg]:w-5 [&>svg]:h-5 sm:[&>svg]:w-6 sm:[&>svg]:h-6 ${isActive ? 'text-[#D4AF37]' : 'text-[#7B1E3A]'}`}>
+                {l.icon}
+              </div>
+              <span className="text-[11px] sm:text-xs font-bold tracking-tight whitespace-nowrap leading-none">
+                {l.name}
+              </span>
+            </Link>
+          );
+        })}
+        <button
+          onClick={handleLogout}
+          className={`flex-1 min-w-[62px] sm:min-w-[75px] flex flex-col items-center justify-center gap-1 sm:gap-1.5 py-2 px-1 sm:px-2 rounded-xl transition-all cursor-pointer text-center select-none ${
+            confirmingLogout
+              ? 'bg-red-600 text-white border border-red-700 shadow-sm scale-[1.02]'
+              : 'bg-red-50/80 hover:bg-red-100 text-red-600 border border-red-200 hover:border-red-400'
+          }`}
+        >
+          <div className={`flex items-center justify-center [&>svg]:w-5 [&>svg]:h-5 sm:[&>svg]:w-6 sm:[&>svg]:h-6 ${confirmingLogout ? 'text-white' : 'text-red-600'}`}>
+            <FiLogOut />
+          </div>
+          <span className="text-[11px] sm:text-xs font-bold tracking-tight whitespace-nowrap leading-none">
+            {confirmingLogout ? 'Confirm?' : 'Logout'}
+          </span>
+        </button>
       </div>
 
       {/* Page Content Area */}
