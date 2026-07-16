@@ -147,7 +147,7 @@ export default function CartPage() {
               <div className="border-t border-[#D4AF37]/20 pt-4 mb-8 flex justify-between items-end">
                 <div>
                   <span className="block text-xs uppercase tracking-widest text-[#D4AF37] font-bold mb-1">Estimated Total</span>
-                  <span className="text-2xl font-bold text-[#7B1E3A]" style={{ fontFamily: 'Playfair Display' }}>
+                  <span className="text-2xl font-bold text-[#7B1E3A]" style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 700, letterSpacing: 'normal' }}>
                     ₹{estimatedTotal.toLocaleString()}
                   </span>
                 </div>

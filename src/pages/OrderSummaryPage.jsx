@@ -144,7 +144,7 @@ export default function OrderSummaryPage() {
               </div>
               <div className="border-t border-[#D4AF37]/20 pt-3 flex justify-between text-[#7B1E3A] font-bold text-lg">
                 <span>Total Amount</span>
-                <span>₹{total.toLocaleString()}</span>
+                <span style={{ fontFamily: 'Poppins, sans-serif', fontWeight: 700, letterSpacing: 'normal' }}>₹{total.toLocaleString()}</span>
               </div>
             </div>
 

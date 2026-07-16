@@ -145,43 +145,44 @@ function StatisticsSection() {
     const calculateWeavers = (uDocs, sDocs) => {
       const map = new Map();
       uDocs.forEach((d) => {
-        const data = d.data();
+        const data = typeof d.data === 'function' ? d.data() : d;
         const st = (data.status || '').toString().trim().toLowerCase();
         const isRoleShop = data.role === 'shopOwner' || data.role === 'shopkeeper' || data.isShop === true;
         const isApproved = st === 'active' || st === 'approved' || st === 'verified' || data.isApproved === true || data.verified === true;
         const isExcluded = st === 'pending' || st === 'rejected' || st === 'disabled' || st === 'inactive' || data.isDisabled === true;
         if (isRoleShop && isApproved && !isExcluded) {
-          map.set(d.id || data.uid, true);
+          map.set(d.id || data.uid || data.id, true);
         }
       });
       sDocs.forEach((d) => {
-        const data = d.data();
+        const data = typeof d.data === 'function' ? d.data() : d;
         const st = (data.status || '').toString().trim().toLowerCase();
         const isApproved = st === 'active' || st === 'approved' || st === 'verified' || data.isApproved === true || data.verified === true;
         const isExcluded = st === 'pending' || st === 'rejected' || st === 'disabled' || st === 'inactive' || data.isDisabled === true;
         if (isApproved && !isExcluded) {
-          map.set(d.id || data.uid, true);
+          map.set(d.id || data.uid || data.id, true);
         }
       });
       setApprovedShopsCount(map.size);
     };
 
-    // Listener 2: Users (to check for approved shopOwners)
+    // Listener 2: Users (to check for approved shopOwners if accessible)
     const usersRef = collection(db, COLLECTIONS.USERS);
     const unsubUsers = onSnapshot(usersRef, (snapshot) => {
       usersList = snapshot.docs;
       calculateWeavers(usersList, shopsList);
-    }, (error) => {
-      console.error('Error in users statistic listener:', error);
+    }, () => {
+      calculateWeavers(usersList, shopsList);
     });
 
-    // Listener 3: Shops
+    // Listener 3: Shops (publicly accessible)
     const shopsRef = collection(db, COLLECTIONS.SHOPS);
     const unsubShops = onSnapshot(shopsRef, (snapshot) => {
       shopsList = snapshot.docs;
       calculateWeavers(usersList, shopsList);
     }, (error) => {
       console.error('Error in shops statistic listener:', error);
+      calculateWeavers(usersList, shopsList);
     });
 
     return () => {

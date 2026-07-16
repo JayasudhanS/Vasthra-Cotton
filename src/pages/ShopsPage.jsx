@@ -53,9 +53,9 @@ export default function ShopsPage() {
         .map(docSnap => ({ ...docSnap.data(), id: docSnap.id, uid: docSnap.data().uid || docSnap.id }))
         .filter(u => u.role === 'shopOwner' || u.role === 'shopkeeper');
       updateCombined(usersList, shopsList);
-    }, (err) => {
-      console.error('Error fetching users for shops page:', err);
-      setLoading(false);
+    }, () => {
+      // If USERS collection requires authentication or permission is denied, fall back to public SHOPS collection cleanly
+      updateCombined(usersList, shopsList);
     });
 
     const unsubShops = onSnapshot(collection(db, COLLECTIONS.SHOPS), (snapshot) => {
@@ -63,7 +63,7 @@ export default function ShopsPage() {
       updateCombined(usersList, shopsList);
     }, (err) => {
       console.error('Error fetching shops collection for shops page:', err);
-      setLoading(false);
+      updateCombined(usersList, shopsList);
     });
 
     return () => {

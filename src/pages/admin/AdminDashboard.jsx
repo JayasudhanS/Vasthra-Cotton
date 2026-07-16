@@ -47,7 +47,7 @@ export default function AdminDashboard() {
       value: pendingWeavesCount, 
       icon: <FiClock size={24} />, 
       color: 'from-[#D4AF37] to-[#E8C94A]', 
-      badge: pendingWeavesCount > 0 ? `${pendingWeavesCount} Awaiting Review` : 'Queue Clear',
+      badge: pendingWeavesCount === 1 ? '1 Pending Review' : `${pendingWeavesCount} Pending Reviews`,
       action: pendingWeavesCount > 0 ? 'Inspect Queue →' : 'Review Queue →',
       path: '/admin/pending-products'
     },
@@ -248,7 +248,7 @@ export default function AdminDashboard() {
               { key: 'pending', label: 'Pending Sarees / Approval Queue', count: pendingNewProducts.length },
               { key: 'live', label: 'Live Catalogue', count: liveCatalogueCount },
               { key: 'recent', label: 'Recently Added Products', count: recentProductsList.length },
-              { key: 'review', label: 'Pending Product Review', count: pendingEditProducts.length },
+              { key: 'review', label: 'Pending Product Review', count: pendingNewProducts.length },
             ].map(tab => (
               <button
                 key={tab.key}
@@ -284,22 +284,8 @@ export default function AdminDashboard() {
                     allShops={allShops}
                     allUsers={allUsers}
                     pendingShops={pendingShops}
-                    actions={
-                      <div className="flex items-center gap-2 w-full justify-end">
-                        <button
-                          onClick={() => { approveProduct(p.id); alert(`Product #${p.id} approved & live.`); }}
-                          className="px-4 py-2 rounded-xl bg-[#2D8F5E] text-white font-bold text-xs hover:bg-[#23744b] transition-colors flex items-center gap-1 cursor-pointer"
-                        >
-                          <FiCheck size={14} /> Approve Saree
-                        </button>
-                        <button
-                          onClick={() => { rejectProduct(p.id); alert(`Product #${p.id} rejected.`); }}
-                          className="px-4 py-2 rounded-xl bg-red-600 text-white font-bold text-xs hover:bg-red-700 transition-colors flex items-center gap-1 cursor-pointer"
-                        >
-                          <FiX size={14} /> Reject
-                        </button>
-                      </div>
-                    }
+                    onApprove={() => { approveProduct(p.id); alert(`Product #${p.id} approved & live.`); }}
+                    onReject={() => { rejectProduct(p.id); alert(`Product #${p.id} rejected.`); }}
                   />
                 ))}
               </div>
@@ -355,35 +341,21 @@ export default function AdminDashboard() {
           )}
 
           {activeTab === 'review' && (
-            pendingEditProducts.length === 0 ? (
+            pendingNewProducts.length === 0 ? (
               <div className="card-base p-12 text-center bg-white shadow-sm border border-[#D4AF37]/20 border-dashed">
-                <p className="text-sm font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>No products currently pending product review / edit requests.</p>
+                <p className="text-sm font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>No products currently pending product review.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {pendingEditProducts.map(p => (
+                {pendingNewProducts.map(p => (
                   <AdminProductDisplayCard
                     key={p.id}
                     product={p}
                     allShops={allShops}
                     allUsers={allUsers}
                     pendingShops={pendingShops}
-                    actions={
-                      <div className="flex items-center gap-2 w-full justify-end">
-                        <button
-                          onClick={() => { approvePendingEdit(p.id); alert(`Edit approved for #${p.id}.`); }}
-                          className="px-4 py-2 rounded-xl bg-[#2D8F5E] text-white font-bold text-xs hover:bg-[#23744b] transition-colors flex items-center gap-1 cursor-pointer"
-                        >
-                          <FiCheck size={14} /> Approve Edit
-                        </button>
-                        <button
-                          onClick={() => { rejectPendingEdit(p.id); alert(`Edit rejected for #${p.id}.`); }}
-                          className="px-4 py-2 rounded-xl bg-red-600 text-white font-bold text-xs hover:bg-red-700 transition-colors flex items-center gap-1 cursor-pointer"
-                        >
-                          <FiX size={14} /> Reject Edit
-                        </button>
-                      </div>
-                    }
+                    onApprove={() => { approveProduct(p.id); alert(`Product #${p.id} approved & live.`); }}
+                    onReject={() => { rejectProduct(p.id); alert(`Product #${p.id} rejected.`); }}
                   />
                 ))}
               </div>

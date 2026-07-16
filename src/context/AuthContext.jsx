@@ -137,12 +137,20 @@ export function AuthProvider({ children }) {
       }));
       const shopsFromShopsCol = sList.map(docData => ({
         ...docData,
-        status: (docData.status || 'Pending').toLowerCase()
+        status: (docData.status || 'Pending').toLowerCase(),
+        fromShopsCol: true
       }));
 
       const map = new Map();
       shopsFromShopsCol.forEach(s => map.set(s.id || s.uid, s));
-      shopkeepersFromUsers.forEach(s => map.set(s.id || s.uid, { ...(map.get(s.id || s.uid) || {}), ...s }));
+      shopkeepersFromUsers.forEach(s => {
+        const existing = map.get(s.id || s.uid);
+        const merged = { ...(existing || {}), ...s };
+        map.set(s.id || s.uid, merged);
+        if ((s.status === 'approved' || s.approved === true) && !existing?.fromShopsCol) {
+          setDoc(doc(db, COLLECTIONS.SHOPS, s.id || s.uid), { ...merged, id: s.id || s.uid, uid: s.id || s.uid, status: 'approved', approved: true, fromShopsCol: true }, { merge: true }).catch(() => {});
+        }
+      });
       setPendingShops(Array.from(map.values()));
     };
 
@@ -220,7 +228,7 @@ export function AuthProvider({ children }) {
         await signOut(auth);
         return {
           success: false,
-          message: 'Your registration has been submitted successfully. Your account is currently under review by our administrator. You will be able to access your dashboard once your account has been approved.'
+          message: 'Your application is pending Admin approval.\nPlease wait until your shop has been verified.'
         };
       }
 
@@ -265,12 +273,14 @@ export function AuthProvider({ children }) {
           shopName: formData.shopName || formData.name || '',
           address: formData.address || '',
           description: formData.description || '',
+          certificateUrl: formData.certificateUrl || '',
         } : {})
       };
 
       await setDoc(doc(db, COLLECTIONS.USERS, firebaseUser.uid), userData);
 
       if (isShop) {
+        await setDoc(doc(db, COLLECTIONS.SHOPS, firebaseUser.uid), { ...userData, id: firebaseUser.uid, uid: firebaseUser.uid, fromShopsCol: true, status: 'Pending', approved: false }, { merge: true }).catch(() => {});
         await signOut(auth);
         return {
           success: true,
@@ -524,9 +534,11 @@ export function AuthProvider({ children }) {
   const approveShop = async (id) => {
     try {
       const userRef = doc(db, COLLECTIONS.USERS, id);
-      await updateDoc(userRef, { status: 'approved', approved: true });
+      const userSnap = await getDoc(userRef).catch(() => null);
+      const userData = userSnap?.exists() ? userSnap.data() : {};
+      await updateDoc(userRef, { status: 'approved', approved: true }).catch(() => {});
       const shopRef = doc(db, COLLECTIONS.SHOPS, id);
-      await updateDoc(shopRef, { status: 'approved', approved: true }).catch(() => {});
+      await setDoc(shopRef, { ...userData, id, uid: id, status: 'approved', approved: true, fromShopsCol: true }, { merge: true }).catch(() => {});
     } catch (error) {
       console.error('Error approving shop:', error);
     }
@@ -535,9 +547,9 @@ export function AuthProvider({ children }) {
   const rejectShop = async (id) => {
     try {
       const userRef = doc(db, COLLECTIONS.USERS, id);
-      await updateDoc(userRef, { status: 'rejected', approved: false });
+      await updateDoc(userRef, { status: 'rejected', approved: false }).catch(() => {});
       const shopRef = doc(db, COLLECTIONS.SHOPS, id);
-      await updateDoc(shopRef, { status: 'rejected', approved: false }).catch(() => {});
+      await setDoc(shopRef, { status: 'rejected', approved: false, fromShopsCol: true }, { merge: true }).catch(() => {});
     } catch (error) {
       console.error('Error rejecting shop:', error);
     }

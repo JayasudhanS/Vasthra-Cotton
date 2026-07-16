@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiSearch, FiHeart, FiMenu, FiX, FiUser, FiGrid, FiClock, FiChevronDown, FiShield, FiShoppingBag, FiLogOut, FiShoppingCart, FiPackage, FiHome, FiPhone } from 'react-icons/fi';
+import { FiSearch, FiHeart, FiMenu, FiX, FiUser, FiUsers, FiGrid, FiClock, FiChevronDown, FiShield, FiShoppingBag, FiLogOut, FiShoppingCart, FiPackage, FiHome, FiPhone } from 'react-icons/fi';
 import { useWishlist } from '../../context/WishlistContext';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
@@ -477,7 +477,7 @@ export default function Navbar() {
                   { name: 'Shops', path: '/shops', icon: FiShoppingBag },
                   { name: 'Login', path: '/portal', icon: FiUser },
                   { name: 'Contact', path: '/contact', icon: FiPhone }
-                ].map(link => {
+                ].filter(link => link.name !== 'Login' || !user).map(link => {
                   const active = location.pathname === link.path;
                   const Icon = link.icon;
                   return (
@@ -503,35 +503,69 @@ export default function Navbar() {
               {/* Divider between sections (Mobile only) */}
               <div className="border-t border-[#D4AF37]/15 my-1 lg:hidden" />
 
-              {/* Quick Access */}
+              {/* Quick Access or Admin Shortcuts */}
               <div className="flex flex-col space-y-2">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-[#D4AF37] px-4 mb-0.5 lg:hidden">Quick Access</span>
-                {[
-                  { name: 'My Profile', path: '/user/dashboard', icon: FiUser },
-                  { name: 'Wishlist', path: '/wishlist', icon: FiHeart },
-                  { name: 'Cart', path: '/cart', icon: FiShoppingCart },
-                  { name: 'Orders', path: '/user/orders', icon: FiPackage }
-                ].map(link => {
-                  const active = location.pathname === link.path;
-                  const Icon = link.icon;
-                  return (
-                    <Link
-                      key={link.name}
-                      to={link.path}
-                      onClick={() => setMobileOpen(false)}
-                      className={`h-[46px] sm:h-[48px] px-4 rounded-xl font-body transition-all text-sm sm:text-base font-semibold no-underline flex items-center justify-between border border-transparent group ${active
-                          ? 'bg-[#7B1E3A] text-white shadow-sm'
-                          : 'text-[#4A2C2A] hover:bg-[#FFF8F0] hover:text-[#7B1E3A] active:bg-[#F5EDE0]'
-                        }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <Icon size={18} className={active ? 'text-[#D4AF37]' : 'text-[#7B1E3A]/70 group-hover:text-[#7B1E3A] transition-colors'} />
-                        {link.name}
-                      </div>
-                      {active && <span className="w-2 h-2 rounded-full bg-[#D4AF37]" />}
-                    </Link>
-                  );
-                })}
+                {role === 'admin' ? (
+                  <>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-[#D4AF37] px-4 mb-0.5 lg:hidden">Admin Shortcuts</span>
+                    {[
+                      { name: 'Pending Sarees', path: '/admin/pending-products', icon: FiClock },
+                      { name: 'Live Catalogue', path: '/admin/approved-products', icon: FiPackage },
+                      { name: 'Pending Shops', path: '/admin/pending-shops', icon: FiShoppingBag },
+                      { name: 'Users', path: '/admin/users', icon: FiUsers }
+                    ].map(link => {
+                      const active = location.pathname === link.path;
+                      const Icon = link.icon;
+                      return (
+                        <Link
+                          key={link.name}
+                          to={link.path}
+                          onClick={() => setMobileOpen(false)}
+                          className={`h-[46px] sm:h-[48px] px-4 rounded-xl font-body transition-all text-sm sm:text-base font-semibold no-underline flex items-center justify-between border border-transparent group ${active
+                              ? 'bg-[#7B1E3A] text-white shadow-sm'
+                              : 'text-[#4A2C2A] hover:bg-[#FFF8F0] hover:text-[#7B1E3A] active:bg-[#F5EDE0]'
+                            }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <Icon size={18} className={active ? 'text-[#D4AF37]' : 'text-[#7B1E3A]/70 group-hover:text-[#7B1E3A] transition-colors'} />
+                            {link.name}
+                          </div>
+                          {active && <span className="w-2 h-2 rounded-full bg-[#D4AF37]" />}
+                        </Link>
+                      );
+                    })}
+                  </>
+                ) : (
+                  <>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-[#D4AF37] px-4 mb-0.5 lg:hidden">Quick Access</span>
+                    {[
+                      { name: 'My Profile', path: '/user/dashboard', icon: FiUser },
+                      { name: 'Wishlist', path: '/wishlist', icon: FiHeart },
+                      { name: 'Cart', path: '/cart', icon: FiShoppingCart },
+                      { name: 'Orders', path: '/user/orders', icon: FiPackage }
+                    ].map(link => {
+                      const active = location.pathname === link.path;
+                      const Icon = link.icon;
+                      return (
+                        <Link
+                          key={link.name}
+                          to={link.path}
+                          onClick={() => setMobileOpen(false)}
+                          className={`h-[46px] sm:h-[48px] px-4 rounded-xl font-body transition-all text-sm sm:text-base font-semibold no-underline flex items-center justify-between border border-transparent group ${active
+                              ? 'bg-[#7B1E3A] text-white shadow-sm'
+                              : 'text-[#4A2C2A] hover:bg-[#FFF8F0] hover:text-[#7B1E3A] active:bg-[#F5EDE0]'
+                            }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <Icon size={18} className={active ? 'text-[#D4AF37]' : 'text-[#7B1E3A]/70 group-hover:text-[#7B1E3A] transition-colors'} />
+                            {link.name}
+                          </div>
+                          {active && <span className="w-2 h-2 rounded-full bg-[#D4AF37]" />}
+                        </Link>
+                      );
+                    })}
+                  </>
+                )}
               </div>
 
               <div className="pt-3 border-t border-[#D4AF37]/20 mt-2">

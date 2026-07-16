@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams, useNavigate, useLocation } from 'react-router-dom';
 import { FiMail, FiLock, FiEye, FiEyeOff } from 'react-icons/fi';
 import { useAuth } from '../../context/AuthContext';
 
 export default function LoginPage() {
   const { role } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { login, forgotPassword, signInWithGoogle } = useAuth();
   const [showPass, setShowPass] = useState(false);
   const [form, setForm] = useState({ email: '', password: '' });
@@ -33,6 +34,10 @@ export default function LoginPage() {
   };
 
   const handleGoogleSignIn = async () => {
+    if (role === 'shopkeeper' || role === 'admin') {
+      alert('Google Authentication is not enabled for this account type. Please sign in using your Email and Password.');
+      return;
+    }
     setLoading(true);
     try {
       const res = await signInWithGoogle(role);
@@ -102,6 +107,13 @@ export default function LoginPage() {
           </p>
         </div>
 
+        {location.state?.fromSuccess && (
+          <div className="mb-8 p-4 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 text-center text-[15px] leading-relaxed shadow-xs">
+            <span className="font-bold block mb-1 text-amber-800">⏳ Verification Underway</span>
+            Your application is currently under Admin verification.
+          </div>
+        )}
+
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Email Address */}
@@ -170,7 +182,7 @@ export default function LoginPage() {
           </div>
 
           {/* Google Sign-In */}
-          {role !== 'admin' && (
+          {role !== 'admin' && role !== 'shopkeeper' && (
             <div className="pt-2">
               <button
                 type="button"

@@ -9,7 +9,7 @@ import { AdminProductDisplayCard, resolveShopInfo } from './AdminProductCardHelp
 export function AdminPendingProducts() {
   const { products, approveProduct, rejectProduct, deleteProduct, adminEditProduct, approvePendingEdit, rejectPendingEdit } = useProducts();
   const { allShops = [], allUsers = [], pendingShops = [] } = useAuth();
-  const pendingNew = products.filter(p => p.status === 'pending');
+  const pendingNew = products.filter(p => (p.status || '').toString().trim().toLowerCase() === 'pending');
   const pendingEdits = products.filter(p => p.pendingEdit && p.pendingEdit.editStatus === 'pending');
 
   const handleEdit = (p) => {
@@ -35,7 +35,7 @@ export function AdminPendingProducts() {
             <h1 className="text-2xl sm:text-3xl font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>Pending Saree Approvals</h1>
           </div>
           <span className="badge badge-warning !text-xs font-bold px-3.5 py-1.5">
-            {pendingNew.length} Awaiting Inspection
+            {pendingNew.length === 1 ? '1 Pending Review' : `${pendingNew.length} Pending Reviews`}
           </span>
         </div>
 
@@ -52,26 +52,10 @@ export function AdminPendingProducts() {
                 allShops={allShops}
                 allUsers={allUsers}
                 pendingShops={pendingShops}
-                actions={
-                  <div className="flex items-center justify-end gap-2 w-full flex-wrap">
-                    <button onClick={() => act(p.id, 'approved')} title="Approve & Certify"
-                      className="px-3.5 py-2 rounded-xl bg-[#2D8F5E] text-white text-xs font-bold flex items-center justify-center cursor-pointer hover:bg-[#23744b] transition-all shadow-xs">
-                      <FiCheck size={14} className="mr-1" /> Approve
-                    </button>
-                    <button onClick={() => act(p.id, 'rejected')} title="Reject Weave"
-                      className="px-3.5 py-2 rounded-xl bg-red-600 text-white text-xs font-bold flex items-center justify-center cursor-pointer hover:bg-red-700 transition-all shadow-xs">
-                      <FiX size={14} className="mr-1" /> Reject
-                    </button>
-                    <button onClick={() => handleEdit(p)} title="Edit Price/Details"
-                      className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center cursor-pointer border border-blue-300 hover:bg-blue-600 hover:text-white transition-all shadow-xs">
-                      <FiEdit2 size={14} />
-                    </button>
-                    <button onClick={() => { if (window.confirm('Delete this saree completely?')) deleteProduct(p.id); }} title="Delete Saree"
-                      className="w-8 h-8 rounded-xl bg-gray-100 text-gray-700 flex items-center justify-center cursor-pointer border border-gray-300 hover:bg-gray-600 hover:text-white transition-all shadow-xs">
-                      <FiTrash2 size={14} />
-                    </button>
-                  </div>
-                }
+                onApprove={() => act(p.id, 'approved')}
+                onReject={() => act(p.id, 'rejected')}
+                onEdit={() => handleEdit(p)}
+                onDelete={() => deleteProduct(p.id)}
               />
             ))}
           </div>
