@@ -20,7 +20,7 @@ export function ShopkeeperProducts() {
     return String(p.ownerId) === String(uid);
   });
 
-  const filteredProducts = myProducts.filter(p => p.status === activeTab);
+  const filteredProducts = activeTab === 'all' ? myProducts : myProducts.filter(p => p.status === activeTab);
 
   const openEditModal = (p) => {
     setEditingProduct(p);
@@ -85,13 +85,14 @@ export function ShopkeeperProducts() {
           <h1 className="text-2xl sm:text-3xl font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>My Sarees</h1>
         </div>
         <span className="badge badge-warning !text-xs font-bold px-3.5 py-1.5">
-          {filteredProducts.length} {activeTab === 'approved' ? 'Approved' : activeTab === 'pending' ? 'Pending' : 'Rejected'}
+          {filteredProducts.length} {activeTab === 'approved' ? 'Approved' : activeTab === 'pending' ? 'Pending' : activeTab === 'rejected' ? 'Rejected' : 'Total'}
         </span>
       </div>
 
       {/* Tabs */}
       <div className="flex flex-wrap gap-2.5 pb-2">
         {[
+          { key: 'all', label: 'All Sarees', count: myProducts.length },
           { key: 'approved', label: 'Approved Sarees', count: myProducts.filter(p => p.status === 'approved').length },
           { key: 'pending', label: 'Pending Approval', count: myProducts.filter(p => p.status === 'pending').length },
           { key: 'rejected', label: 'Rejected Sarees', count: myProducts.filter(p => p.status === 'rejected').length },

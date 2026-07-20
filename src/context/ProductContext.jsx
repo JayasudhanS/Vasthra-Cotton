@@ -60,7 +60,7 @@ export function ProductProvider({ children }) {
   // Approve product: update Firestore status
   const approveProduct = async (id) => {
     try {
-      await updateDoc(doc(db, COLLECTIONS.PRODUCTS, id), { status: 'approved' });
+      await updateDoc(doc(db, COLLECTIONS.PRODUCTS, id), { status: 'approved', approvedAt: new Date().toISOString() });
     } catch (error) {
       console.error('Error approving product:', error);
       // Fallback to local state update
@@ -71,7 +71,7 @@ export function ProductProvider({ children }) {
   // Reject product: update Firestore status
   const rejectProduct = async (id) => {
     try {
-      await updateDoc(doc(db, COLLECTIONS.PRODUCTS, id), { status: 'rejected' });
+      await updateDoc(doc(db, COLLECTIONS.PRODUCTS, id), { status: 'rejected', rejectedAt: new Date().toISOString() });
     } catch (error) {
       console.error('Error rejecting product:', error);
       setProducts(prev => prev.map(p => p.id === id ? { ...p, status: 'rejected' } : p));

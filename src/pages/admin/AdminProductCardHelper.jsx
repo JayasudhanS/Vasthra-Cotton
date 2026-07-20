@@ -24,8 +24,10 @@ export function resolveShopInfo(p, allShops = [], allUsers = [], pendingShops = 
   const shopLogo = shopDoc?.shopLogo || shopDoc?.logo || shopDoc?.profileImage || 'https://images.pexels.com/photos/5709661/pexels-photo-5709661.jpeg?auto=compress&cs=tinysrgb&w=150';
   const ownerName = shopDoc?.ownerName || shopDoc?.owner || shopDoc?.name || p.ownerName || 'Verified Artisan';
   const shopStatus = shopDoc?.status || 'Active';
+  const phoneNumber = shopDoc?.phone || shopDoc?.phoneNumber || p.phone || 'N/A';
+  const address = shopDoc?.address || shopDoc?.location || p.shopAddress || p.address || 'Address Not Provided';
 
-  return { shopName, shopLogo, ownerName, shopStatus, shopDoc };
+  return { shopName, shopLogo, ownerName, shopStatus, phoneNumber, address, shopDoc };
 }
 
 export function formatShortId(id) {
@@ -46,7 +48,7 @@ export function AdminProductDisplayCard({
   onEdit = null,
   onDelete = null
 }) {
-  const { shopName, shopLogo, ownerName } = resolveShopInfo(product, allShops, allUsers, pendingShops);
+  const { shopName, shopLogo, ownerName, phoneNumber } = resolveShopInfo(product, allShops, allUsers, pendingShops);
   
   const statusStr = (product.status || '').toString().trim().toLowerCase();
   const isApproved = statusStr === 'approved';
@@ -136,6 +138,9 @@ export function AdminProductDisplayCard({
                 </span>
                 <span className="text-[11px] sm:text-xs text-[#6B4A48] font-medium truncate block">
                   Owner: <strong className="text-[#4A2C2A] font-bold">{ownerName}</strong>
+                </span>
+                <span className="text-[11px] text-[#D4AF37] font-mono font-medium block truncate">
+                  {phoneNumber}
                 </span>
               </div>
             </div>

@@ -11,6 +11,7 @@ export function OrderProvider({ children }) {
       id: `VC-${orderCounter}`,
       ...orderData,
       date: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+      timestamp: new Date().toISOString(),
       status: 'Pending',
       deliveryCharge: 30,
       total: orderData.price * orderData.quantity + 30,

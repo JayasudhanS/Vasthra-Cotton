@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FiCheck, FiX, FiPlus, FiSave, FiEdit2, FiTrash2, FiShield, FiSliders, FiBell, FiLock, FiAlertCircle } from 'react-icons/fi';
+import { FiCheck, FiX, FiPlus, FiSave, FiEdit2, FiTrash2, FiShield, FiSliders, FiBell, FiLock, FiAlertCircle, FiEye, FiMapPin, FiMail, FiPhone, FiSearch } from 'react-icons/fi';
 import { products as staticProducts, shops, categories as initialCategories } from '../../data';
 import { useProducts } from '../../context/ProductContext';
 import { useAuth } from '../../context/AuthContext';
@@ -20,9 +20,10 @@ export function AdminPendingProducts() {
   };
 
   const act = (id, status) => {
+    const isConfirm = window.confirm(`Are you sure you want to ${status} this saree?`);
+    if (!isConfirm) return;
     if (status === 'approved') approveProduct(id);
     else if (status === 'rejected') rejectProduct(id);
-    alert(`Saree ID #${id} has been ${status.toUpperCase()} and seller notified.`);
   };
 
   return (
@@ -77,7 +78,7 @@ export function AdminPendingProducts() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {pendingEdits.map(p => {
-              const { shopName, shopLogo, ownerName } = resolveShopInfo(p, allShops, allUsers, pendingShops);
+              const { shopName, shopLogo, ownerName, phoneNumber } = resolveShopInfo(p, allShops, allUsers, pendingShops);
               return (
                 <div key={p.id} className="card-base p-5 bg-white border border-amber-200 shadow-sm flex flex-col justify-between rounded-2xl">
                   <div>
@@ -99,6 +100,9 @@ export function AdminPendingProducts() {
                           <span className="text-sm sm:text-base font-bold text-[#7B1E3A] truncate block leading-tight">{shopName}</span>
                           <span className="text-xs text-[#6B4A48] font-medium truncate block mt-0.5">
                             Owner : <strong className="text-[#4A2C2A] font-bold text-xs sm:text-sm">{ownerName}</strong>
+                          </span>
+                          <span className="text-[11px] text-[#D4AF37] font-mono font-medium block truncate mt-0.5">
+                            {phoneNumber}
                           </span>
                         </div>
                       </div>
@@ -208,12 +212,49 @@ export function AdminApprovedProducts() {
 
 export function AdminPendingShops() {
   const { pendingShops, approveShop, rejectShop } = useAuth();
-  const items = pendingShops.filter(s => s.status === 'pending');
+  const [filter, setFilter] = useState('pending');
+  const [search, setSearch] = useState('');
+  const [selectedShop, setSelectedShop] = useState(null);
 
   const act = (id, decision) => {
+    const isConfirm = window.confirm(`Are you sure you want to ${decision.toLowerCase()} this shop?`);
+    if (!isConfirm) return;
+
     if (decision === 'Approved') approveShop(id);
     else rejectShop(id);
-    alert(`Weaver House ID #${id} has been ${decision} and onboarded.`);
+    setSelectedShop(null); // Close modal on action
+  };
+
+  const items = pendingShops.filter(s => {
+    const sStatus = (s.status || 'pending').toLowerCase();
+    const isApproved = sStatus === 'approved' || sStatus === 'active' || sStatus === 'verified' || s.approved === true || s.isApproved === true;
+    const isRejected = sStatus === 'rejected' || s.approved === false;
+    const isPending = sStatus === 'pending' || (!isApproved && !isRejected);
+
+    let matchesFilter = false;
+    if (filter === 'all') matchesFilter = true;
+    else if (filter === 'approved' && isApproved) matchesFilter = true;
+    else if (filter === 'rejected' && isRejected) matchesFilter = true;
+    else if (filter === 'pending' && isPending) matchesFilter = true;
+
+    if (!matchesFilter) return false;
+
+    if (search) {
+      const q = search.toLowerCase();
+      const nameMatch = (s.shopName || '').toLowerCase().includes(q) || (s.name || '').toLowerCase().includes(q);
+      const phoneMatch = (s.phone || s.phoneNumber || '').includes(q);
+      if (!nameMatch && !phoneMatch) return false;
+    }
+    
+    // Attach grouped status for UI consistency
+    s._computedStatus = isApproved ? 'approved' : isRejected ? 'rejected' : 'pending';
+    return true;
+  });
+
+  const statusColors = {
+    pending: 'bg-yellow-100 text-yellow-800 border-yellow-300',
+    approved: 'bg-green-100 text-green-800 border-green-300',
+    rejected: 'bg-red-100 text-red-800 border-red-300',
   };
 
   return (
@@ -221,67 +262,171 @@ export function AdminPendingShops() {
       <div className="flex items-center justify-between pb-4 border-b border-[#D4AF37]/20">
         <div>
           <span className="text-xs uppercase font-bold tracking-widest text-[#D4AF37] block mb-1">✦ Artisan Verification</span>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>Pending Weaver Houses</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>Weaver Houses</h1>
         </div>
         <span className="badge badge-warning !text-xs font-bold px-3.5 py-1.5">
-          {items.length} Applications Pending
+          {items.length} {filter === 'pending' ? 'Applications Pending' : 'Shops Found'}
         </span>
       </div>
 
-      <div className="table-container bg-white shadow-sm border border-[#D4AF37]/20">
-        <table className="table-base w-full">
-          <thead>
-            <tr>
-              <th className="!text-xs uppercase tracking-wider">Weave House / Brand</th>
-              <th className="!text-xs uppercase tracking-wider">Master Artisan / Owner</th>
-              <th className="!text-xs uppercase tracking-wider">Location & Contact</th>
-              <th className="!text-xs uppercase tracking-wider">Status</th>
-              <th className="!text-xs uppercase tracking-wider text-right">Onboarding Decision</th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="py-12 text-center text-[#6B4A48] italic">No pending applications found.</td>
-              </tr>
-            ) : (
-              items.map(s => (
-                <tr key={s.id} className="hover:bg-[#FFF8F0]/50 transition-colors">
-                  <td className="font-medium text-[#4A2C2A]">
-                    <div className="flex items-center gap-3.5">
-                      <div className="w-12 h-12 rounded-full bg-[#7B1E3A] text-white flex items-center justify-center font-bold text-lg flex-shrink-0">
-                        {s.shopName ? s.shopName[0] : 'W'}
-                      </div>
-                      <div>
-                        <span className="font-bold text-[#7B1E3A] block text-sm">{s.shopName || s.name}</span>
-                        <span className="text-[11px] text-[#6B4A48]/70">Applied: {s.date || 'July 2026'}</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="text-[#6B4A48] font-bold text-xs">{s.name}</td>
-                  <td className="text-[#6B4A48] text-xs">
-                    <span className="block font-medium">📍 {s.address || ''}</span>
-                    <span className="text-[11px] text-[#D4AF37] font-mono">{s.phone || ''}</span>
-                  </td>
-                  <td><span className="badge badge-warning">⏳ KYC Pending</span></td>
-                  <td className="text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <button onClick={() => act(s.id, 'Approved')} title="Approve Weaver"
-                        className="w-9 h-9 rounded-xl bg-green-100 text-green-700 flex items-center justify-center cursor-pointer border border-green-300 hover:bg-green-600 hover:text-white transition-all shadow-xs">
-                        <FiCheck size={18} />
-                      </button>
-                      <button onClick={() => act(s.id, 'Rejected')} title="Reject Application"
-                        className="w-9 h-9 rounded-xl bg-red-100 text-red-700 flex items-center justify-center cursor-pointer border border-red-300 hover:bg-red-600 hover:text-white transition-all shadow-xs">
-                        <FiX size={18} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+      {/* Filters and Search */}
+      <div className="card-base p-5 sm:p-6 bg-white border border-[#D4AF37]/20 space-y-4">
+        <div className="flex flex-wrap gap-2 mb-4">
+          {['pending', 'approved', 'rejected', 'all'].map(f => (
+            <button key={f} onClick={() => setFilter(f)}
+              className={`px-3.5 py-1.5 rounded-full text-xs font-bold cursor-pointer border transition-all capitalize ${filter === f ? 'bg-[#7B1E3A] text-white border-[#7B1E3A]' : 'bg-[#FFF8F0] text-[#6B4A48] border-[#D4AF37]/20 hover:border-[#D4AF37]'}`}>
+              {f}
+            </button>
+          ))}
+        </div>
+        <div className="relative max-w-md">
+          <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B4A48]/60" size={14} />
+          <input type="text" value={search} onChange={e => setSearch(e.target.value)}
+            placeholder="Search by Shop Name, Owner, or Phone..." className="input-field !h-10 !text-xs !pl-9" />
+        </div>
       </div>
+
+      {/* Grid Layout */}
+      {items.length === 0 ? (
+        <div className="card-base p-16 text-center max-w-lg mx-auto bg-white border-dashed border-[#D4AF37]/40">
+          <div className="w-16 h-16 rounded-full bg-[#7B1E3A]/10 text-[#7B1E3A] flex items-center justify-center mx-auto mb-4 text-2xl">🏪</div>
+          <h3 className="text-xl font-bold text-[#7B1E3A] mb-1" style={{ fontFamily: 'Playfair Display' }}>No pending shop approval requests.</h3>
+          <p className="text-sm text-[#6B4A48] m-0">There are no shops matching your current filters.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {items.map(s => {
+            const logo = s.shopLogo || s.logo || s.profileImage || 'https://images.pexels.com/photos/5709661/pexels-photo-5709661.jpeg?auto=compress&cs=tinysrgb&w=150';
+            const sStatus = s._computedStatus;
+            return (
+              <motion.div key={s.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                className="card-base bg-white border border-[#D4AF37]/20 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between overflow-hidden">
+                <div className="p-5 sm:p-6">
+                  {/* Header: Logo and Title */}
+                  <div className="flex items-start gap-4 mb-4 pb-4 border-b border-[#D4AF37]/15">
+                    <img src={logo} alt={s.shopName} className="w-16 h-16 rounded-full object-cover border-2 border-[#D4AF37]/30 shadow-xs flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-bold text-[#7B1E3A] text-lg leading-tight m-0 truncate" style={{ fontFamily: 'Playfair Display' }}>{s.shopName || 'Weaver House'}</h3>
+                      <p className="text-xs font-semibold text-[#6B4A48] mt-1 m-0 truncate">{s.name || 'Master Artisan'}</p>
+                      <span className={`inline-block mt-2 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${statusColors[sStatus] || statusColors.pending}`}>
+                        {sStatus}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Details */}
+                  <div className="space-y-2 mb-6">
+                    <div className="flex items-center gap-2 text-xs text-[#6B4A48]">
+                      <FiPhone className="text-[#D4AF37] flex-shrink-0" size={13} />
+                      <span className="font-mono font-medium truncate">{s.phone || s.phoneNumber || 'N/A'}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-xs text-[#6B4A48]">
+                      <FiMail className="text-[#D4AF37] flex-shrink-0" size={13} />
+                      <span className="truncate">{s.email || 'N/A'}</span>
+                    </div>
+                    <div className="flex items-start gap-2 text-xs text-[#6B4A48]">
+                      <FiMapPin className="text-[#D4AF37] flex-shrink-0 mt-0.5" size={13} />
+                      <span className="line-clamp-2 leading-relaxed">{s.address || s.location || 'Address not provided'}</span>
+                    </div>
+                    <div className="pt-2 border-t border-[#D4AF37]/15 text-[11px] font-semibold text-[#6B4A48] mt-2">
+                      Applied: {s.createdAt ? new Date(s.createdAt).toLocaleDateString('en-IN', {day: '2-digit', month: 'short', year: 'numeric'}) : (s.date || 'July 2026')}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="p-4 sm:p-5 border-t border-[#D4AF37]/15 bg-[#FFF8F0]/40 flex flex-wrap gap-2 justify-end">
+                  <button onClick={() => setSelectedShop(s)}
+                    className="flex-1 min-w-[100px] flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold text-[#7B1E3A] bg-white border border-[#D4AF37]/30 hover:bg-[#D4AF37]/10 transition-colors">
+                    <FiEye size={14} /> Details
+                  </button>
+                  {sStatus === 'pending' && (
+                    <>
+                      <button onClick={() => act(s.id, 'Approved')}
+                        className="flex-1 min-w-[100px] flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold text-[#2D8F5E] bg-[#2D8F5E]/10 border border-[#2D8F5E]/20 hover:bg-[#2D8F5E]/20 transition-colors">
+                        <FiCheck size={14} /> Approve
+                      </button>
+                      <button onClick={() => act(s.id, 'Rejected')}
+                        className="flex-1 min-w-[100px] flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold text-[#C53030] bg-[#C53030]/10 border border-[#C53030]/20 hover:bg-[#C53030]/20 transition-colors">
+                        <FiX size={14} /> Reject
+                      </button>
+                    </>
+                  )}
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Modal for View Details */}
+      {selectedShop && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto" onClick={() => setSelectedShop(null)}>
+          <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }}
+            className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden border border-[#D4AF37]/30 my-8" onClick={e => e.stopPropagation()}>
+            <div className="p-5 sm:p-6 border-b border-[#D4AF37]/20 flex justify-between items-center bg-[#FFF8F0]/50 sticky top-0 z-10">
+              <h2 className="text-xl font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>Shop Details</h2>
+              <button onClick={() => setSelectedShop(null)} className="text-[#6B4A48] hover:text-[#7B1E3A] transition-colors bg-white w-8 h-8 rounded-full flex items-center justify-center shadow-sm border border-[#D4AF37]/20"><FiX size={18}/></button>
+            </div>
+            
+            <div className="p-5 sm:p-6 space-y-5">
+              <div className="flex items-center gap-4 sm:gap-5">
+                <img src={selectedShop.shopLogo || selectedShop.logo || selectedShop.profileImage || 'https://images.pexels.com/photos/5709661/pexels-photo-5709661.jpeg?auto=compress&cs=tinysrgb&w=150'} alt="Logo" className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-[#D4AF37]/40 shadow-sm flex-shrink-0" />
+                <div className="min-w-0">
+                  <h3 className="font-bold text-[#7B1E3A] text-lg sm:text-xl m-0 truncate">{selectedShop.shopName || 'Weaver House'}</h3>
+                  <p className="text-sm font-semibold text-[#6B4A48] m-0 truncate">Owner: {selectedShop.name || 'Master Artisan'}</p>
+                  <span className={`inline-block mt-2 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${statusColors[selectedShop._computedStatus || 'pending'] || statusColors.pending}`}>
+                    {(selectedShop._computedStatus || 'pending').toUpperCase()}
+                  </span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm bg-[#FFF8F0]/40 p-4 rounded-xl border border-[#D4AF37]/15">
+                <div>
+                  <span className="text-[10px] uppercase font-bold tracking-widest text-[#D4AF37] block mb-1.5">Contact</span>
+                  <div className="text-[#4A2C2A] font-medium space-y-1.5">
+                    <p className="m-0 flex items-center gap-1.5 font-mono"><FiPhone size={12} className="text-[#6B4A48]"/> {selectedShop.phone || selectedShop.phoneNumber || 'N/A'}</p>
+                    <p className="m-0 flex items-center gap-1.5 break-all"><FiMail size={12} className="text-[#6B4A48]"/> {selectedShop.email || 'N/A'}</p>
+                  </div>
+                </div>
+                <div>
+                  <span className="text-[10px] uppercase font-bold tracking-widest text-[#D4AF37] block mb-1.5">Registration Date</span>
+                  <p className="text-[#4A2C2A] font-medium m-0">{selectedShop.createdAt ? new Date(selectedShop.createdAt).toLocaleDateString('en-IN', {day: '2-digit', month: 'short', year: 'numeric'}) : (selectedShop.date || 'July 2026')}</p>
+                </div>
+              </div>
+
+              <div>
+                <span className="text-[10px] uppercase font-bold tracking-widest text-[#D4AF37] block mb-2"><FiMapPin className="inline mr-1" size={12}/> Address</span>
+                <p className="text-[#4A2C2A] text-sm leading-relaxed m-0 bg-white p-3.5 rounded-lg border border-[#D4AF37]/20">
+                  {selectedShop.address || selectedShop.location || 'No address provided.'}
+                </p>
+              </div>
+
+              {selectedShop.description && (
+                <div>
+                  <span className="text-[10px] uppercase font-bold tracking-widest text-[#D4AF37] block mb-2">Business Description</span>
+                  <p className="text-[#4A2C2A] text-sm leading-relaxed m-0 bg-white p-3.5 rounded-lg border border-[#D4AF37]/20 whitespace-pre-wrap">
+                    {selectedShop.description}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {(selectedShop._computedStatus || 'pending') === 'pending' && (
+              <div className="p-5 border-t border-[#D4AF37]/20 bg-[#FFF8F0]/80 flex gap-3 sticky bottom-0">
+                <button onClick={() => act(selectedShop.id, 'Approved')}
+                  className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold text-white bg-[#2D8F5E] hover:bg-[#2D8F5E]/90 transition-colors shadow-sm">
+                  <FiCheck size={16} /> Approve
+                </button>
+                <button onClick={() => act(selectedShop.id, 'Rejected')}
+                  className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold text-white bg-[#C53030] hover:bg-[#C53030]/90 transition-colors shadow-sm">
+                  <FiX size={16} /> Reject
+                </button>
+              </div>
+            )}
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }
@@ -307,7 +452,7 @@ export function AdminUsers() {
           <thead>
             <tr>
               <th className="!text-xs uppercase tracking-wider">Member Name</th>
-              <th className="!text-xs uppercase tracking-wider">Email Address</th>
+              <th className="!text-xs uppercase tracking-wider">Contact Info</th>
               <th className="!text-xs uppercase tracking-wider">Member Tier</th>
               <th className="!text-xs uppercase tracking-wider">Joined Date</th>
               <th className="!text-xs uppercase tracking-wider text-right">Total Orders</th>
@@ -329,7 +474,10 @@ export function AdminUsers() {
                       {u.name || 'Connoisseur'}
                     </div>
                   </td>
-                  <td className="text-[#6B4A48] font-mono text-xs">{u.email || ''}</td>
+                  <td className="text-[#6B4A48] text-xs">
+                    <span className="block font-mono">{u.email || ''}</span>
+                    <span className="block font-mono text-[10px] text-[#D4AF37] mt-0.5">{u.phone || u.phoneNumber || 'No phone'}</span>
+                  </td>
                   <td>
                     <span className={`badge ${(u.tier || '').includes('Platinum') || (u.tier || '').includes('Gold') || (u.orders || 0) > 5 ? 'badge-warning' : 'badge-success'}`}>
                       ✦ {u.tier || ((u.orders || 0) > 5 ? 'Gold Member' : 'Silver Connoisseur')}

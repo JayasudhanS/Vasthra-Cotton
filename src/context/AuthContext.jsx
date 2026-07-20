@@ -494,14 +494,37 @@ export function AuthProvider({ children }) {
   const forgotPassword = async (email) => {
     try {
       if (!email) return { success: false, message: 'Please enter your email address first.' };
-      await sendPasswordResetEmail(auth, email);
+      
+      const trimmedEmail = email.trim();
+      if (!trimmedEmail) return { success: false, message: 'Please enter a valid email address.' };
+
+      await sendPasswordResetEmail(auth, trimmedEmail, {
+        url: "https://vasthracotton.netlify.app/login/user",
+        handleCodeInApp: false,
+      });
+      
       return { success: true, message: 'Password reset link sent to your email.' };
     } catch (error) {
-      console.error('Password reset error:', error);
-      let msg = error.message;
+      console.error("Password Reset Error:", error);
+      console.error("Error Code:", error.code);
+      console.error("Error Message:", error.message);
+      
+      let msg = 'Failed to send password reset email. Please try again.';
+      
       if (error.code === 'auth/user-not-found') {
         msg = 'No account found with this email address.';
+      } else if (error.code === 'auth/invalid-email') {
+        msg = 'The email address is not valid.';
+      } else if (error.code === 'auth/network-request-failed') {
+        msg = 'Network error. Please check your internet connection and try again.';
+      } else if (error.code === 'auth/unauthorized-domain') {
+        msg = 'Domain is not authorized for password reset operations.';
+      } else if (error.code === 'auth/too-many-requests') {
+        msg = 'Too many requests. Please wait a few minutes before trying again.';
+      } else {
+        msg = error.message;
       }
+      
       return { success: false, message: msg };
     }
   };
@@ -536,9 +559,10 @@ export function AuthProvider({ children }) {
       const userRef = doc(db, COLLECTIONS.USERS, id);
       const userSnap = await getDoc(userRef).catch(() => null);
       const userData = userSnap?.exists() ? userSnap.data() : {};
-      await updateDoc(userRef, { status: 'approved', approved: true }).catch(() => {});
+      const approvedAt = new Date().toISOString();
+      await updateDoc(userRef, { status: 'approved', approved: true, approvedAt }).catch(() => {});
       const shopRef = doc(db, COLLECTIONS.SHOPS, id);
-      await setDoc(shopRef, { ...userData, id, uid: id, status: 'approved', approved: true, fromShopsCol: true }, { merge: true }).catch(() => {});
+      await setDoc(shopRef, { ...userData, id, uid: id, status: 'approved', approved: true, fromShopsCol: true, approvedAt }, { merge: true }).catch(() => {});
     } catch (error) {
       console.error('Error approving shop:', error);
     }
@@ -547,9 +571,10 @@ export function AuthProvider({ children }) {
   const rejectShop = async (id) => {
     try {
       const userRef = doc(db, COLLECTIONS.USERS, id);
-      await updateDoc(userRef, { status: 'rejected', approved: false }).catch(() => {});
+      const rejectedAt = new Date().toISOString();
+      await updateDoc(userRef, { status: 'rejected', approved: false, rejectedAt }).catch(() => {});
       const shopRef = doc(db, COLLECTIONS.SHOPS, id);
-      await setDoc(shopRef, { status: 'rejected', approved: false, fromShopsCol: true }, { merge: true }).catch(() => {});
+      await setDoc(shopRef, { status: 'rejected', approved: false, fromShopsCol: true, rejectedAt }, { merge: true }).catch(() => {});
     } catch (error) {
       console.error('Error rejecting shop:', error);
     }

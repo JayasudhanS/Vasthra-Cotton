@@ -165,7 +165,7 @@ export default function AdminDashboard() {
       } else if (u.role === 'user' || (!u.role && u.email !== 'admin@vasthracotton.com')) {
         list.push({
           type: 'user',
-          text: `New Customer Registered: ${u.name || 'Connoisseur'} (${u.email || ''})`,
+          text: `New Customer Registered: ${u.name || 'Connoisseur'} (${u.email || ''}${u.phone ? ` | ${u.phone}` : ''})`,
           time: formatRelativeTime(timeVal),
           timestamp: ts,
           badgeColor: 'bg-[#7B1E3A]'
