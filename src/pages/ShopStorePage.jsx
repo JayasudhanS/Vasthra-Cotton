@@ -1,17 +1,21 @@
 import { useParams, Link } from 'react-router-dom';
 import { useMemo, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { FiCheckCircle, FiMapPin, FiStar, FiPackage, FiMail, FiPhone, FiArrowLeft, FiCalendar, FiShield } from 'react-icons/fi';
+import { FiCheckCircle, FiMapPin, FiStar, FiPackage, FiArrowLeft, FiShield, FiMail, FiPhone, FiCalendar } from 'react-icons/fi';
 import { doc, getDoc, collection, onSnapshot, query, where } from 'firebase/firestore';
 import { db, COLLECTIONS } from '../firebase/config';
 import ProductCard from '../components/shared/ProductCard';
 import { useProducts } from '../context/ProductContext';
+import { useAuth } from '../context/AuthContext';
 
 export default function ShopStorePage() {
   const { ownerId } = useParams();
   const { approvedProducts = [] } = useProducts();
+  const { user, role } = useAuth();
   const [shopDoc, setShopDoc] = useState(null);
   const [loadingShop, setLoadingShop] = useState(true);
+
+  const isAdminOrOwner = role === 'admin' || (user && String(user.uid) === String(ownerId));
 
   // Listen to live shop information from Firestore collections (SHOPS and USERS)
   useEffect(() => {
@@ -88,8 +92,8 @@ export default function ShopStorePage() {
     rating: shopDoc?.rating || firstProduct?.shopRating || firstProduct?.rating || 4.9,
     email: shopDoc?.email || firstProduct?.shopEmail || '',
     phone: shopDoc?.phone || firstProduct?.shopPhone || '',
+    registeredDate: shopDoc?.establishedDate || shopDoc?.registeredDate || (shopDoc?.createdAt ? new Date(shopDoc.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : 'July 2026'),
     description: shopDoc?.description || firstProduct?.shopDescription || 'Welcome to our official Silk Mark certified online weaving house. We craft authentic heritage handloom silk sarees with purity, precision, and dedication to traditional craftsmanship.',
-    registeredDate: shopDoc?.establishedDate || shopDoc?.registeredDate || (shopDoc?.createdAt ? new Date(shopDoc.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : 'July 2026')
   };
 
   // Extract unique categories from this shop's products
@@ -177,48 +181,92 @@ export default function ShopStorePage() {
                 </p>
               </div>
 
-              {/* Location & Contact Information */}
-              <div className="bg-[#FFF8F0]/80 rounded-2xl p-5 border border-[#D4AF37]/25 space-y-3">
-                <h4 className="text-xs uppercase font-bold tracking-widest text-[#7B1E3A] mb-3 m-0 pb-2 border-b border-[#D4AF37]/20">
-                  Store Details & Contact
-                </h4>
-                
-                <div className="flex items-start gap-2.5 text-xs text-[#4A2C2A]">
-                  <FiMapPin size={16} className="text-[#D4AF37] flex-shrink-0 mt-0.5" />
-                  <div>
-                    <span className="font-bold block text-[#7B1E3A]">Location</span>
-                    <span className="text-[#6B4A48]">{shopInfo.location}</span>
+              {/* Location & Store Info */}
+              {isAdminOrOwner ? (
+                <div className="bg-[#FFF8F0]/80 rounded-2xl p-5 border border-[#D4AF37]/25 space-y-3">
+                  <div className="flex items-center justify-between border-b border-[#D4AF37]/20 pb-2 mb-3">
+                    <h4 className="text-xs uppercase font-bold tracking-widest text-[#7B1E3A] m-0">
+                      Store Details & Contact
+                    </h4>
+                    <span className="text-[10px] bg-[#2D8F5E]/10 text-[#2D8F5E] px-2 py-0.5 rounded font-bold">Admin/Owner View</span>
                   </div>
-                </div>
-
-                <div className="flex items-start gap-2.5 text-xs text-[#4A2C2A] pt-1">
-                  <FiCalendar size={16} className="text-[#D4AF37] flex-shrink-0 mt-0.5" />
-                  <div>
-                    <span className="font-bold block text-[#7B1E3A]">Registered Date</span>
-                    <span className="text-[#6B4A48]">{shopInfo.registeredDate}</span>
-                  </div>
-                </div>
-
-                {shopInfo.email && (
-                  <div className="flex items-start gap-2.5 text-xs text-[#4A2C2A] pt-1">
-                    <FiMail size={16} className="text-[#D4AF37] flex-shrink-0 mt-0.5" />
-                    <div className="min-w-0 flex-1">
-                      <span className="font-bold block text-[#7B1E3A]">Email Contact</span>
-                      <span className="text-[#6B4A48] truncate block">{shopInfo.email}</span>
-                    </div>
-                  </div>
-                )}
-
-                {shopInfo.phone && (
-                  <div className="flex items-start gap-2.5 text-xs text-[#4A2C2A] pt-1">
-                    <FiPhone size={16} className="text-[#D4AF37] flex-shrink-0 mt-0.5" />
+                  
+                  <div className="flex items-start gap-2.5 text-xs text-[#4A2C2A]">
+                    <FiMapPin size={16} className="text-[#D4AF37] flex-shrink-0 mt-0.5" />
                     <div>
-                      <span className="font-bold block text-[#7B1E3A]">Phone Support</span>
-                      <span className="text-[#6B4A48] font-mono">{shopInfo.phone}</span>
+                      <span className="font-bold block text-[#7B1E3A]">Location</span>
+                      <span className="text-[#6B4A48]">{shopInfo.location}</span>
                     </div>
                   </div>
-                )}
-              </div>
+
+                  <div className="flex items-start gap-2.5 text-xs text-[#4A2C2A] pt-1">
+                    <FiCalendar size={16} className="text-[#D4AF37] flex-shrink-0 mt-0.5" />
+                    <div>
+                      <span className="font-bold block text-[#7B1E3A]">Registered Date</span>
+                      <span className="text-[#6B4A48]">{shopInfo.registeredDate}</span>
+                    </div>
+                  </div>
+
+                  {shopInfo.email && (
+                    <div className="flex items-start gap-2.5 text-xs text-[#4A2C2A] pt-1">
+                      <FiMail size={16} className="text-[#D4AF37] flex-shrink-0 mt-0.5" />
+                      <div className="min-w-0 flex-1">
+                        <span className="font-bold block text-[#7B1E3A]">Email Contact</span>
+                        <span className="text-[#6B4A48] truncate block">{shopInfo.email}</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {shopInfo.phone && (
+                    <div className="flex items-start gap-2.5 text-xs text-[#4A2C2A] pt-1">
+                      <FiPhone size={16} className="text-[#D4AF37] flex-shrink-0 mt-0.5" />
+                      <div>
+                        <span className="font-bold block text-[#7B1E3A]">Phone Support</span>
+                        <span className="text-[#6B4A48] font-mono">{shopInfo.phone}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="bg-[#FFF8F0]/80 rounded-2xl p-5 border border-[#D4AF37]/25 space-y-3">
+                  <h4 className="text-xs uppercase font-bold tracking-widest text-[#7B1E3A] mb-3 m-0 pb-2 border-b border-[#D4AF37]/20">
+                    Store Information
+                  </h4>
+                  
+                  <div className="flex items-start gap-2.5 text-xs text-[#4A2C2A]">
+                    <FiMapPin size={16} className="text-[#D4AF37] flex-shrink-0 mt-0.5" />
+                    <div>
+                      <span className="font-bold block text-[#7B1E3A]">Location</span>
+                      <span className="text-[#6B4A48]">{shopInfo.location}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5 text-xs text-[#4A2C2A] pt-1">
+                    <FiCheckCircle size={16} className="text-[#2D8F5E] flex-shrink-0 mt-0.5" />
+                    <div>
+                      <span className="font-bold block text-[#7B1E3A]">Verified Seller</span>
+                      <span className="text-[#6B4A48]">Silk Mark Certified Weaver</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-2.5 text-xs text-[#4A2C2A] pt-1">
+                    <FiStar size={16} className="text-[#D4AF37] flex-shrink-0 mt-0.5" />
+                    <div>
+                      <span className="font-bold block text-[#7B1E3A]">Seller Rating</span>
+                      <span className="text-[#6B4A48]">{shopInfo.rating} / 5.0</span>
+                    </div>
+                  </div>
+
+                  <div className="mt-3 pt-3 border-t border-[#D4AF37]/15">
+                    <div className="flex items-start gap-2.5 text-xs text-[#6B4A48]">
+                      <FiShield size={15} className="text-[#D4AF37] flex-shrink-0 mt-0.5" />
+                      <p className="m-0 leading-relaxed font-medium" style={{ fontSize: '11px' }}>
+                        Shop contact details will be shared after your order is successfully confirmed.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </motion.div>

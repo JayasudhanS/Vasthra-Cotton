@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiSearch, FiHeart, FiMenu, FiX, FiUser, FiUsers, FiGrid, FiClock, FiChevronDown, FiShield, FiShoppingBag, FiLogOut, FiShoppingCart, FiPackage, FiHome, FiPhone } from 'react-icons/fi';
@@ -23,6 +23,7 @@ const navLinks = [
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [navHidden, setNavHidden] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [loginDropdownOpen, setLoginDropdownOpen] = useState(false);
@@ -60,11 +61,99 @@ export default function Navbar() {
     }
   };
 
+  // ─── Immersive header: ONLY on individual product/shop detail pages for Customers ───
+  const shouldAutoHide = (location.pathname.startsWith('/product/') || location.pathname.startsWith('/store/')) && role !== 'admin' && role !== 'shopOwner' && role !== 'shopkeeper';
+
+  // Accumulated overscroll pull distance (tracked via wheel/touch while at scrollY===0)
+  const overscrollAccum = useRef(0);
+  const touchStartY = useRef(null);
+  const OVERSCROLL_THRESHOLD = 150; // px of deliberate pull-down needed at top
+
+  // Step 0: Immediately hide on every navigation to an immersive route
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 30);
-    window.addEventListener('scroll', onScroll);
+    if (shouldAutoHide) {
+      setNavHidden(true);
+      overscrollAccum.current = 0;
+    } else {
+      setNavHidden(false);
+    }
+  }, [location.pathname]);
+
+  // Standard scroll listener — only handles scrolled shadow + re-hiding
+  useEffect(() => {
+    let lastY = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 30);
+
+      if (shouldAutoHide && !mobileOpen && !searchOpen) {
+        // Any downward scroll or moving away from top → hide immediately
+        if (y > lastY + 2 || y > 5) {
+          setNavHidden(true);
+          overscrollAccum.current = 0;
+        }
+      } else {
+        setNavHidden(false);
+      }
+      lastY = y;
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  }, [shouldAutoHide, mobileOpen, searchOpen]);
+
+  // Two-step overscroll detection via wheel events (desktop)
+  useEffect(() => {
+    if (!shouldAutoHide) return;
+    const onWheel = (e) => {
+      if (mobileOpen || searchOpen) return;
+      // Only track upward wheel gestures while page is at the very top
+      if (window.scrollY === 0 && e.deltaY < 0) {
+        overscrollAccum.current += Math.abs(e.deltaY);
+        if (overscrollAccum.current >= OVERSCROLL_THRESHOLD) {
+          setNavHidden(false);
+        }
+      } else {
+        // Reset accumulator if user scrolls down or page is not at top
+        overscrollAccum.current = 0;
+      }
+    };
+    window.addEventListener('wheel', onWheel, { passive: true });
+    return () => window.removeEventListener('wheel', onWheel);
+  }, [shouldAutoHide, mobileOpen, searchOpen]);
+
+  // Two-step overscroll detection via touch events (mobile)
+  useEffect(() => {
+    if (!shouldAutoHide) return;
+    const onTouchStart = (e) => {
+      touchStartY.current = e.touches[0].clientY;
+    };
+    const onTouchMove = (e) => {
+      if (mobileOpen || searchOpen || touchStartY.current === null) return;
+      const deltaY = e.touches[0].clientY - touchStartY.current;
+      // Pulling down (positive deltaY) while at the very top of page
+      if (window.scrollY === 0 && deltaY > 0) {
+        overscrollAccum.current += deltaY * 0.3; // dampen for natural feel
+        touchStartY.current = e.touches[0].clientY;
+        if (overscrollAccum.current >= OVERSCROLL_THRESHOLD) {
+          setNavHidden(false);
+        }
+      } else {
+        overscrollAccum.current = 0;
+      }
+    };
+    const onTouchEnd = () => {
+      touchStartY.current = null;
+      // Don't reset accumulator here — let scroll handler manage hiding
+    };
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
+    window.addEventListener('touchmove', onTouchMove, { passive: true });
+    window.addEventListener('touchend', onTouchEnd, { passive: true });
+    return () => {
+      window.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchmove', onTouchMove);
+      window.removeEventListener('touchend', onTouchEnd);
+    };
+  }, [shouldAutoHide, mobileOpen, searchOpen]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -83,7 +172,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white/97 backdrop-blur-lg shadow-lg border-b border-[#D4AF37]/10' : 'bg-white/95 backdrop-blur-sm shadow-sm'}`}>
+      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out ${navHidden ? '-translate-y-full' : 'translate-y-0'} ${scrolled ? 'bg-white/97 backdrop-blur-lg shadow-lg border-b border-[#D4AF37]/10' : 'bg-white/95 backdrop-blur-sm shadow-sm'}`}>
         <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 xl:px-14 flex items-center justify-between h-[64px] sm:h-[72px] lg:h-[76px]">
           {/* Logo */}
           <Link to={user ? getDashboardPath() : '/'} className="flex items-center gap-2.5 sm:gap-3 no-underline group flex-shrink-0 min-w-0 mr-3 lg:mr-6 xl:mr-10">
@@ -595,8 +684,11 @@ export default function Navbar() {
         )}
       </AnimatePresence>
 
-      {/* Spacer for fixed nav */}
-      <div className="h-[64px] sm:h-[72px] lg:h-[76px]" />
+      {/* Spacer — zero height on immersive pages, normal on standard pages */}
+      {shouldAutoHide
+        ? <div style={{ height: navHidden ? 0 : undefined }} className="transition-[height] duration-300 ease-in-out overflow-hidden">{!navHidden && <div className="h-[64px] sm:h-[72px] lg:h-[76px]" />}</div>
+        : <div className="h-[64px] sm:h-[72px] lg:h-[76px]" />
+      }
     </>
   );
 }

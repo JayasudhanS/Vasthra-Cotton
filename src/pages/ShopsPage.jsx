@@ -181,10 +181,6 @@ export default function ShopsPage() {
                   {/* Information Details Box */}
                   <div className="bg-[#FFF8F0]/80 rounded-xl p-3 border border-[#D4AF37]/20 text-left space-y-1.5 mb-4 text-[11px] sm:text-xs text-[#6B4A48]">
                     <div className="flex items-center justify-between gap-1">
-                      <span className="font-semibold text-[#6B4A48]/80">Registered:</span>
-                      <span className="font-bold text-[#4A2C2A] text-right truncate">{registeredDate}</span>
-                    </div>
-                    <div className="flex items-center justify-between gap-1">
                       <span className="font-semibold text-[#6B4A48]/80">Published Sarees:</span>
                       <span className="font-bold text-[#7B1E3A] text-right">{publishedCount}</span>
                     </div>

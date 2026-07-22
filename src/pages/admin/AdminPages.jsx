@@ -212,9 +212,20 @@ export function AdminApprovedProducts() {
 
 export function AdminPendingShops() {
   const { pendingShops, approveShop, rejectShop } = useAuth();
+  const { products = [] } = useProducts();
   const [filter, setFilter] = useState('pending');
   const [search, setSearch] = useState('');
   const [selectedShop, setSelectedShop] = useState(null);
+
+  const getShopStats = (shopId, shopUid) => {
+    const shopProducts = products.filter(p => p.shopId === shopId || p.ownerId === shopId || p.shopId === shopUid || p.ownerId === shopUid);
+    return {
+      published: shopProducts.filter(p => (p.status || '').toLowerCase() === 'approved' || p.status === 'active').length,
+      pending: shopProducts.filter(p => (p.status || '').toLowerCase() === 'pending').length,
+      rejected: shopProducts.filter(p => (p.status || '').toLowerCase() === 'rejected').length,
+      total: shopProducts.length
+    };
+  };
 
   const act = (id, decision) => {
     const isConfirm = window.confirm(`Are you sure you want to ${decision.toLowerCase()} this shop?`);
@@ -315,7 +326,7 @@ export function AdminPendingShops() {
                   </div>
 
                   {/* Details */}
-                  <div className="space-y-2 mb-6">
+                  <div className="space-y-2 mb-4">
                     <div className="flex items-center gap-2 text-xs text-[#6B4A48]">
                       <FiPhone className="text-[#D4AF37] flex-shrink-0" size={13} />
                       <span className="font-mono font-medium truncate">{s.phone || s.phoneNumber || 'N/A'}</span>
@@ -329,7 +340,19 @@ export function AdminPendingShops() {
                       <span className="line-clamp-2 leading-relaxed">{s.address || s.location || 'Address not provided'}</span>
                     </div>
                     <div className="pt-2 border-t border-[#D4AF37]/15 text-[11px] font-semibold text-[#6B4A48] mt-2">
-                      Applied: {s.createdAt ? new Date(s.createdAt).toLocaleDateString('en-IN', {day: '2-digit', month: 'short', year: 'numeric'}) : (s.date || 'July 2026')}
+                      Registered Date: {s.createdAt ? new Date(s.createdAt).toLocaleDateString('en-IN', {day: '2-digit', month: 'short', year: 'numeric'}) : (s.date || 'July 2026')}
+                    </div>
+                  </div>
+
+                  {/* Saree Counts */}
+                  <div className="flex gap-2 mb-4">
+                    <div className="flex-1 bg-[#FFF8F0] p-2 rounded-lg text-center border border-[#D4AF37]/20">
+                      <span className="block text-[10px] uppercase font-bold text-[#D4AF37]">Published</span>
+                      <span className="block text-sm font-bold text-[#7B1E3A]">{getShopStats(s.id, s.uid).published}</span>
+                    </div>
+                    <div className="flex-1 bg-yellow-50 p-2 rounded-lg text-center border border-yellow-200">
+                      <span className="block text-[10px] uppercase font-bold text-yellow-700">Pending</span>
+                      <span className="block text-sm font-bold text-yellow-800">{getShopStats(s.id, s.uid).pending}</span>
                     </div>
                   </div>
                 </div>
@@ -363,53 +386,115 @@ export function AdminPendingShops() {
       {selectedShop && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto" onClick={() => setSelectedShop(null)}>
           <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }}
-            className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden border border-[#D4AF37]/30 my-8" onClick={e => e.stopPropagation()}>
+            className="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden border border-[#D4AF37]/30 my-8" onClick={e => e.stopPropagation()}>
             <div className="p-5 sm:p-6 border-b border-[#D4AF37]/20 flex justify-between items-center bg-[#FFF8F0]/50 sticky top-0 z-10">
-              <h2 className="text-xl font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>Shop Details</h2>
+              <h2 className="text-xl font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>Complete Shop Details</h2>
               <button onClick={() => setSelectedShop(null)} className="text-[#6B4A48] hover:text-[#7B1E3A] transition-colors bg-white w-8 h-8 rounded-full flex items-center justify-center shadow-sm border border-[#D4AF37]/20"><FiX size={18}/></button>
             </div>
             
-            <div className="p-5 sm:p-6 space-y-5">
-              <div className="flex items-center gap-4 sm:gap-5">
-                <img src={selectedShop.shopLogo || selectedShop.logo || selectedShop.profileImage || 'https://images.pexels.com/photos/5709661/pexels-photo-5709661.jpeg?auto=compress&cs=tinysrgb&w=150'} alt="Logo" className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-[#D4AF37]/40 shadow-sm flex-shrink-0" />
-                <div className="min-w-0">
-                  <h3 className="font-bold text-[#7B1E3A] text-lg sm:text-xl m-0 truncate">{selectedShop.shopName || 'Weaver House'}</h3>
-                  <p className="text-sm font-semibold text-[#6B4A48] m-0 truncate">Owner: {selectedShop.name || 'Master Artisan'}</p>
-                  <span className={`inline-block mt-2 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${statusColors[selectedShop._computedStatus || 'pending'] || statusColors.pending}`}>
-                    {(selectedShop._computedStatus || 'pending').toUpperCase()}
-                  </span>
-                </div>
+            <div className="p-0 overflow-y-auto max-h-[70vh]">
+              {/* Shop Banner */}
+              <div className="h-32 bg-gradient-to-r from-[#7B1E3A] via-[#9B2E4A] to-[#7B1E3A] relative">
+                {selectedShop.banner || selectedShop.shopBanner ? (
+                  <img src={selectedShop.banner || selectedShop.shopBanner} alt="Banner" className="w-full h-full object-cover opacity-80" />
+                ) : (
+                  <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23D4AF37\' fill-opacity=\'0.3\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")' }} />
+                )}
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm bg-[#FFF8F0]/40 p-4 rounded-xl border border-[#D4AF37]/15">
-                <div>
-                  <span className="text-[10px] uppercase font-bold tracking-widest text-[#D4AF37] block mb-1.5">Contact</span>
-                  <div className="text-[#4A2C2A] font-medium space-y-1.5">
-                    <p className="m-0 flex items-center gap-1.5 font-mono"><FiPhone size={12} className="text-[#6B4A48]"/> {selectedShop.phone || selectedShop.phoneNumber || 'N/A'}</p>
-                    <p className="m-0 flex items-center gap-1.5 break-all"><FiMail size={12} className="text-[#6B4A48]"/> {selectedShop.email || 'N/A'}</p>
+              <div className="px-6 pb-6 -mt-12 relative z-10 space-y-6">
+                <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-end">
+                  <img src={selectedShop.shopLogo || selectedShop.logo || selectedShop.profileImage || 'https://images.pexels.com/photos/5709661/pexels-photo-5709661.jpeg?auto=compress&cs=tinysrgb&w=150'} alt="Logo" className="w-24 h-24 rounded-2xl object-cover border-4 border-white shadow-lg bg-[#FFF8F0] flex-shrink-0" />
+                  <div className="min-w-0 flex-1 pt-2 sm:pt-0">
+                    <h3 className="font-bold text-[#7B1E3A] text-2xl m-0 truncate" style={{ fontFamily: 'Playfair Display' }}>{selectedShop.shopName || 'Weaver House'}</h3>
+                    <p className="text-sm font-semibold text-[#6B4A48] m-0 mb-2 truncate">Owner: {selectedShop.name || selectedShop.ownerName || 'Master Artisan'}</p>
+                    <span className={`inline-block text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${statusColors[selectedShop._computedStatus || 'pending'] || statusColors.pending}`}>
+                      {(selectedShop._computedStatus || 'pending').toUpperCase()}
+                    </span>
                   </div>
                 </div>
-                <div>
-                  <span className="text-[10px] uppercase font-bold tracking-widest text-[#D4AF37] block mb-1.5">Registration Date</span>
-                  <p className="text-[#4A2C2A] font-medium m-0">{selectedShop.createdAt ? new Date(selectedShop.createdAt).toLocaleDateString('en-IN', {day: '2-digit', month: 'short', year: 'numeric'}) : (selectedShop.date || 'July 2026')}</p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm bg-[#FFF8F0]/40 p-4 rounded-xl border border-[#D4AF37]/15">
+                  <div>
+                    <span className="text-[10px] uppercase font-bold tracking-widest text-[#D4AF37] block mb-1.5">Contact</span>
+                    <div className="text-[#4A2C2A] font-medium space-y-1.5">
+                      <p className="m-0 flex items-center gap-1.5 font-mono"><FiPhone size={12} className="text-[#6B4A48]"/> {selectedShop.phone || selectedShop.phoneNumber || 'N/A'}</p>
+                      <p className="m-0 flex items-center gap-1.5 break-all"><FiMail size={12} className="text-[#6B4A48]"/> {selectedShop.email || 'N/A'}</p>
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-[10px] uppercase font-bold tracking-widest text-[#D4AF37] block mb-1.5">Registration Date</span>
+                    <p className="text-[#4A2C2A] font-medium m-0">{selectedShop.createdAt ? new Date(selectedShop.createdAt).toLocaleDateString('en-IN', {day: '2-digit', month: 'short', year: 'numeric'}) : (selectedShop.date || 'July 2026')}</p>
+                  </div>
                 </div>
-              </div>
 
-              <div>
-                <span className="text-[10px] uppercase font-bold tracking-widest text-[#D4AF37] block mb-2"><FiMapPin className="inline mr-1" size={12}/> Address</span>
-                <p className="text-[#4A2C2A] text-sm leading-relaxed m-0 bg-white p-3.5 rounded-lg border border-[#D4AF37]/20">
-                  {selectedShop.address || selectedShop.location || 'No address provided.'}
-                </p>
-              </div>
-
-              {selectedShop.description && (
                 <div>
-                  <span className="text-[10px] uppercase font-bold tracking-widest text-[#D4AF37] block mb-2">Business Description</span>
-                  <p className="text-[#4A2C2A] text-sm leading-relaxed m-0 bg-white p-3.5 rounded-lg border border-[#D4AF37]/20 whitespace-pre-wrap">
-                    {selectedShop.description}
+                  <span className="text-[10px] uppercase font-bold tracking-widest text-[#D4AF37] block mb-2"><FiMapPin className="inline mr-1" size={12}/> Complete Address</span>
+                  <p className="text-[#4A2C2A] text-sm leading-relaxed m-0 bg-white p-3.5 rounded-lg border border-[#D4AF37]/20">
+                    {selectedShop.address || selectedShop.location || 'No address provided.'}
                   </p>
                 </div>
-              )}
+
+                {selectedShop.description && (
+                  <div>
+                    <span className="text-[10px] uppercase font-bold tracking-widest text-[#D4AF37] block mb-2">Shop Description</span>
+                    <p className="text-[#4A2C2A] text-sm leading-relaxed m-0 bg-white p-3.5 rounded-lg border border-[#D4AF37]/20 whitespace-pre-wrap">
+                      {selectedShop.description}
+                    </p>
+                  </div>
+                )}
+
+                {/* Advanced Statistics */}
+                <div>
+                  <span className="text-[10px] uppercase font-bold tracking-widest text-[#D4AF37] block mb-2">Shop Statistics</span>
+                  <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                    <div className="bg-white p-3 rounded-lg border border-[#D4AF37]/20 text-center">
+                      <span className="block text-[10px] uppercase font-bold text-[#D4AF37] mb-1">Published</span>
+                      <span className="block text-lg font-bold text-[#2D8F5E]">{getShopStats(selectedShop.id, selectedShop.uid).published}</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg border border-[#D4AF37]/20 text-center">
+                      <span className="block text-[10px] uppercase font-bold text-[#D4AF37] mb-1">Pending</span>
+                      <span className="block text-lg font-bold text-yellow-600">{getShopStats(selectedShop.id, selectedShop.uid).pending}</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg border border-[#D4AF37]/20 text-center">
+                      <span className="block text-[10px] uppercase font-bold text-[#D4AF37] mb-1">Approved</span>
+                      <span className="block text-lg font-bold text-[#2D8F5E]">{getShopStats(selectedShop.id, selectedShop.uid).published}</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg border border-[#D4AF37]/20 text-center">
+                      <span className="block text-[10px] uppercase font-bold text-[#D4AF37] mb-1">Rejected</span>
+                      <span className="block text-lg font-bold text-[#C53030]">{getShopStats(selectedShop.id, selectedShop.uid).rejected}</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg border border-[#D4AF37]/20 text-center">
+                      <span className="block text-[10px] uppercase font-bold text-[#D4AF37] mb-1">Orders</span>
+                      <span className="block text-lg font-bold text-[#7B1E3A]">{selectedShop.totalOrders || 0}</span>
+                    </div>
+                    <div className="bg-white p-3 rounded-lg border border-[#D4AF37]/20 text-center">
+                      <span className="block text-[10px] uppercase font-bold text-[#D4AF37] mb-1">Revenue</span>
+                      <span className="block text-sm font-bold text-[#7B1E3A] flex items-center justify-center h-[28px]">
+                        ₹{((selectedShop.revenue || 0) / 1000).toFixed(1)}k
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Approval History Mockup */}
+                <div>
+                  <span className="text-[10px] uppercase font-bold tracking-widest text-[#D4AF37] block mb-2">Approval History</span>
+                  <div className="bg-white p-3.5 rounded-lg border border-[#D4AF37]/20 text-xs text-[#6B4A48] space-y-2">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                      <span>Application submitted on {selectedShop.createdAt ? new Date(selectedShop.createdAt).toLocaleDateString('en-IN') : 'July 2026'}</span>
+                    </div>
+                    {(selectedShop._computedStatus === 'approved') && (
+                      <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                        <span>Approved by Admin</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+              </div>
             </div>
 
             {(selectedShop._computedStatus || 'pending') === 'pending' && (
