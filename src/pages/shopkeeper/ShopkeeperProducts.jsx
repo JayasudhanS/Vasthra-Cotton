@@ -6,7 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import { FiEye, FiEdit2, FiTrash2, FiX, FiSave, FiAlertCircle } from 'react-icons/fi';
 
 export function ShopkeeperProducts() {
-  const { products, deleteProduct, submitProductEdit } = useProducts();
+  const { products, deleteProduct, submitProductEdit, firestoreError } = useProducts();
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('approved');
   const [editingProduct, setEditingProduct] = useState(null);
@@ -88,6 +88,17 @@ export function ShopkeeperProducts() {
           {filteredProducts.length} {activeTab === 'approved' ? 'Approved' : activeTab === 'pending' ? 'Pending' : activeTab === 'rejected' ? 'Rejected' : 'Total'}
         </span>
       </div>
+
+      {/* Firestore connectivity warning */}
+      {firestoreError && (
+        <div className="flex items-start gap-3 p-4 rounded-xl bg-yellow-50 border border-yellow-300 text-yellow-800 text-sm">
+          <FiAlertCircle className="flex-shrink-0 mt-0.5 text-yellow-600" size={18} />
+          <div>
+            <p className="m-0 font-bold text-yellow-900">Unable to load latest product data</p>
+            <p className="m-0 mt-1 text-xs leading-relaxed">Your products are safe in the database. This is a temporary connectivity or permission issue. Please refresh the page or contact admin if this persists.</p>
+          </div>
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="flex flex-wrap gap-2.5 pb-2">

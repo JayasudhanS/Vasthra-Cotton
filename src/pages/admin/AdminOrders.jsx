@@ -15,7 +15,7 @@ const statusColors = {
 };
 
 export default function AdminOrders() {
-  const { orders, updateOrderStatus } = useOrders();
+  const { allOrders: orders, updateOrderStatus, loading } = useOrders();
   const { allShops = [], allUsers = [], pendingShops = [] } = useAuth();
   const [statusFilter, setStatusFilter] = useState('All');
   const [shopFilter, setShopFilter] = useState('');
@@ -32,6 +32,12 @@ export default function AdminOrders() {
   });
 
   const uniqueShops = [...new Set(orders.map(o => o.shopName))];
+
+  if (loading) return (
+    <div className="flex justify-center items-center py-20">
+      <span className="inline-block w-8 h-8 border-3 border-[#7B1E3A]/20 border-t-[#7B1E3A] rounded-full animate-spin" />
+    </div>
+  );
 
   return (
     <div className="space-y-6">

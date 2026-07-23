@@ -7,31 +7,60 @@ const ProductContext = createContext();
 export function ProductProvider({ children }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [firestoreError, setFirestoreError] = useState(null);
 
   // Real-time Firestore listener for ALL products
   // NO orderBy — avoids requiring a Firestore index. Sorting is done client-side.
   useEffect(() => {
     const colRef = collection(db, COLLECTIONS.PRODUCTS);
-    const unsubscribe = onSnapshot(colRef, (snapshot) => {
-      const firestoreProducts = snapshot.docs.map(d => ({
-        ...d.data(),
-        id: d.id,
-      }));
-      // Sort client-side by createdAt descending (newest first)
-      firestoreProducts.sort((a, b) => {
-        const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
-        const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
-        return dateB - dateA;
-      });
-      setProducts(firestoreProducts);
-      setLoading(false);
-    }, (error) => {
-      console.error('Firestore products listener error:', error);
-      // Fallback: try without any query constraints
-      setLoading(false);
-    });
+    let retryTimer = null;
+    let retryCount = 0;
+    const MAX_RETRIES = 3;
 
-    return () => unsubscribe();
+    const startListener = () => {
+      const unsubscribe = onSnapshot(colRef, (snapshot) => {
+        const firestoreProducts = snapshot.docs.map(d => ({
+          ...d.data(),
+          id: d.id,
+        }));
+        // Sort client-side by createdAt descending (newest first)
+        firestoreProducts.sort((a, b) => {
+          const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
+          const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
+          return dateB - dateA;
+        });
+        setProducts(firestoreProducts);
+        setLoading(false);
+        setFirestoreError(null);
+        retryCount = 0; // Reset retry count on success
+      }, (error) => {
+        console.error('Firestore products listener error:', error);
+        console.error('Error code:', error.code, '| Message:', error.message);
+        setFirestoreError(error.message || 'Failed to load products');
+        setLoading(false);
+        // IMPORTANT: Do NOT clear products on error — keep existing data visible
+        // This prevents products from "disappearing" due to permission/network errors
+
+        // Retry with backoff if we haven't exceeded max retries
+        if (retryCount < MAX_RETRIES) {
+          retryCount++;
+          const delay = Math.min(2000 * Math.pow(2, retryCount - 1), 10000);
+          console.warn(`Retrying Firestore products listener in ${delay}ms (attempt ${retryCount}/${MAX_RETRIES})...`);
+          retryTimer = setTimeout(() => {
+            startListener();
+          }, delay);
+        }
+      });
+
+      return unsubscribe;
+    };
+
+    const unsubscribe = startListener();
+
+    return () => {
+      if (typeof unsubscribe === 'function') unsubscribe();
+      if (retryTimer) clearTimeout(retryTimer);
+    };
   }, []);
 
   // Only approved products for public-facing pages
@@ -167,6 +196,7 @@ export function ProductProvider({ children }) {
       products,
       approvedProducts,
       loading,
+      firestoreError,
       addProduct,
       approveProduct,
       rejectProduct,

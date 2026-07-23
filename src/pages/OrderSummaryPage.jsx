@@ -38,22 +38,30 @@ export default function OrderSummaryPage() {
   const deliveryCharge = 30;
   const total = subtotal + deliveryCharge;
 
-  const handlePlaceOrder = (e) => {
+  const handlePlaceOrder = async (e) => {
     e.preventDefault();
-    placeOrder({
-      productId: product.id,
-      productName: product.name,
-      productImage: product.image,
-      shopId: product.shopId,
-      shopName: product.shopName,
-      shopLogo: shop?.logo || '',
-      price: product.offerPrice,
-      quantity,
-      customerName: delivery.name,
-      customerPhone: delivery.phone,
-      customerAddress: `${delivery.address}, ${delivery.city}, ${delivery.state} - ${delivery.pincode}`,
-    });
-    navigate('/order-confirmation', { state: { productName: product.name, total } });
+    try {
+      await placeOrder({
+        productId: product.id,
+        productName: product.name,
+        productImage: product.image || product.imageUrl || product.thumbnail || '',
+        shopId: product.shopId || product.ownerId || '',
+        shopName: product.shopName || '',
+        shopLogo: shop?.logo || '',
+        ownerId: product.ownerId || product.shopId || '',
+        price: product.offerPrice,
+        quantity,
+        fabric: product.fabric || '',
+        color: product.color || '',
+        customerName: delivery.name,
+        customerPhone: delivery.phone,
+        customerAddress: `${delivery.address}, ${delivery.city}, ${delivery.state} - ${delivery.pincode}`,
+      });
+      navigate('/order-confirmation', { state: { productName: product.name, total } });
+    } catch (err) {
+      console.error('Failed to place order:', err);
+      alert('Failed to place order. Please try again.');
+    }
   };
 
   return (

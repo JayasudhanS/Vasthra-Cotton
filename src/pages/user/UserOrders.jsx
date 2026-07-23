@@ -20,8 +20,13 @@ const statusIcons = {
 };
 
 export default function UserOrders() {
-  const { orders } = useOrders();
+  const { myOrders: orders, loading } = useOrders();
 
+  if (loading) return (
+    <div className="flex justify-center items-center py-20">
+      <span className="inline-block w-8 h-8 border-3 border-[#7B1E3A]/20 border-t-[#7B1E3A] rounded-full animate-spin" />
+    </div>
+  );
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between pb-4 border-b border-[#D4AF37]/20">

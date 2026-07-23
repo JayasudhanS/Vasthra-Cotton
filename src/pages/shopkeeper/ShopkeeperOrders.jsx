@@ -13,17 +13,21 @@ const statusColors = {
 };
 
 export default function ShopkeeperOrders() {
-  const { orders, updateOrderStatus } = useOrders();
+  const { shopOrders, updateOrderStatus, loading } = useOrders();
   const { user } = useAuth();
-  const [statusFilter, setStatusFilter] = useState('Confirmed');
+  const [statusFilter, setStatusFilter] = useState('All');
 
-  // Filter orders for current shopkeeper's shop only
-  const shopName = user?.shopName || user?.name || '';
-  const myOrders = orders.filter(o => {
-    if (shopName && o.shopName && o.shopName !== shopName) return false;
+  // Apply local status filter on top of the pre-filtered shop orders
+  const myOrders = shopOrders.filter(o => {
     if (statusFilter !== 'All' && o.status !== statusFilter) return false;
     return true;
   });
+
+  if (loading) return (
+    <div className="flex justify-center items-center py-20">
+      <span className="inline-block w-8 h-8 border-3 border-[#7B1E3A]/20 border-t-[#7B1E3A] rounded-full animate-spin" />
+    </div>
+  );
 
   return (
     <div className="space-y-6">
