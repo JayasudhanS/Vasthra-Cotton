@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useProducts } from '../../context/ProductContext';
 import { useAuth } from '../../context/AuthContext';
 import { FiEye, FiEdit2, FiTrash2, FiX, FiSave, FiAlertCircle } from 'react-icons/fi';
+import { DESCRIPTION_TEMPLATES } from '../../utils/descriptionTemplates';
+import NativeSelectField from '../../components/shared/NativeSelectField';
 
 export function ShopkeeperProducts() {
   const { products, deleteProduct, submitProductEdit, firestoreError } = useProducts();
@@ -11,6 +13,7 @@ export function ShopkeeperProducts() {
   const [activeTab, setActiveTab] = useState('approved');
   const [editingProduct, setEditingProduct] = useState(null);
   const [editForm, setEditForm] = useState({});
+  const [selectedTemplate, setSelectedTemplate] = useState('');
   const [editLoading, setEditLoading] = useState(false);
   const [editMessage, setEditMessage] = useState('');
 
@@ -34,7 +37,25 @@ export function ShopkeeperProducts() {
       color: p.color || '',
       zariType: p.zariType || '',
     });
+    setSelectedTemplate('');
     setEditMessage('');
+  };
+
+  const handleTemplateChange = (e) => {
+    const templateName = e.target.value;
+    if (!templateName) {
+      setSelectedTemplate('');
+      return;
+    }
+
+    const newDescription = DESCRIPTION_TEMPLATES[templateName];
+    if (editForm.description && editForm.description.trim() !== '') {
+      if (!window.confirm('Changing the template will replace the current description. Continue?')) {
+        return; // Keep existing template and description
+      }
+    }
+    setEditForm(prev => ({ ...prev, description: newDescription }));
+    setSelectedTemplate(templateName);
   };
 
   const handleEditSubmit = async (e) => {
@@ -249,8 +270,13 @@ export function ShopkeeperProducts() {
                     <input type="number" value={editForm.stock} onChange={e => setEditForm({ ...editForm, stock: e.target.value })} className="input-field !h-10 !text-sm" />
                   </div>
                   <div>
-                    <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block mb-1.5">Fabric</label>
-                    <input type="text" value={editForm.fabric} onChange={e => setEditForm({ ...editForm, fabric: e.target.value })} className="input-field !h-10 !text-sm" />
+                    <NativeSelectField
+                      label="Fabric"
+                      options={['Pure Silk', 'Kanjivaram Silk', 'Banarasi Silk', 'Chiffon', 'Georgette', 'Cotton Silk', 'Organza', 'Tussar Silk', 'Linen', 'Handloom Cotton']}
+                      value={editForm.fabric}
+                      onChange={e => setEditForm({ ...editForm, fabric: e.target.value })}
+                      placeholder="Select Fabric"
+                    />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -259,13 +285,27 @@ export function ShopkeeperProducts() {
                     <input type="text" value={editForm.color} onChange={e => setEditForm({ ...editForm, color: e.target.value })} className="input-field !h-10 !text-sm" />
                   </div>
                   <div>
-                    <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block mb-1.5">Zari / Motif</label>
-                    <input type="text" value={editForm.zariType} onChange={e => setEditForm({ ...editForm, zariType: e.target.value })} className="input-field !h-10 !text-sm" />
+                    <NativeSelectField
+                      label="Zari / Motif"
+                      options={['Pure Zari', 'Half Fine Zari', 'Tested Zari', 'Antique Gold Zari', 'Silver Zari', 'No Zari']}
+                      value={editForm.zariType}
+                      onChange={e => setEditForm({ ...editForm, zariType: e.target.value })}
+                      placeholder="Select Zari"
+                    />
                   </div>
                 </div>
                 <div>
+                  <NativeSelectField
+                    label="Description Template"
+                    options={Object.keys(DESCRIPTION_TEMPLATES)}
+                    value={selectedTemplate}
+                    onChange={handleTemplateChange}
+                    placeholder="Select a Template"
+                  />
+                </div>
+                <div>
                   <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block mb-1.5">Description</label>
-                  <textarea value={editForm.description} onChange={e => setEditForm({ ...editForm, description: e.target.value })} className="input-field !text-sm !min-h-[80px]" rows={3} />
+                  <textarea value={editForm.description} onChange={e => setEditForm({ ...editForm, description: e.target.value })} className="input-field !text-sm !min-h-[80px] py-2" rows={4} placeholder="Describe the weaving technique, fabric quality, motifs, craftsmanship, blouse details, care instructions, and styling suggestions..." />
                 </div>
 
                 {editMessage && (

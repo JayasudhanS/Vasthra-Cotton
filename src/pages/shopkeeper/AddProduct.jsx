@@ -6,6 +6,8 @@ import { db, COLLECTIONS } from '../../firebase/config';
 import { useProducts } from '../../context/ProductContext';
 import { useAuth } from '../../context/AuthContext';
 import { uploadToCloudinary, validateImageFile, getCloudinaryThumbnail } from '../../utils/cloudinaryUpload';
+import { DESCRIPTION_TEMPLATES } from '../../utils/descriptionTemplates';
+import NativeSelectField from '../../components/shared/NativeSelectField';
 
 export const PREDEFINED_WEAVES = [
   'Pure Silk',
@@ -52,10 +54,6 @@ export default function AddProduct() {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  // Regional Category (Weave) Dropdown State
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [activeIdx, setActiveIdx] = useState(-1);
-
   // Multi-image upload state (up to 3 images)
   // Each item: { id: string, file: File, previewUrl: string, name: string, size: number }
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -64,51 +62,11 @@ export default function AddProduct() {
   const [imageError, setImageError] = useState('');
   const [isDragging, setIsDragging] = useState(false);
   const [replaceTargetId, setReplaceTargetId] = useState(null);
+  
+  // Description Template state
+  const [selectedTemplate, setSelectedTemplate] = useState('');
 
   const upd = (k) => (e) => setForm({ ...form, [k]: e.target.value });
-
-  // Close weave dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setDropdownOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  const handleSelectWeave = (weaveName) => {
-    setForm(prev => ({ ...prev, category: weaveName }));
-    setDropdownOpen(false);
-  };
-
-  const handleKeyDown = (e) => {
-    if (!dropdownOpen) {
-      if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        setDropdownOpen(true);
-        setActiveIdx(form.category ? PREDEFINED_WEAVES.indexOf(form.category) : 0);
-      }
-      return;
-    }
-
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      setActiveIdx(prev => (prev + 1) % PREDEFINED_WEAVES.length);
-    } else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      setActiveIdx(prev => (prev - 1 + PREDEFINED_WEAVES.length) % PREDEFINED_WEAVES.length);
-    } else if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      if (activeIdx >= 0 && activeIdx < PREDEFINED_WEAVES.length) {
-        handleSelectWeave(PREDEFINED_WEAVES[activeIdx]);
-      }
-    } else if (e.key === 'Escape') {
-      e.preventDefault();
-      setDropdownOpen(false);
-    }
-  };
 
   // Process and add validated files up to limit of 3
   const processAndAddFiles = useCallback((files) => {
@@ -158,6 +116,23 @@ export default function AddProduct() {
       processAndAddFiles(e.target.files);
       e.target.value = ''; // Reset input to allow re-selecting same files
     }
+  };
+
+  const handleTemplateChange = (e) => {
+    const templateName = e.target.value;
+    if (!templateName) {
+      setSelectedTemplate('');
+      return;
+    }
+
+    const newDescription = DESCRIPTION_TEMPLATES[templateName];
+    if (form.description && form.description.trim() !== '') {
+      if (!window.confirm('Changing the template will replace the current description. Continue?')) {
+        return; // Keep existing template and description
+      }
+    }
+    setForm(prev => ({ ...prev, description: newDescription }));
+    setSelectedTemplate(templateName);
   };
 
   const handleRemoveImage = (idToRemove) => {
@@ -330,6 +305,7 @@ export default function AddProduct() {
           <button onClick={() => {
             setSubmitted(false);
             setForm({ name: '', category: '', price: '', offerPrice: '', stock: '', description: '', fabric: 'Pure Silk', color: 'Gold', zariType: 'Pure Zari' });
+            setSelectedTemplate('');
             setSelectedFiles([]);
             setImageError('');
             setUploadProgresses({});
@@ -372,80 +348,29 @@ export default function AddProduct() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {/* Regional Category (Weave) Dropdown matching Reference Screenshot */}
-              <div ref={dropdownRef} className="relative">
-                <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block mb-1.5">Regional Category (Weave) *</label>
-                <div
-                  tabIndex={0}
-                  role="combobox"
-                  aria-expanded={dropdownOpen}
-                  aria-haspopup="listbox"
-                  onClick={() => {
-                    if (!dropdownOpen) setActiveIdx(form.category ? PREDEFINED_WEAVES.indexOf(form.category) : 0);
-                    setDropdownOpen(!dropdownOpen);
-                  }}
-                  onKeyDown={handleKeyDown}
-                  className={`input-field !h-12 !text-sm flex items-center justify-between cursor-pointer select-none bg-white transition-all ${dropdownOpen ? 'border-[#7B1E3A] ring-2 ring-[#7B1E3A]/15' : ''
-                    }`}
-                >
-                  <span className={form.category ? 'text-[#4A2C2A] font-medium truncate' : 'text-gray-400'}>
-                    {form.category || 'Select Weave Option'}
-                  </span>
-                  <FiChevronDown className={`text-[#7B1E3A] transition-transform duration-200 flex-shrink-0 ml-2 ${dropdownOpen ? 'rotate-180' : ''}`} />
-                </div>
+              <NativeSelectField
+                label="Regional Category (Weave) *"
+                options={PREDEFINED_WEAVES}
+                value={form.category}
+                onChange={upd('category')}
+                placeholder="Select Weave Option"
+              />
 
-                <AnimatePresence>
-                  {dropdownOpen && (
-                    <motion.ul
-                      role="listbox"
-                      initial={{ opacity: 0, y: -4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -4 }}
-                      transition={{ duration: 0.15 }}
-                      className="absolute z-50 left-0 right-0 mt-1.5 bg-white border border-[#1976D2] rounded-lg shadow-2xl max-h-72 overflow-y-auto py-1 select-none focus:outline-none scroll-smooth"
-                    >
-                      {PREDEFINED_WEAVES.map((weaveName, index) => {
-                        const isSelected = form.category === weaveName;
-                        const isHighlighted = activeIdx === index || isSelected;
-                        return (
-                          <li
-                            key={weaveName}
-                            role="option"
-                            aria-selected={isSelected}
-                            onClick={() => handleSelectWeave(weaveName)}
-                            onMouseEnter={() => setActiveIdx(index)}
-                            className={`px-4 py-2.5 text-sm sm:text-[15px] cursor-pointer transition-colors flex items-center justify-between font-medium leading-normal ${isSelected
-                                ? 'bg-[#1976D2] text-white font-semibold'
-                                : isHighlighted
-                                  ? 'bg-[#1976D2] text-white'
-                                  : 'text-[#4A2C2A] hover:bg-[#1976D2] hover:text-white'
-                              }`}
-                          >
-                            <span className="truncate">{weaveName}</span>
-                          </li>
-                        );
-                      })}
-                    </motion.ul>
-                  )}
-                </AnimatePresence>
-              </div>
+              <NativeSelectField
+                label="Primary Fabric *"
+                options={['Pure Silk', 'Kanjivaram Silk', 'Banarasi Silk', 'Chiffon', 'Georgette', 'Cotton Silk', 'Organza', 'Tussar Silk', 'Linen', 'Handloom Cotton']}
+                value={form.fabric}
+                onChange={upd('fabric')}
+                placeholder="Select Fabric"
+              />
 
-              <div>
-                <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block mb-1.5">Primary Fabric *</label>
-                <select value={form.fabric} onChange={upd('fabric')} className="select-field !h-12 !text-sm">
-                  {['Pure Silk', 'Kanjivaram Silk', 'Banarasi Silk', 'Chiffon', 'Georgette', 'Cotton Silk', 'Organza', 'Tussar Silk', 'Linen', 'Handloom Cotton'].map(f => (
-                    <option key={f} value={f}>{f}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block mb-1.5">Zari Type</label>
-                <select value={form.zariType} onChange={upd('zariType')} className="select-field !h-12 !text-sm">
-                  {['Pure Zari', 'Half Fine Zari', 'Tested Zari', 'Antique Gold Zari', 'Silver Zari', 'No Zari'].map(z => (
-                    <option key={z} value={z}>{z}</option>
-                  ))}
-                </select>
-              </div>
+              <NativeSelectField
+                label="Zari Type"
+                options={['Pure Zari', 'Half Fine Zari', 'Tested Zari', 'Antique Gold Zari', 'Silver Zari', 'No Zari']}
+                value={form.zariType}
+                onChange={upd('zariType')}
+                placeholder="Select Zari"
+              />
             </div>
           </div>
         </div>
@@ -476,16 +401,27 @@ export default function AddProduct() {
           <h3 className="text-base font-bold text-[#7B1E3A] uppercase tracking-wider mb-4 pb-2 border-b border-[#D4AF37]/15">
             3. Craftsmanship & Description
           </h3>
-          <div>
-            <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block mb-1.5">Detailed Description & Motif Story *</label>
-            <textarea
-              required
-              value={form.description}
-              onChange={upd('description')}
-              rows={4}
-              placeholder="Describe the weaving technique, motif inspiration (e.g. Peacock, Lotus), border style, and blouse piece specifications..."
-              className="textarea-field !text-sm"
-            />
+          <div className="space-y-4">
+            <div className="md:w-1/2">
+              <NativeSelectField
+                label="Description Template"
+                options={Object.keys(DESCRIPTION_TEMPLATES)}
+                value={selectedTemplate}
+                onChange={handleTemplateChange}
+                placeholder="Select a Template"
+              />
+            </div>
+            <div>
+              <label className="text-xs font-bold uppercase tracking-wider text-[#7B1E3A] block mb-1.5">Detailed Description & Motif Story *</label>
+              <textarea
+                required
+                value={form.description}
+                onChange={upd('description')}
+                rows={6}
+                placeholder="Describe the weaving technique, fabric quality, motifs, craftsmanship, blouse details, care instructions, and styling suggestions..."
+                className="textarea-field !text-sm"
+              />
+            </div>
           </div>
         </div>
 

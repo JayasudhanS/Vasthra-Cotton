@@ -30,7 +30,9 @@ export default function ShopsPage() {
       uList.forEach(u => {
         if (u.id || u.uid) {
           const existing = shopMap.get(u.id || u.uid) || {};
-          shopMap.set(u.id || u.uid, { ...existing, ...u, id: u.id || u.uid });
+          // Merge 'u' first, then 'existing' so that the SHOPS collection 
+          // (which holds the true public approval status) takes precedence.
+          shopMap.set(u.id || u.uid, { ...u, ...existing, id: u.id || u.uid });
         }
       });
 

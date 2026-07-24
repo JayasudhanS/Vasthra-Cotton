@@ -7,11 +7,13 @@ import { db, COLLECTIONS } from '../firebase/config';
 import ProductCard from '../components/shared/ProductCard';
 import { useProducts } from '../context/ProductContext';
 import { useAuth } from '../context/AuthContext';
+import { useShopBranding } from '../context/ShopBrandingContext';
 
 export default function ShopStorePage() {
   const { ownerId } = useParams();
   const { approvedProducts = [] } = useProducts();
   const { user, role } = useAuth();
+  const { setShopBranding, clearShopBranding } = useShopBranding();
   const [shopDoc, setShopDoc] = useState(null);
   const [loadingShop, setLoadingShop] = useState(true);
 
@@ -95,6 +97,14 @@ export default function ShopStorePage() {
     registeredDate: shopDoc?.establishedDate || shopDoc?.registeredDate || (shopDoc?.createdAt ? new Date(shopDoc.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : 'July 2026'),
     description: shopDoc?.description || firstProduct?.shopDescription || 'Welcome to our official Silk Mark certified online weaving house. We craft authentic heritage handloom silk sarees with purity, precision, and dedication to traditional craftsmanship.',
   };
+
+  // Set navbar branding to this shop while the page is mounted
+  useEffect(() => {
+    if (shopInfo.name && shopInfo.name !== 'Master Weaving House') {
+      setShopBranding(shopInfo.name, shopInfo.logo);
+    }
+    return () => clearShopBranding();
+  }, [shopInfo.name, shopInfo.logo, setShopBranding, clearShopBranding]);
 
   // Extract unique categories from this shop's products
   const shopCategories = useMemo(() => {

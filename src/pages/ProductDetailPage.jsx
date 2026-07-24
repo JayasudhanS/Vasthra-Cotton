@@ -1,6 +1,6 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { FiHeart, FiShoppingBag, FiShare2, FiTruck, FiShield, FiRefreshCw, FiAward, FiCheckCircle, FiChevronLeft, FiChevronRight, FiMapPin, FiStar, FiPackage } from 'react-icons/fi';
 import { StarRating } from '../components/shared/ProductCard';
 import ProductCard from '../components/shared/ProductCard';
@@ -8,6 +8,7 @@ import { useProducts } from '../context/ProductContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import { useShopBranding } from '../context/ShopBrandingContext';
 import BreadcrumbBack from '../components/shared/BreadcrumbBack';
 
 export default function ProductDetailPage() {
@@ -44,6 +45,15 @@ export default function ProductDetailPage() {
     logo: product?.shopLogo || productImages[0] || '',
     rating: product?.shopRating || product?.rating || 4.9,
   };
+
+  // Set navbar branding to this product's shop while the page is mounted
+  const { setShopBranding, clearShopBranding } = useShopBranding();
+  useEffect(() => {
+    if (shopInfo.name && shopInfo.name !== 'Artisan Weave House' && shopInfo.id) {
+      setShopBranding(shopInfo.name, shopInfo.logo);
+    }
+    return () => clearShopBranding();
+  }, [shopInfo.name, shopInfo.logo, shopInfo.id, setShopBranding, clearShopBranding]);
 
   // Related products: same category or same fabric, excluding current product
   const related = approvedProducts
