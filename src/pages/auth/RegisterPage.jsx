@@ -289,14 +289,6 @@ export default function RegisterPage() {
             >
               Go to Login
             </button>
-            <button
-              type="button"
-              onClick={() => navigate('/')}
-              style={{ height: '54px' }}
-              className="w-full rounded-[12px] border border-[#D4AF37]/50 bg-white hover:bg-[#FFF8F0] text-[#7B1E3A] text-[16px] font-semibold cursor-pointer shadow-sm transition-all flex items-center justify-center"
-            >
-              Back to Home
-            </button>
           </div>
         </motion.div>
       </section>

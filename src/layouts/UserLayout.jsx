@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { FiHome, FiHeart, FiPackage, FiUser, FiLogOut, FiCheckCircle } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
-import BreadcrumbBack from '../components/shared/BreadcrumbBack';
 
 const links = [
   { name: 'Home', path: '/user/dashboard', icon: <FiHome className="w-6 h-6 sm:w-8 sm:h-8" /> },
@@ -111,16 +110,9 @@ export default function UserLayout() {
     return currentPath === linkPath;
   };
 
-  // Avoid duplicate breadcrumb when inner pages (like Wishlist or Cart) render their own BreadcrumbBack
-  const showBreadcrumb = pathname === '/user/dashboard' ||
-                         pathname === '/user/orders' ||
-                         pathname.startsWith('/user/orders/') ||
-                         pathname === '/user/profile';
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-28 sm:pt-8 sm:pb-32 lg:py-10 w-full overflow-visible">
-      {showBreadcrumb && <BreadcrumbBack />}
-
       {/* Logged-in User Account Status & Identity Header */}
       <div ref={welcomeCardRef} className="bg-gradient-to-r from-[#7B1E3A] via-[#5A1028] to-[#4A2C2A] rounded-2xl sm:rounded-3xl p-5 sm:p-6 md:p-7 mb-6 sm:mb-8 text-white border-2 border-[#D4AF37]/40 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">

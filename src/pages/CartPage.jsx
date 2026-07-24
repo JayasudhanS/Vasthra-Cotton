@@ -2,7 +2,6 @@ import { motion } from 'framer-motion';
 import { FiShoppingCart, FiTrash2, FiArrowRight, FiMinus, FiPlus, FiChevronLeft } from 'react-icons/fi';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
-import BreadcrumbBack from '../components/shared/BreadcrumbBack';
 
 export default function CartPage() {
   const { cart, removeFromCart, updateQuantity, clearCart, cartTotal, cartCount } = useCart();
@@ -19,8 +18,6 @@ export default function CartPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 lg:px-8 py-10 w-full">
-      <BreadcrumbBack items={[{ label: 'Cart', path: '/cart' }]} title="Shopping Cart" />
-      
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#D4AF37]/20 mb-8 gap-4">
         <div>
           <span className="text-xs uppercase font-bold tracking-widest text-[#D4AF37] block mb-1">✦ Your Selections</span>

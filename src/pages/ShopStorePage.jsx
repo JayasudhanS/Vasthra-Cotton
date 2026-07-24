@@ -114,13 +114,6 @@ export default function ShopStorePage() {
 
   return (
     <div className="min-h-screen bg-[#FFF8F0] pb-16">
-      {/* Back navigation */}
-      <div className="max-w-7xl mx-auto px-4 lg:px-8 pt-6">
-        <Link to="/shops" className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-[#7B1E3A] hover:text-[#D4AF37] no-underline transition-colors py-1">
-          <FiArrowLeft size={16} /> Back to Shop Directory
-        </Link>
-      </div>
-
       {/* ═══════ Large Shop Banner & Storefront Header ═══════ */}
       <div className="max-w-7xl mx-auto px-4 lg:px-8 pt-6 pb-10">
         <motion.div

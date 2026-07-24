@@ -1,7 +1,6 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { FiGrid, FiPackage, FiPlusCircle, FiClock, FiCheck, FiXCircle, FiUser, FiLogOut, FiList } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
-import BreadcrumbBack from '../components/shared/BreadcrumbBack';
 
 const links = [
   { name: 'Dashboard', path: '/shopkeeper/dashboard', icon: <FiGrid size={18} /> },
@@ -64,7 +63,6 @@ export default function ShopkeeperLayout() {
 
       {/* Content */}
       <main className="flex-1 p-4 sm:p-6 md:p-8 lg:p-10 pb-28 lg:pb-10 bg-[#FFF8F0]/40">
-        <BreadcrumbBack />
         <Outlet />
       </main>
     </div>

@@ -9,7 +9,6 @@ import { useWishlist } from '../context/WishlistContext';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useShopBranding } from '../context/ShopBrandingContext';
-import BreadcrumbBack from '../components/shared/BreadcrumbBack';
 
 export default function ProductDetailPage() {
   const { id } = useParams();
@@ -147,13 +146,6 @@ export default function ProductDetailPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 lg:px-8 py-8 sm:py-12">
-      {/* Breadcrumb */}
-      <BreadcrumbBack items={[
-        { label: 'Sarees', path: '/products' },
-        { label: product?.category || 'Collection', path: `/products?category=${product?.category || ''}` },
-        { label: product?.name || 'Saree Details' }
-      ]} />
-
       <div className="grid lg:grid-cols-12 gap-8 lg:gap-14 mb-20 items-start">
 
         {/* ═══════ Gallery ═══════ */}

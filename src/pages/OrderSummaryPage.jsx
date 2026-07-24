@@ -66,9 +66,6 @@ export default function OrderSummaryPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 lg:px-8 py-8 sm:py-12">
-      <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-sm text-[#7B1E3A] font-semibold mb-6 bg-transparent border-none cursor-pointer p-0 hover:text-[#D4AF37] transition-colors">
-        <FiArrowLeft size={18} /> Back to Product
-      </button>
 
       <h1 className="text-2xl sm:text-3xl font-bold text-[#7B1E3A] mb-8" style={{ fontFamily: 'Playfair Display' }}>Order Summary</h1>
 

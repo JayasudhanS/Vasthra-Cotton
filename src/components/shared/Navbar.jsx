@@ -37,8 +37,24 @@ export default function Navbar() {
   const location = useLocation();
   const { shopName: brandShopName, shopLogo: brandShopLogo } = useShopBranding();
 
-  // Show shop branding only for customer-facing individual shop/product pages
-  const isShopBranded = !!(brandShopName && brandShopLogo && role !== 'admin' && role !== 'shopkeeper' && role !== 'shopOwner');
+  const isInShopkeeperPortal = location.pathname.startsWith('/shopkeeper');
+  const isShopOwnerRole = role === 'shopkeeper' || role === 'shopOwner';
+
+  let activeShopName = '';
+  let activeShopLogo = '';
+  let isActiveShopBranded = false;
+
+  if (isInShopkeeperPortal && isShopOwnerRole && user) {
+    // Shop Owner Portal Branding
+    activeShopName = user.shopName || user.name || 'My Shop';
+    activeShopLogo = user.shopLogo || user.logo || user.profileImage || 'https://images.pexels.com/photos/5709661/pexels-photo-5709661.jpeg?auto=compress&cs=tinysrgb&w=300';
+    isActiveShopBranded = true;
+  } else if (!isShopOwnerRole && role !== 'admin' && brandShopName && brandShopLogo) {
+    // Customer-facing Individual Shop/Product pages
+    activeShopName = brandShopName;
+    activeShopLogo = brandShopLogo;
+    isActiveShopBranded = true;
+  }
 
   const trendingTerms = ['Kanjivaram Bridal Silk', 'Banarasi Zari Weave', 'Pure Organza Designer', 'Handloom Cotton Doria', 'Silk Mark Certified'];
   const [recentTerms, setRecentTerms] = useState(['Royal Kanchipuram Wedding Collection', 'Mysore Silk Gold Zari', 'Chanderi Handloom Festive', 'Pure Banarasi Katan Silk']);
@@ -96,12 +112,12 @@ export default function Navbar() {
           {/* Logo */}
           <Link to={user ? getDashboardPath() : '/'} className="flex items-center gap-2.5 sm:gap-3 no-underline group flex-shrink-0 min-w-0 mr-3 lg:mr-6 xl:mr-10">
             <img
-              src={isShopBranded ? brandShopLogo : '/images/logo_vas.png'}
-              alt={isShopBranded ? brandShopName : 'Vasthra Cotton Logo'}
-              className={`flex-shrink-0 group-hover:scale-105 transition-transform ${isShopBranded ? 'w-8 h-8 sm:w-10 sm:h-10 lg:w-11 lg:h-11 rounded-full object-cover border-2 border-[#D4AF37]/40 shadow-sm' : 'w-8 h-8 sm:w-10 sm:h-10 lg:w-11 lg:h-11 object-contain'}`}
+              src={isActiveShopBranded ? activeShopLogo : '/images/logo_vas.png'}
+              alt={isActiveShopBranded ? activeShopName : 'Vasthra Cotton Logo'}
+              className={`flex-shrink-0 group-hover:scale-105 transition-transform ${isActiveShopBranded ? 'w-8 h-8 sm:w-10 sm:h-10 lg:w-11 lg:h-11 rounded-full object-cover border-2 border-[#D4AF37]/40 shadow-sm' : 'w-8 h-8 sm:w-10 sm:h-10 lg:w-11 lg:h-11 object-contain'}`}
             />
             <span className="text-lg sm:text-2xl lg:text-[28px] font-bold text-[#7B1E3A] tracking-tight whitespace-nowrap truncate max-w-[140px] sm:max-w-[200px] lg:max-w-none" style={{ fontFamily: 'Playfair Display' }}>
-              {isShopBranded ? brandShopName : (<>Vasthra <span className="text-[#D4AF37]">Cotton</span></>)}
+              {isActiveShopBranded ? activeShopName : (<>Vasthra <span className="text-[#D4AF37]">Cotton</span></>)}
             </span>
           </Link>
 

@@ -5,8 +5,6 @@ import {
   onSnapshot,
   updateDoc,
   doc,
-  query,
-  orderBy,
   serverTimestamp
 } from 'firebase/firestore';
 import { db, COLLECTIONS } from '../firebase/config';
@@ -20,28 +18,72 @@ export function OrderProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   // ─── Real-time listener on Firestore 'orders' collection ───
+  // NO orderBy to avoid requiring a Firestore composite index.
+  // Sorting is done client-side after fetching, same pattern as ProductContext.
   useEffect(() => {
     const ordersRef = collection(db, COLLECTIONS.ORDERS);
-    const q = query(ordersRef, orderBy('createdAt', 'desc'));
+    let retryTimer = null;
+    let retryCount = 0;
+    const MAX_RETRIES = 3;
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const allOrders = snapshot.docs.map(docSnap => ({
-        ...docSnap.data(),
-        id: docSnap.id,
-        // Normalize the total for display safety
-        total: docSnap.data().total || 0,
-        price: docSnap.data().price || 0,
-        quantity: docSnap.data().quantity || 1,
-        deliveryCharge: docSnap.data().deliveryCharge || 30,
-      }));
-      setOrders(allOrders);
-      setLoading(false);
-    }, (err) => {
-      console.error('Error listening to orders:', err);
-      setLoading(false);
-    });
+    const startListener = () => {
+      const unsubscribe = onSnapshot(ordersRef, (snapshot) => {
+        const allOrders = snapshot.docs.map(docSnap => {
+          const data = docSnap.data();
+          return {
+            ...data,
+            id: docSnap.id,
+            // Normalize values for display safety
+            total: data.total || 0,
+            price: data.price || 0,
+            quantity: data.quantity || 1,
+            deliveryCharge: data.deliveryCharge || 30,
+          };
+        });
 
-    return () => unsubscribe();
+        // Sort client-side by createdAt descending (newest first)
+        allOrders.sort((a, b) => {
+          // Handle Firestore Timestamp objects and ISO strings
+          const getTime = (val) => {
+            if (!val) return 0;
+            if (val.toDate) return val.toDate().getTime(); // Firestore Timestamp
+            if (val.seconds) return val.seconds * 1000; // Firestore Timestamp plain object
+            return new Date(val).getTime(); // ISO string
+          };
+          // Prefer createdAt, fall back to timestamp
+          const timeA = getTime(a.createdAt) || getTime(a.timestamp) || 0;
+          const timeB = getTime(b.createdAt) || getTime(b.timestamp) || 0;
+          return timeB - timeA;
+        });
+
+        setOrders(allOrders);
+        setLoading(false);
+        retryCount = 0;
+      }, (err) => {
+        console.error('Error listening to orders:', err);
+        console.error('Error code:', err.code, '| Message:', err.message);
+        setLoading(false);
+
+        // Retry with backoff if we haven't exceeded max retries
+        if (retryCount < MAX_RETRIES) {
+          retryCount++;
+          const delay = Math.min(2000 * Math.pow(2, retryCount - 1), 10000);
+          console.warn(`Retrying Firestore orders listener in ${delay}ms (attempt ${retryCount}/${MAX_RETRIES})...`);
+          retryTimer = setTimeout(() => {
+            startListener();
+          }, delay);
+        }
+      });
+
+      return unsubscribe;
+    };
+
+    const unsubscribe = startListener();
+
+    return () => {
+      if (typeof unsubscribe === 'function') unsubscribe();
+      if (retryTimer) clearTimeout(retryTimer);
+    };
   }, []);
 
   // ─── Place a new order → writes to Firestore ───
@@ -69,8 +111,8 @@ export function OrderProvider({ children }) {
         fabric: orderData.fabric || '',
         color: orderData.color || '',
 
-        // Shop info
-        shopId: orderData.shopId || '',
+        // Shop info — critical for Shop Owner order filtering
+        shopId: orderData.shopId || orderData.ownerId || '',
         shopName: orderData.shopName || '',
         shopLogo: orderData.shopLogo || '',
         ownerId: orderData.ownerId || orderData.shopId || '',
@@ -112,13 +154,16 @@ export function OrderProvider({ children }) {
   // Customer: only their own orders
   const myOrders = orders.filter(o => user && o.userId === user.uid);
 
-  // Shop Owner: only orders for their shop
+  // Shop Owner: only orders for their shop's products
+  // Matches by ownerId (the product uploader's UID) or shopId, or shopName as fallback
   const shopOrders = orders.filter(o => {
     if (!user) return false;
+    const uid = user.uid || user.id;
+    if (!uid) return false;
     return (
-      o.shopId === user.uid ||
-      o.ownerId === user.uid ||
-      (o.shopName && user.shopName && o.shopName.toLowerCase() === user.shopName.toLowerCase())
+      (o.ownerId && String(o.ownerId) === String(uid)) ||
+      (o.shopId && String(o.shopId) === String(uid)) ||
+      (o.shopName && user.shopName && o.shopName.toLowerCase().trim() === user.shopName.toLowerCase().trim())
     );
   });
 

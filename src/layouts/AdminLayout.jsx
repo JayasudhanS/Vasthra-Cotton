@@ -1,7 +1,6 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { FiGrid, FiClock, FiPackage, FiCheck, FiUsers, FiSettings, FiLogOut, FiShoppingBag, FiList } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
-import BreadcrumbBack from '../components/shared/BreadcrumbBack';
 
 const links = [
   { name: 'Dashboard', path: '/admin/dashboard', icon: <FiGrid size={18} /> },
@@ -62,7 +61,6 @@ export default function AdminLayout() {
       </div>
 
       <main className="flex-1 min-w-0 w-full p-4 sm:p-6 md:p-8 lg:p-10 pb-28 lg:pb-10 bg-[#FFF8F0] overflow-x-hidden block">
-        <BreadcrumbBack />
         <Outlet />
       </main>
     </div>

@@ -112,7 +112,9 @@ export default function AdminOrders() {
                      <span className={`text-[11px] font-bold tracking-wider px-3.5 py-1.5 rounded-full border w-fit uppercase ${statusColors[o.status] || statusColors['Pending']}`}>
                         {o.status}
                       </span>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#2D8F5E] bg-[#2D8F5E]/10 px-2.5 py-1 rounded-md border border-[#2D8F5E]/20 text-center">Paid Online</span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#B8860B] bg-[#FFF8E7] px-2.5 py-1 rounded-md border border-[#D4AF37]/40 text-center">
+                        {o.paymentMethod || 'Cash on Delivery (COD)'}
+                      </span>
                   </div>
                 </div>
 
