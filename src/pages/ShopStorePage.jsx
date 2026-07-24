@@ -1,7 +1,7 @@
 import { useParams, Link } from 'react-router-dom';
 import { useMemo, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { FiCheckCircle, FiMapPin, FiStar, FiPackage, FiArrowLeft, FiShield, FiMail, FiPhone, FiCalendar } from 'react-icons/fi';
+import { FiCheckCircle, FiMapPin, FiStar, FiPackage, FiArrowLeft, FiShield, FiMail, FiPhone, FiCalendar, FiShare2 } from 'react-icons/fi';
 import { doc, getDoc, collection, onSnapshot, query, where } from 'firebase/firestore';
 import { db, COLLECTIONS } from '../firebase/config';
 import ProductCard from '../components/shared/ProductCard';
@@ -16,6 +16,7 @@ export default function ShopStorePage() {
   const { setShopBranding, clearShopBranding } = useShopBranding();
   const [shopDoc, setShopDoc] = useState(null);
   const [loadingShop, setLoadingShop] = useState(true);
+  const [showToast, setShowToast] = useState(false);
 
   const isAdminOrOwner = role === 'admin' || (user && String(user.uid) === String(ownerId));
 
@@ -112,8 +113,31 @@ export default function ShopStorePage() {
     return Array.from(cats);
   }, [shopProducts]);
 
+  const handleShareShop = () => {
+    const url = window.location.href;
+    const shareData = {
+      title: shopInfo.name,
+      text: `Explore authentic Silk Mark Certified sarees from ${shopInfo.name} on Vasthra Cotton.`,
+      url: url,
+    };
+
+    if (navigator.share) {
+      navigator.share(shareData).catch(err => console.log('Error sharing:', err));
+    } else {
+      navigator.clipboard.writeText(url);
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-[#FFF8F0] pb-16">
+    <div className="min-h-screen bg-[#FFF8F0] pb-16 relative">
+      {/* Toast Notification */}
+      {showToast && (
+        <div className="fixed bottom-5 left-1/2 -translate-x-1/2 bg-[#2D8F5E] text-white px-6 py-3 rounded-full shadow-xl font-bold text-sm z-50 flex items-center gap-2">
+          <FiCheckCircle size={16} /> Shop link copied successfully.
+        </div>
+      )}
       {/* ═══════ Large Shop Banner & Storefront Header ═══════ */}
       <div className="max-w-7xl mx-auto px-4 lg:px-8 pt-6 pb-10">
         <motion.div
@@ -147,13 +171,23 @@ export default function ShopStorePage() {
 
                 {/* Large Shop Name & Owner Name */}
                 <div className="flex-1 min-w-0 pt-2">
-                  <div className="flex flex-wrap items-center gap-2 mb-2">
-                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#2D8F5E] text-white text-xs font-bold shadow-xs">
-                      <FiCheckCircle size={13} /> Verified Seller
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFF8F0] text-[#7B1E3A] text-xs font-bold border border-[#D4AF37]/30">
-                      <FiStar className="text-[#D4AF37]" size={13} /> {shopInfo.rating} Rating
-                    </span>
+                  <div className="flex items-center justify-between mb-2 gap-4">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-[#2D8F5E] text-white text-xs font-bold shadow-xs">
+                        <FiCheckCircle size={13} /> Verified Seller
+                      </span>
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFF8F0] text-[#7B1E3A] text-xs font-bold border border-[#D4AF37]/30">
+                        <FiStar className="text-[#D4AF37]" size={13} /> {shopInfo.rating} Rating
+                      </span>
+                    </div>
+                    
+                    {/* Share Button */}
+                    <button
+                      onClick={handleShareShop}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white text-[#7B1E3A] text-xs font-bold shadow-xs hover:bg-[#FFF8F0] border border-[#D4AF37]/30 transition-colors flex-shrink-0 cursor-pointer"
+                    >
+                      <FiShare2 size={14} /> <span className="hidden sm:inline">Share</span>
+                    </button>
                   </div>
                   
                   <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#7B1E3A] m-0 mb-1 leading-tight break-words" style={{ fontFamily: 'Playfair Display' }}>
