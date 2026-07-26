@@ -1,4 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { doc, getDoc } from 'firebase/firestore';
+import { db, COLLECTIONS } from '../../firebase/config';
 import { Link } from 'react-router-dom';
 import { FiInstagram, FiMail, FiPhone, FiMapPin, FiSend, FiCheckCircle } from 'react-icons/fi';
 import { FaFacebookF, FaWhatsapp, FaPinterestP } from 'react-icons/fa';
@@ -11,7 +13,7 @@ export default function Footer() {
   const [subscribed, setSubscribed] = useState(false);
   const { user, role } = useAuth();
   const location = useLocation();
-  const { shopName: brandShopName, shopLogo: brandShopLogo, shopAddress: brandShopAddress, shopEmail: brandShopEmail, shopPhone: brandShopPhone, shopDescription: brandShopDesc } = useShopBranding();
+  const { shopName: brandShopName, logo: brandShopLogo, shopAddress: brandShopAddress, shopEmail: brandShopEmail, shopPhone: brandShopPhone, shopDescription: brandShopDesc } = useShopBranding();
 
   const getDashboardPath = () => {
     if (role === 'admin') return '/admin/dashboard';
@@ -30,13 +32,37 @@ export default function Footer() {
   let activeShopDesc = '';
   let isActiveShopBranded = false;
 
+  const [shopData, setShopData] = useState(null);
+  const [loadingShop, setLoadingShop] = useState(false);
+
+  useEffect(() => {
+    if (isInShopkeeperPortal && isShopOwnerRole && user?.uid) {
+      setLoadingShop(true);
+      const fetchShop = async () => {
+        try {
+          const shopRef = doc(db, COLLECTIONS.SHOPS, user.uid);
+          const shopSnap = await getDoc(shopRef);
+          if (shopSnap.exists()) {
+            setShopData(shopSnap.data());
+          }
+        } catch (error) {
+          console.error('Error fetching shop data for footer:', error);
+        } finally {
+          setLoadingShop(false);
+        }
+      };
+      fetchShop();
+    }
+  }, [isInShopkeeperPortal, isShopOwnerRole, user?.uid]);
+
   if (isInShopkeeperPortal && isShopOwnerRole && user) {
-    activeShopName = user.shopName || user.name || 'My Shop';
-    activeShopLogo = user.shopLogo || user.logo || user.profileImage || 'https://images.pexels.com/photos/5709661/pexels-photo-5709661.jpeg?auto=compress&cs=tinysrgb&w=300';
-    activeShopAddress = user.shopAddress || user.location || user.address || user.city || 'Not Provided';
-    activeShopEmail = user.shopEmail || user.email || 'Not Provided';
-    activeShopPhone = user.shopPhone || user.phone || 'Not Provided';
-    activeShopDesc = user.shopDescription || user.description || 'Official Silk Mark Certified Weaving House offering authentic handcrafted sarees.';
+    activeShopName = shopData?.shopName || user.shopName || (loadingShop ? 'Loading...' : 'Shop Name');
+    const rawActiveLogo = shopData?.logo || user.logo;
+    activeShopLogo = (!rawActiveLogo || rawActiveLogo === '/images/placeholder.png') ? 'https://images.pexels.com/photos/5709661/pexels-photo-5709661.jpeg?auto=compress&cs=tinysrgb&w=300' : rawActiveLogo;
+    activeShopAddress = shopData?.address || user.address || 'Not Provided';
+    activeShopEmail = shopData?.email || user.email || 'Not Provided';
+    activeShopPhone = shopData?.phone || user.phone || 'Not Provided';
+    activeShopDesc = shopData?.description || user.description || 'Official Silk Mark Certified Weaving House offering authentic handcrafted sarees.';
     isActiveShopBranded = true;
   } else if (brandShopName && brandShopLogo) {
     activeShopName = brandShopName;

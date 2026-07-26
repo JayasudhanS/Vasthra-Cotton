@@ -20,6 +20,10 @@ export default function ProtectedRoute({ children, allowedRoles }) {
   }
 
   // Role-based access control
+  if (role === 'pending_shopkeeper') {
+    return <Navigate to="/waiting-approval" replace />;
+  }
+
   if (allowedRoles && allowedRoles.length > 0 && !allowedRoles.includes(role)) {
     // Redirect to the correct dashboard for their actual role
     if (role === 'admin') return <Navigate to="/admin/dashboard" replace />;

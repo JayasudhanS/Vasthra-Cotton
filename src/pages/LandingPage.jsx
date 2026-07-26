@@ -370,17 +370,17 @@ function TrendingShops() {
             className="card-base p-6 text-center group h-full justify-between">
             <div>
               <div className="relative w-22 h-22 mx-auto mb-4">
-                <img src={shop.logo} alt={shop.name} className="w-full h-full rounded-full object-cover border-4 border-[#FFF8F0] shadow-md group-hover:border-[#D4AF37]/50 transition-colors" />
+                <img src={(!shop.logo || shop.logo === '/images/placeholder.png') ? 'https://images.pexels.com/photos/5709661/pexels-photo-5709661.jpeg?auto=compress&cs=tinysrgb&w=150' : shop.logo} alt={shop.shopName} className="w-full h-full rounded-full object-cover border-4 border-[#FFF8F0] shadow-md group-hover:border-[#D4AF37]/50 transition-colors" />
                 <span className="absolute bottom-0 right-0 w-6 h-6 bg-[#2D8F5E] text-white rounded-full flex items-center justify-center text-xs shadow-sm" title="Verified Seller">
                   ✓
                 </span>
               </div>
               <h3 className="text-lg font-bold text-[#7B1E3A] mb-1 group-hover:text-[#D4AF37] transition-colors truncate" style={{ fontFamily: 'Playfair Display' }}>
-                {shop.name}
+                {shop.shopName}
               </h3>
-              <p className="text-xs font-medium text-[#6B4A48] mb-1.5">by {shop.owner}</p>
+              <p className="text-xs font-medium text-[#6B4A48] mb-1.5">by {shop.ownerName || 'Master Artisan'}</p>
               <p className="text-xs text-[#6B4A48]/80 mb-3 flex items-center justify-center gap-1">
-                📍 {shop.location}
+                📍 {shop.address || 'India'}
               </p>
             </div>
 
@@ -391,7 +391,7 @@ function TrendingShops() {
                 <span className="text-[11px] text-[#6B4A48]/70">(120+ rev.)</span>
               </div>
               <div className="border-t border-[#D4AF37]/15 pt-4 mt-2 flex items-center justify-between gap-2">
-                <span className="text-xs font-semibold text-[#4A2C2A]">{shop.products} Weaves</span>
+                <span className="text-xs font-semibold text-[#4A2C2A]">{shop.publishedProductsCount || shop.products || 0} Weaves</span>
                 <Link to="/shops" className="btn-golden !py-1.5 !px-4 !min-h-[36px] !text-xs no-underline">
                   Visit Shop
                 </Link>

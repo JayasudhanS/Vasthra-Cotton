@@ -172,8 +172,7 @@ export default function RegisterPage() {
       }
       if (res?.pending || (isShopkeeper && res?.success)) {
         setLoading(false);
-        setSubmitted(true);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        navigate('/waiting-approval');
         return;
       }
       setLoading(false);
@@ -200,8 +199,7 @@ export default function RegisterPage() {
       }
       if (res?.pending) {
         setLoading(false);
-        setSubmitted(true);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        navigate('/waiting-approval');
         return;
       }
       setLoading(false);
@@ -213,87 +211,7 @@ export default function RegisterPage() {
     }
   };
 
-  if (isShopkeeper && submitted) {
-    return (
-      <section className="min-h-[88vh] flex items-center justify-center py-16 px-4 bg-[#FFF8F0]">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4 }}
-          className="w-full max-w-[580px] bg-white rounded-2xl p-8 sm:p-12 shadow-xl border border-[#D4AF37]/35 mx-auto text-center"
-        >
-          {/* Large Success Icon (✓ inside a green circle) */}
-          <div className="w-20 h-20 rounded-full bg-green-100 border-2 border-green-500 flex items-center justify-center mx-auto mb-6 text-green-600 shadow-sm">
-            <FiCheck size={44} strokeWidth={2.5} />
-          </div>
 
-          {/* Heading */}
-          <h1 className="text-[26px] sm:text-[28px] lg:text-[32px] font-bold text-[#7B1E3A] m-0 mb-4 leading-tight" style={{ fontFamily: 'Playfair Display' }}>
-            Application Submitted Successfully!
-          </h1>
-
-          {/* Status Badge */}
-          <div className="mb-6">
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-50 border border-amber-300 text-amber-800 font-semibold text-[15px] shadow-xs">
-              <span>⏳</span>
-              <span>Pending Admin Verification</span>
-            </span>
-          </div>
-
-          {/* Message */}
-          <div className="text-[16px] sm:text-[17px] text-[#6B4A48] leading-relaxed space-y-3 mb-8">
-            <p className="m-0">
-              Your Shop Owner application has been received successfully.
-            </p>
-            <p className="m-0">
-              Our Admin team will review your shop details, documents, and certificate.
-            </p>
-            <p className="m-0">
-              Once approved, your store will become publicly visible and you will receive a notification.
-            </p>
-            <p className="m-0 font-medium text-[#7B1E3A]">
-              This verification usually takes a short time.
-            </p>
-          </div>
-
-          {/* Information Box */}
-          <div className="bg-[#FFF8F0] border border-[#D4AF37]/50 rounded-xl p-6 text-left space-y-3 mx-auto max-w-md shadow-sm mb-8">
-            <h3 className="text-[#7B1E3A] font-bold text-[17px] m-0 mb-3">Current Status:</h3>
-            <ul className="space-y-3 m-0 p-0 list-none text-[15px] sm:text-[16px] text-[#4A2C2A]">
-              <li className="flex items-center gap-3">
-                <span className="w-5 h-5 rounded-full bg-green-600 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">✓</span>
-                <span className="font-medium">Account Created Successfully</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="w-5 h-5 rounded-full bg-green-600 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">✓</span>
-                <span className="font-medium">Shop Profile Saved</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="w-5 h-5 rounded-full bg-green-600 text-white flex items-center justify-center text-xs font-bold flex-shrink-0">✓</span>
-                <span className="font-medium">Documents Uploaded</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="w-5 h-5 rounded-full bg-amber-500 text-white flex items-center justify-center text-xs flex-shrink-0">⏳</span>
-                <span className="font-semibold text-amber-800">Waiting for Admin Approval</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Buttons */}
-          <div className="space-y-3 pt-2">
-            <button
-              type="button"
-              onClick={() => navigate('/login/shopkeeper', { state: { fromSuccess: true } })}
-              style={{ height: '54px' }}
-              className="w-full rounded-[12px] bg-gradient-to-r from-[#D4AF37] to-[#E8C94A] hover:from-[#E8C94A] hover:to-[#D4AF37] text-[#4A2C2A] text-[18px] font-bold cursor-pointer shadow-md hover:shadow-lg transition-all flex items-center justify-center"
-            >
-              Go to Login
-            </button>
-          </div>
-        </motion.div>
-      </section>
-    );
-  }
 
   if (role === 'admin') return null;
 

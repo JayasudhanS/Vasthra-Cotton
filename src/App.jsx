@@ -25,6 +25,7 @@ import OrderConfirmationPage from './pages/OrderConfirmationPage';
 import PortalPage from './pages/auth/PortalPage';
 import LoginPage from './pages/auth/LoginPage';
 import RegisterPage from './pages/auth/RegisterPage';
+import WaitingApproval from './pages/auth/WaitingApproval';
 
 // User
 import UserLayout from './layouts/UserLayout';
@@ -105,6 +106,7 @@ export default function App() {
           <Route path="/portal" element={<PortalPage />} />
           <Route path="/login/:role" element={<LoginPage />} />
           <Route path="/register/:role" element={<RegisterPage />} />
+          <Route path="/waiting-approval" element={<WaitingApproval />} />
 
           {/* Dynamic Layout wraps all public and user routes to provide role-specific Navigation */}
           <Route element={<DynamicRoleLayout />}>

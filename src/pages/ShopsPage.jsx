@@ -39,11 +39,9 @@ export default function ShopsPage() {
       // Filter strictly for approved shops
       const approvedOnly = Array.from(shopMap.values()).filter(shop => {
         const statusStr = (shop.status || '').toString().trim().toLowerCase();
-        const isApproved = shop.approved === true || shop.approved === 'true' || statusStr === 'approved' || statusStr === 'active';
-        if (!isApproved) return false;
-        if (statusStr === 'pending' || statusStr === 'rejected' || statusStr === 'deleted' || shop.deleted === true) return false;
+        if (statusStr !== 'approved') return false;
         // Must be a shop entity
-        return shop.role === 'shopOwner' || shop.role === 'shopkeeper' || shop.shopName || shop.fromShopsCol === true || typeof shop.products === 'number';
+        return shop.role === 'shopOwner' || shop.role === 'shopkeeper' || shop.shopName || shop.fromShopsCol === true || typeof shop.publishedProductsCount === 'number';
       });
 
       setLiveShops(approvedOnly);
@@ -75,7 +73,7 @@ export default function ShopsPage() {
   }, []);
 
   const getPublishedSareesCount = (shop) => {
-    if (typeof shop.products === 'number' && shop.products > 0) return shop.products;
+    if (typeof shop.publishedProductsCount === 'number' && shop.publishedProductsCount > 0) return shop.publishedProductsCount;
     const count = approvedProducts.filter(p => 
       String(p.shopId) === String(shop.id) || 
       String(p.ownerId) === String(shop.id) || 
@@ -134,12 +132,12 @@ export default function ShopsPage() {
         /* Responsive Grid: Mobile: 2 per row | Tablet: 3 per row | Desktop: 4 per row */
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 w-full min-w-0 items-stretch">
           {liveShops.map((shop, i) => {
-            const logoUrl = shop.logo || shop.shopLogo || shop.profileImage || getDefaultLogo();
-            const shopName = shop.shopName || shop.name || 'Weaver Studio';
-            const ownerName = shop.ownerName || shop.owner || shop.name || 'Master Artisan';
+            const logoUrl = (!shop.logo || shop.logo === '/images/placeholder.png') ? 'https://images.pexels.com/photos/5709661/pexels-photo-5709661.jpeg?auto=compress&cs=tinysrgb&w=150' : shop.logo;
+            const shopName = shop.shopName || 'Weaver Studio';
+            const ownerName = shop.ownerName || 'Master Artisan';
             const publishedCount = getPublishedSareesCount(shop);
             const registeredDate = getEstablishedDate(shop);
-            const location = shop.location || shop.address || shop.city || '';
+            const location = shop.address || '';
             const targetUrl = `/store/${shop.id || shop.uid}`;
 
             return (
@@ -158,6 +156,7 @@ export default function ShopsPage() {
                     <img
                       src={logoUrl}
                       alt={shopName}
+                      onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.pexels.com/photos/5709661/pexels-photo-5709661.jpeg?auto=compress&cs=tinysrgb&w=150'; }}
                       className="w-full h-full rounded-full object-cover border-2 sm:border-3 border-[#D4AF37]/50 group-hover:border-[#D4AF37] group-hover:scale-105 transition-all shadow-md bg-[#FFF8F0]"
                     />
                     <span className="absolute bottom-0 right-0 bg-[#2D8F5E] text-white p-1 sm:p-1.5 rounded-full text-xs shadow-md border-2 border-white" title="Silk Mark Verified">

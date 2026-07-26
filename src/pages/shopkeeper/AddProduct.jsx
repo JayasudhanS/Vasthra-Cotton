@@ -246,26 +246,32 @@ export default function AddProduct() {
       const productRef = doc(collection(db, COLLECTIONS.PRODUCTS));
       const primaryUrl = uploadedUrls[0];
       const productData = {
-        id: productRef.id,
-        name: form.name,
-        category: form.category,
-        fabric: form.fabric,
-        zariType: form.zariType,
-        color: form.color,
-        price: Number(form.price) || 0,
-        offerPrice: Number(form.offerPrice || form.price) || 0,
-        stock: Number(form.stock) || 0,
-        description: form.description,
-        images: uploadedUrls, // Array of up to 3 Cloudinary URLs
-        imageUrl: primaryUrl,
-        image: primaryUrl,
-        thumbnail: getCloudinaryThumbnail(primaryUrl),
-        shopName: user?.shopName || user?.name || '',
-        ownerName: user?.name || '',
+        productId: productRef.id,
+        id: productRef.id, // For UI compatibility
+        shopId: user?.uid || user?.id || '',
         ownerId: user?.uid || user?.id || '',
+        shopName: user?.shopName || user?.name || '',
+        title: form.name,
+        name: form.name, // For UI compatibility
+        description: form.description,
+        category: form.category,
+        fabric: form.fabric, // Kept for UI
+        zariType: form.zariType, // Kept for UI
+        color: form.color, // Kept for UI
+        price: Number(form.price) || 0,
+        discount: Number(form.price) - Number(form.offerPrice) || 0,
+        offerPrice: Number(form.offerPrice || form.price) || 0, // Kept for UI
+        stock: Number(form.stock) || 0,
+        images: uploadedUrls,
+        imageUrl: primaryUrl, // Kept for UI
+        image: primaryUrl, // Kept for UI
+        thumbnail: getCloudinaryThumbnail(primaryUrl), // Kept for UI
+        ownerName: user?.name || '', // Kept for UI
         status: 'pending',
+        isApproved: false,
         createdAt: new Date().toISOString(),
-        date: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+        updatedAt: new Date().toISOString(),
+        date: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }), // Kept for UI
       };
 
       await setDoc(productRef, productData);

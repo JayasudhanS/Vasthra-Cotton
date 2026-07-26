@@ -20,14 +20,15 @@ export function resolveShopInfo(p, allShops = [], allUsers = [], pendingShops = 
               allUsers.find(u => (u.role === 'shopOwner' || u.role === 'shopkeeper') && (u.shopName || u.name || '').toString().trim().toLowerCase() === lowerName);
   }
 
-  const shopName = shopDoc?.shopName || shopDoc?.name || p.shopName || 'Weaver Studio Partner';
-  const shopLogo = shopDoc?.shopLogo || shopDoc?.logo || shopDoc?.profileImage || 'https://images.pexels.com/photos/5709661/pexels-photo-5709661.jpeg?auto=compress&cs=tinysrgb&w=150';
-  const ownerName = shopDoc?.ownerName || shopDoc?.owner || shopDoc?.name || p.ownerName || 'Verified Artisan';
+  const shopName = shopDoc?.shopName || p.shopName || 'Weaver Studio Partner';
+  const rawLogo = shopDoc?.logo;
+  const logo = (!rawLogo || rawLogo === '/images/placeholder.png') ? 'https://images.pexels.com/photos/5709661/pexels-photo-5709661.jpeg?auto=compress&cs=tinysrgb&w=150' : rawLogo;
+  const ownerName = shopDoc?.ownerName || p.ownerName || 'Verified Artisan';
   const shopStatus = shopDoc?.status || 'Active';
-  const phoneNumber = shopDoc?.phone || shopDoc?.phoneNumber || p.phone || 'N/A';
-  const address = shopDoc?.address || shopDoc?.location || p.shopAddress || p.address || 'Address Not Provided';
+  const phoneNumber = shopDoc?.phone || p.phone || 'N/A';
+  const address = shopDoc?.address || p.shopAddress || p.address || 'Address Not Provided';
 
-  return { shopName, shopLogo, ownerName, shopStatus, phoneNumber, address, shopDoc };
+  return { shopName, logo, ownerName, shopStatus, phoneNumber, address, shopDoc };
 }
 
 export function formatShortId(id) {
@@ -48,7 +49,7 @@ export function AdminProductDisplayCard({
   onEdit = null,
   onDelete = null
 }) {
-  const { shopName, shopLogo, ownerName, phoneNumber } = resolveShopInfo(product, allShops, allUsers, pendingShops);
+  const { shopName, logo, ownerName, phoneNumber } = resolveShopInfo(product, allShops, allUsers, pendingShops);
   
   const statusStr = (product.status || '').toString().trim().toLowerCase();
   const isApproved = statusStr === 'approved';
@@ -104,6 +105,7 @@ export function AdminProductDisplayCard({
             <img
               src={product.thumbnail || product.image || product.imageUrl || product.images?.[0] || 'https://images.pexels.com/photos/5709661/pexels-photo-5709661.jpeg?auto=compress&cs=tinysrgb&w=150'}
               alt={product.name}
+              onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.pexels.com/photos/5709661/pexels-photo-5709661.jpeg?auto=compress&cs=tinysrgb&w=150'; }}
               className="w-[80px] h-[80px] lg:w-[100px] lg:h-[100px] rounded-xl object-cover border border-[#D4AF37]/40 shadow-2xs bg-[#FFF8F0]"
             />
           </div>
@@ -128,8 +130,9 @@ export function AdminProductDisplayCard({
             {/* Shop Owner Information */}
             <div className="flex items-center gap-2 mt-1 bg-[#FFF8F0]/90 p-2 sm:p-2.5 rounded-xl border border-[#D4AF37]/20">
               <img
-                src={shopLogo}
+                src={logo}
                 alt={shopName}
+                onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.pexels.com/photos/5709661/pexels-photo-5709661.jpeg?auto=compress&cs=tinysrgb&w=150'; }}
                 className="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover border border-[#D4AF37] shadow-2xs flex-shrink-0 bg-white"
               />
               <div className="min-w-0 flex-1 leading-snug">

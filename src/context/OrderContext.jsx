@@ -114,7 +114,7 @@ export function OrderProvider({ children }) {
         // Shop info — critical for Shop Owner order filtering
         shopId: orderData.shopId || orderData.ownerId || '',
         shopName: orderData.shopName || '',
-        shopLogo: orderData.shopLogo || '',
+        logo: orderData.logo || orderData.shopLogo || '',
         ownerId: orderData.ownerId || orderData.shopId || '',
 
         // Order meta

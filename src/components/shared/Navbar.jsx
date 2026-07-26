@@ -35,7 +35,7 @@ export default function Navbar() {
   const { user, role, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const { shopName: brandShopName, shopLogo: brandShopLogo } = useShopBranding();
+  const { shopName: brandShopName, logo: brandShopLogo } = useShopBranding();
 
   const isInShopkeeperPortal = location.pathname.toLowerCase().startsWith('/shopkeeper');
   const isShopOwnerRole = role === 'shopkeeper' || role === 'shopOwner' || user?.role === 'shopkeeper' || user?.role === 'shopOwner';
@@ -46,8 +46,9 @@ export default function Navbar() {
 
   if (isInShopkeeperPortal && isShopOwnerRole && user) {
     // Shop Owner Portal Branding
-    activeShopName = user.shopName || user.name || 'My Shop';
-    activeShopLogo = user.shopLogo || user.logo || user.profileImage || 'https://images.pexels.com/photos/5709661/pexels-photo-5709661.jpeg?auto=compress&cs=tinysrgb&w=300';
+    activeShopName = user.shopName || 'My Shop';
+    const rawActiveLogo = user.logo;
+    activeShopLogo = (!rawActiveLogo || rawActiveLogo === '/images/placeholder.png') ? 'https://images.pexels.com/photos/5709661/pexels-photo-5709661.jpeg?auto=compress&cs=tinysrgb&w=300' : rawActiveLogo;
     isActiveShopBranded = true;
   } else if (brandShopName && brandShopLogo) {
     // Customer-facing Individual Shop/Product pages (Show branding regardless of logged-in role)

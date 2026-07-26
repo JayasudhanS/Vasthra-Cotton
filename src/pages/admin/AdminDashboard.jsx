@@ -21,6 +21,10 @@ export default function AdminDashboard() {
     pendingShops.filter(s => (s.status || '').toString().trim().toLowerCase() === 'pending').length, 
   [pendingShops]);
 
+  const approvedWeaversCount = useMemo(() => 
+    pendingShops.filter(s => (s.status || '').toString().trim().toLowerCase() === 'approved').length, 
+  [pendingShops]);
+
   const registeredUsersCount = useMemo(() => 
     allUsers.filter(u => u.role === 'user' || (!u.role && u.email !== 'admin@vasthracotton.com')).length, 
   [allUsers]);
@@ -43,13 +47,13 @@ export default function AdminDashboard() {
 
   const stats = [
     { 
-      title: 'Active Weaves', 
-      value: liveCatalogueCount, 
+      title: 'Approved Weavers', 
+      value: approvedWeaversCount, 
       icon: <FiClock size={24} />, 
       color: 'from-[#D4AF37] to-[#E8C94A]', 
-      badge: liveCatalogueCount === 1 ? '1 Live Approved Saree' : `${liveCatalogueCount} Live Approved Sarees`,
-      action: 'View Live Weaves →',
-      path: '/admin/pending-products'
+      badge: approvedWeaversCount === 1 ? '1 Verified Shop' : `${approvedWeaversCount} Verified Shops`,
+      action: 'View Shops →',
+      path: '/admin/pending-shops'
     },
     { 
       title: 'Live Saree Catalogue', 

@@ -9,6 +9,8 @@ import { useWishlist } from '../context/WishlistContext';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useShopBranding } from '../context/ShopBrandingContext';
+import { doc, getDoc } from 'firebase/firestore';
+import { db, COLLECTIONS } from '../firebase/config';
 
 export default function ProductDetailPage() {
   const { id } = useParams();
@@ -35,17 +37,38 @@ export default function ProductDetailPage() {
     return imgs;
   })();
 
-  // Shop info from product document
+  const shopId = product?.ownerId || product?.shopId || '';
+  const [fetchedShop, setFetchedShop] = useState(null);
+
+  useEffect(() => {
+    if (!shopId) return;
+    const fetchShop = async () => {
+      try {
+        const shopSnap = await getDoc(doc(db, COLLECTIONS.SHOPS, shopId));
+        if (shopSnap.exists()) {
+          setFetchedShop(shopSnap.data());
+        }
+      } catch (e) {
+        console.error('Error fetching shop for product detail:', e);
+      }
+    };
+    fetchShop();
+  }, [shopId]);
+
+  const rawLogo = fetchedShop?.logo || product?.logo;
+  const verifiedLogo = (!rawLogo || rawLogo === '/images/placeholder.png') ? 'https://images.pexels.com/photos/5709661/pexels-photo-5709661.jpeg?auto=compress&cs=tinysrgb&w=150' : rawLogo;
+
+  // Shop info from product document combined with fetched shop
   const shopInfo = {
-    id: product?.ownerId || product?.shopId || '',
-    name: product?.shopName || 'Artisan Weave House',
-    owner: product?.ownerName || '',
-    location: product?.shopLocation || 'India',
-    logo: product?.shopLogo || productImages[0] || '',
-    rating: product?.shopRating || product?.rating || 4.9,
-    email: product?.shopEmail || '',
-    phone: product?.shopPhone || '',
-    description: product?.shopDescription || '',
+    id: shopId,
+    name: fetchedShop?.shopName || product?.shopName || 'Artisan Weave House',
+    owner: fetchedShop?.ownerName || product?.ownerName || '',
+    location: fetchedShop?.address || product?.shopLocation || 'India',
+    logo: verifiedLogo,
+    rating: fetchedShop?.rating || product?.shopRating || product?.rating || 4.9,
+    email: fetchedShop?.email || product?.shopEmail || '',
+    phone: fetchedShop?.phone || product?.shopPhone || '',
+    description: fetchedShop?.description || product?.shopDescription || '',
   };
 
   // Set navbar branding to this product's shop while the page is mounted

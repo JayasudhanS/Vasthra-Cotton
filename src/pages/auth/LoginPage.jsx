@@ -24,6 +24,7 @@ export default function LoginPage() {
         return;
       }
       if (res?.role === 'admin' || role === 'admin') navigate('/admin/dashboard');
+      else if (res?.role === 'pending_shopkeeper') navigate('/waiting-approval');
       else if (res?.role === 'shopkeeper' || role === 'shopkeeper') navigate('/shopkeeper/dashboard');
       else navigate('/user/dashboard');
     } catch (err) {
@@ -58,6 +59,7 @@ export default function LoginPage() {
         return;
       }
       if (res?.role === 'admin' || role === 'admin') navigate('/admin/dashboard');
+      else if (res?.role === 'pending_shopkeeper') navigate('/waiting-approval');
       else if (res?.role === 'shopkeeper' || role === 'shopkeeper') navigate('/shopkeeper/dashboard');
       else navigate('/user/dashboard');
     } catch (err) {

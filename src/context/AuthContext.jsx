@@ -75,7 +75,16 @@ export function AuthProvider({ children }) {
             return;
           }
 
-          setUser({ ...docData, id: firebaseUser.uid, uid: firebaseUser.uid });
+          let shopDocData = {};
+          if (isShop) {
+            const shopRef = doc(db, COLLECTIONS.SHOPS, firebaseUser.uid);
+            const shopSnap = await getDoc(shopRef);
+            if (shopSnap.exists()) {
+              shopDocData = shopSnap.data();
+            }
+          }
+
+          setUser({ ...docData, ...shopDocData, id: firebaseUser.uid, uid: firebaseUser.uid });
           setRole(normalizedRole);
         } else if (firebaseUser.email?.toLowerCase() === 'admin@vasthracotton.com') {
           // Auto-initialize predefined administrator account in Firestore if missing
@@ -149,8 +158,8 @@ export function AuthProvider({ children }) {
         const existing = map.get(s.id || s.uid);
         const merged = { ...(existing || {}), ...s };
         map.set(s.id || s.uid, merged);
-        if ((s.status === 'approved' || s.approved === true) && !existing?.fromShopsCol) {
-          setDoc(doc(db, COLLECTIONS.SHOPS, s.id || s.uid), { ...merged, id: s.id || s.uid, uid: s.id || s.uid, status: 'approved', approved: true, fromShopsCol: true }, { merge: true }).catch(() => {});
+        if (s.status === 'approved' && !existing?.fromShopsCol) {
+          setDoc(doc(db, COLLECTIONS.SHOPS, s.id || s.uid), { ...merged, id: s.id || s.uid, uid: s.id || s.uid, status: 'approved', fromShopsCol: true }, { merge: true }).catch(() => {});
         }
       });
       setPendingShops(Array.from(map.values()));
@@ -226,25 +235,38 @@ export function AuthProvider({ children }) {
       }
 
       // Enforce Shop Owner status review
-      if (isShop && (docData.status === 'Pending' || docData.status === 'pending')) {
-        await signOut(auth);
-        return {
-          success: false,
-          message: 'Your application is pending Admin approval.\nPlease wait until your shop has been verified.'
-        };
+      if (isShop) {
+        const shopStatus = (docData.status || 'pending').toLowerCase();
+        
+        if (shopStatus === 'pending') {
+          await signOut(auth);
+          return {
+            success: true,
+            role: 'pending_shopkeeper'
+          };
+        }
+
+        if (shopStatus === 'rejected') {
+          await signOut(auth);
+          return { success: false, message: 'Your shop owner account application was not approved.' };
+        }
+
+        if (shopStatus === 'disabled') {
+          await signOut(auth);
+          return { success: false, message: 'Your shop account has been disabled by the Administrator. Please contact support.' };
+        }
       }
 
-      if (isShop && (docData.status === 'Rejected' || docData.status === 'rejected')) {
-        await signOut(auth);
-        return { success: false, message: 'Your shop owner account application was not approved.' };
+      let shopDocData = {};
+      if (isShop) {
+        const shopRef = doc(db, COLLECTIONS.SHOPS, firebaseUser.uid);
+        const shopSnap = await getDoc(shopRef);
+        if (shopSnap.exists()) {
+          shopDocData = shopSnap.data();
+        }
       }
 
-      if (isShop && (docData.status === 'disabled' || docData.isDisabled === true)) {
-        await signOut(auth);
-        return { success: false, message: 'Your shop account has been disabled by the Administrator. Please contact support.' };
-      }
-
-      setUser({ ...docData, id: firebaseUser.uid, uid: firebaseUser.uid });
+      setUser({ ...docData, ...shopDocData, id: firebaseUser.uid, uid: firebaseUser.uid });
       setRole(normalizedRole);
 
       return { success: true, role: normalizedRole };
@@ -267,27 +289,36 @@ export function AuthProvider({ children }) {
       const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
       const firebaseUser = userCredential.user;
 
-      const userData = {
+      const baseUserData = {
         uid: firebaseUser.uid,
         name: formData.name || '',
         email: formData.email,
         phone: formData.phone || '',
-        role: isShop ? 'shopOwner' : 'user',
-        status: isShop ? 'Pending' : 'Active',
+        role: isShop ? 'shopkeeper' : 'user',
+        status: isShop ? 'pending' : 'active',
         createdAt: new Date().toISOString(),
         profileImage: '/images/placeholder.png',
-        ...(isShop ? {
-          shopName: formData.shopName || formData.name || '',
-          address: formData.address || '',
-          description: formData.description || '',
-          certificateUrl: formData.certificateUrl || '',
-        } : {})
       };
 
-      await setDoc(doc(db, COLLECTIONS.USERS, firebaseUser.uid), userData);
+      await setDoc(doc(db, COLLECTIONS.USERS, firebaseUser.uid), baseUserData);
 
       if (isShop) {
-        await setDoc(doc(db, COLLECTIONS.SHOPS, firebaseUser.uid), { ...userData, id: firebaseUser.uid, uid: firebaseUser.uid, fromShopsCol: true, status: 'Pending', approved: false }, { merge: true }).catch(() => {});
+        const shopData = {
+          shopId: firebaseUser.uid,
+          ownerId: firebaseUser.uid,
+          shopName: formData.shopName || formData.name || '',
+          ownerName: formData.name || '',
+          email: formData.email,
+          phone: formData.phone || '',
+          address: formData.address || '',
+          gstNumber: formData.gstNumber || '',
+          logo: '/images/placeholder.png',
+          banner: '/images/placeholder.png',
+          shopName: formData.shopName || '',
+          status: 'pending',
+          createdAt: new Date().toISOString(),
+        };
+        await setDoc(doc(db, COLLECTIONS.SHOPS, firebaseUser.uid), shopData);
         await signOut(auth);
         return {
           success: true,
@@ -296,7 +327,7 @@ export function AuthProvider({ children }) {
         };
       }
 
-      setUser({ ...userData, id: firebaseUser.uid });
+      setUser({ ...baseUserData, id: firebaseUser.uid });
       setRole('user');
       return { success: true, pending: false };
     } catch (error) {
@@ -567,9 +598,9 @@ export function AuthProvider({ children }) {
       const userSnap = await getDoc(userRef).catch(() => null);
       const userData = userSnap?.exists() ? userSnap.data() : {};
       const approvedAt = new Date().toISOString();
-      await updateDoc(userRef, { status: 'approved', approved: true, approvedAt }).catch(() => {});
+      await updateDoc(userRef, { status: 'approved', approvedAt }).catch(() => {});
       const shopRef = doc(db, COLLECTIONS.SHOPS, id);
-      await setDoc(shopRef, { ...userData, id, uid: id, status: 'approved', approved: true, fromShopsCol: true, approvedAt }, { merge: true }).catch(() => {});
+      await setDoc(shopRef, { ...userData, id, uid: id, status: 'approved', fromShopsCol: true, approvedAt }, { merge: true }).catch(() => {});
     } catch (error) {
       console.error('Error approving shop:', error);
     }
@@ -579,9 +610,9 @@ export function AuthProvider({ children }) {
     try {
       const userRef = doc(db, COLLECTIONS.USERS, id);
       const rejectedAt = new Date().toISOString();
-      await updateDoc(userRef, { status: 'rejected', approved: false, rejectedAt }).catch(() => {});
+      await updateDoc(userRef, { status: 'rejected', rejectedAt }).catch(() => {});
       const shopRef = doc(db, COLLECTIONS.SHOPS, id);
-      await setDoc(shopRef, { status: 'rejected', approved: false, fromShopsCol: true, rejectedAt }, { merge: true }).catch(() => {});
+      await setDoc(shopRef, { status: 'rejected', fromShopsCol: true, rejectedAt }, { merge: true }).catch(() => {});
     } catch (error) {
       console.error('Error rejecting shop:', error);
     }
@@ -589,11 +620,13 @@ export function AuthProvider({ children }) {
 
   const disableShop = async (id) => {
     try {
+      const disableFields = { status: 'disabled', disabledAt: new Date().toISOString() };
+      
       const userRef = doc(db, COLLECTIONS.USERS, id);
-      const disabledAt = new Date().toISOString();
-      await updateDoc(userRef, { status: 'disabled', approved: false, isDisabled: true, disabledAt }).catch(() => {});
+      await updateDoc(userRef, disableFields).catch(() => {});
+
       const shopRef = doc(db, COLLECTIONS.SHOPS, id);
-      await setDoc(shopRef, { status: 'disabled', approved: false, isDisabled: true, fromShopsCol: true, disabledAt }, { merge: true }).catch(() => {});
+      await setDoc(shopRef, { ...disableFields, fromShopsCol: true }, { merge: true }).catch(() => {});
 
       // Automatically hide all products belonging to this shop
       const q1 = query(collection(db, COLLECTIONS.PRODUCTS), where('shopId', '==', id));
@@ -610,11 +643,7 @@ export function AuthProvider({ children }) {
       
       disabledProductsMap.forEach((docSnap, docId) => {
         batch.update(doc(db, COLLECTIONS.PRODUCTS, docId), { 
-          status: 'disabled', 
-          isApproved: false, 
-          approved: false,
-          publishStatus: 'disabled',
-          isDisabled: true 
+          status: 'disabled'
         });
       });
       
@@ -655,6 +684,10 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const updateLocalUser = (newData) => {
+    setUser(prev => ({ ...prev, ...newData }));
+  };
+
   return (
     <AuthContext.Provider value={{
       user,
@@ -674,6 +707,7 @@ export function AuthProvider({ children }) {
       forgotPassword,
       logout,
       updateUser,
+      updateLocalUser,
       isAuthenticated: !!user
     }}>
       {!loading && children}

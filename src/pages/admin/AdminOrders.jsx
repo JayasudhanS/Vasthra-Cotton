@@ -92,7 +92,7 @@ export default function AdminOrders() {
       ) : (
         <div className="space-y-4">
           {filtered.map((o, i) => {
-            const { shopName, shopLogo, ownerName, phoneNumber, address } = resolveShopInfo({ shopName: o.shopName }, allShops, allUsers, pendingShops);
+            const { shopName, logo, ownerName, phoneNumber, address } = resolveShopInfo({ shopName: o.shopName }, allShops, allUsers, pendingShops);
             return (
             <motion.div key={o.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}
               className="card-base bg-white border border-[#D4AF37]/20 shadow-sm hover:shadow-md transition-all overflow-hidden">
@@ -132,7 +132,7 @@ export default function AdminOrders() {
                   <div className="bg-[#FFF8F0]/40 p-5 rounded-xl border border-[#D4AF37]/20 flex flex-col justify-center">
                     <span className="text-[10px] uppercase font-bold tracking-widest text-[#D4AF37] mb-3 flex items-center gap-1.5"><FiHome size={13}/> SHOP</span>
                     <div className="flex items-start gap-3.5">
-                      {shopLogo && <img src={shopLogo} alt={shopName} className="w-10 h-10 rounded-full object-cover border-2 border-[#D4AF37]/40 shadow-xs bg-white flex-shrink-0" />}
+                      {logo && <img src={logo} alt={shopName} className="w-10 h-10 rounded-full object-cover border-2 border-[#D4AF37]/40 shadow-xs bg-white flex-shrink-0" />}
                       <div className="min-w-0">
                         <p className="text-sm font-bold text-[#7B1E3A] m-0 leading-tight truncate">{shopName}</p>
                         <p className="text-[11px] text-[#6B4A48] mt-1 mb-1.5 truncate">Owner: <strong className="text-[#4A2C2A]">{ownerName}</strong></p>

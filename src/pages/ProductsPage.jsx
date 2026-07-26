@@ -66,7 +66,7 @@ export default function ProductsPage() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
           className="card-base p-6 sm:p-8 mb-8 bg-white border border-[#D4AF37]/20 shadow-sm">
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-            <img src={shop.logo} alt={shop.name} className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover border-3 border-[#D4AF37]/40 shadow-lg flex-shrink-0" />
+            <img src={(!shop.logo || shop.logo === '/images/placeholder.png') ? 'https://images.pexels.com/photos/5709661/pexels-photo-5709661.jpeg?auto=compress&cs=tinysrgb&w=150' : shop.logo} alt={shop.shopName} className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover border-3 border-[#D4AF37]/40 shadow-lg flex-shrink-0" />
             <div className="flex-1 text-center sm:text-left">
               <div className="flex items-center justify-center sm:justify-start gap-2 mb-2">
                 <span className="inline-flex items-center gap-1 text-xs font-bold text-[#2D8F5E] bg-[#2D8F5E]/10 px-2.5 py-1 rounded-full">
@@ -74,19 +74,19 @@ export default function ProductsPage() {
                 </span>
               </div>
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#7B1E3A] m-0 mb-2" style={{ fontFamily: 'Playfair Display' }}>
-                {shop.name}
+                {shop.shopName}
               </h1>
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4 text-sm text-[#6B4A48] mb-3">
                 <span className="flex items-center gap-1.5">
-                  <FiMapPin className="text-[#D4AF37]" size={14} /> {shop.location}
+                  <FiMapPin className="text-[#D4AF37]" size={14} /> {shop.address || 'India'}
                 </span>
                 <span className="flex items-center gap-1.5">
                   <FiStar className="text-[#D4AF37]" size={14} /> {shop.rating} Rating
                 </span>
-                <span className="font-semibold text-[#7B1E3A]">{shop.products} Products</span>
+                <span className="font-semibold text-[#7B1E3A]">{shop.publishedProductsCount || shop.products || 0} Products</span>
               </div>
               <p className="text-xs text-[#6B4A48] m-0 font-medium">
-                Owner: <span className="text-[#7B1E3A] font-semibold">{shop.owner}</span>
+                Owner: <span className="text-[#7B1E3A] font-semibold">{shop.ownerName || 'Master Artisan'}</span>
               </p>
             </div>
           </div>
@@ -102,7 +102,7 @@ export default function ProductsPage() {
             </span>
           )}
           <h2 className="text-2xl lg:text-3xl font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>
-            {shop ? `${shop.name} Collection` : params.get('filter') === 'featured' ? 'Featured Weaves' : 'All Sarees Collection'}
+            {shop ? `${shop.shopName} Collection` : params.get('filter') === 'featured' ? 'Featured Weaves' : 'All Sarees Collection'}
           </h2>
           <p className="text-sm text-[#6B4A48] mt-1 m-0 font-medium">
             Showing <span className="font-bold text-[#7B1E3A]">{filtered.length}</span> handpicked sarees

@@ -88,15 +88,15 @@ export default function ShopStorePage() {
   // Derive unified shop info
   const firstProduct = shopProducts[0] || {};
   const shopInfo = {
-    name: shopDoc?.shopName || shopDoc?.name || firstProduct?.shopName || 'Master Weaving House',
-    owner: shopDoc?.ownerName || shopDoc?.owner || firstProduct?.ownerName || shopDoc?.name || 'Master Artisan',
-    location: shopDoc?.location || shopDoc?.address || shopDoc?.city || firstProduct?.shopLocation || 'India',
-    logo: shopDoc?.logo || shopDoc?.shopLogo || shopDoc?.profileImage || firstProduct?.shopLogo || firstProduct?.image || firstProduct?.imageUrl || 'https://images.pexels.com/photos/5709661/pexels-photo-5709661.jpeg?auto=compress&cs=tinysrgb&w=300',
-    rating: shopDoc?.rating || firstProduct?.shopRating || firstProduct?.rating || 4.9,
-    email: shopDoc?.email || firstProduct?.shopEmail || '',
-    phone: shopDoc?.phone || firstProduct?.shopPhone || '',
-    registeredDate: shopDoc?.establishedDate || shopDoc?.registeredDate || (shopDoc?.createdAt ? new Date(shopDoc.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : 'July 2026'),
-    description: shopDoc?.description || firstProduct?.shopDescription || 'Welcome to our official Silk Mark certified online weaving house. We craft authentic heritage handloom silk sarees with purity, precision, and dedication to traditional craftsmanship.',
+    name: shopDoc?.shopName || 'Master Weaving House',
+    owner: shopDoc?.ownerName || 'Master Artisan',
+    location: shopDoc?.address || 'India',
+    logo: (!shopDoc?.logo || shopDoc?.logo === '/images/placeholder.png') ? 'https://images.pexels.com/photos/5709661/pexels-photo-5709661.jpeg?auto=compress&cs=tinysrgb&w=300' : shopDoc.logo,
+    rating: shopDoc?.rating || 4.9,
+    email: shopDoc?.email || '',
+    phone: shopDoc?.phone || '',
+    registeredDate: shopDoc?.createdAt ? new Date(shopDoc.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : 'July 2026',
+    description: shopDoc?.description || 'Welcome to our official Silk Mark certified online weaving house. We craft authentic heritage handloom silk sarees with purity, precision, and dedication to traditional craftsmanship.',
   };
 
   // Set navbar branding to this shop while the page is mounted
@@ -178,7 +178,7 @@ export default function ShopStorePage() {
                 {/* Large Shop Logo */}
                 <div className="relative flex-shrink-0">
                   <div className="w-28 h-28 sm:w-36 sm:h-36 rounded-2xl overflow-hidden border-4 border-white shadow-xl bg-[#FFF8F0] flex items-center justify-center">
-                    <img src={shopInfo.logo} alt={shopInfo.name} className="w-full h-full object-cover" />
+                    <img src={shopInfo.logo} alt={shopInfo.name} onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.pexels.com/photos/5709661/pexels-photo-5709661.jpeg?auto=compress&cs=tinysrgb&w=150'; }} className="w-full h-full object-cover" />
                   </div>
                   <span className="absolute -bottom-2 -right-2 bg-[#2D8F5E] text-white p-2 rounded-full shadow-lg border-2 border-white" title="Silk Mark Verified Weaver">
                     <FiCheckCircle size={18} />

@@ -4,12 +4,14 @@ import { motion } from 'framer-motion';
 import { FiMinus, FiPlus, FiTruck, FiShield, FiArrowLeft } from 'react-icons/fi';
 import { useOrders } from '../context/OrderContext';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 
 export default function OrderSummaryPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const { placeOrder } = useOrders();
   const { user } = useAuth();
+  const { clearCart } = useCart();
   const product = location.state?.product;
   const shop = location.state?.shop;
 
@@ -23,7 +25,12 @@ export default function OrderSummaryPage() {
     pincode: '',
   });
 
-  if (!product) {
+  const cart = location.state?.cart || [];
+  const fromCart = location.state?.fromCart;
+  const cartTotal = location.state?.cartTotal || 0;
+  const estimatedTotal = location.state?.estimatedTotal || 0;
+
+  if (!product && !fromCart) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-20 text-center">
         <div className="w-20 h-20 rounded-full bg-[#7B1E3A]/10 text-[#7B1E3A] flex items-center justify-center mx-auto mb-6 text-3xl">🛒</div>
@@ -34,30 +41,51 @@ export default function OrderSummaryPage() {
     );
   }
 
-  const subtotal = product.offerPrice * quantity;
+  const subtotal = fromCart ? cartTotal : (product?.offerPrice || product?.price || 0) * quantity;
   const deliveryCharge = 30;
-  const total = subtotal + deliveryCharge;
+  const total = fromCart ? estimatedTotal : subtotal + deliveryCharge;
 
   const handlePlaceOrder = async (e) => {
     e.preventDefault();
     try {
-      await placeOrder({
-        productId: product.id,
-        productName: product.name,
-        productImage: product.image || product.imageUrl || product.thumbnail || '',
-        shopId: product.shopId || product.ownerId || '',
-        shopName: product.shopName || '',
-        shopLogo: shop?.logo || '',
-        ownerId: product.ownerId || product.shopId || '',
-        price: product.offerPrice,
-        quantity,
-        fabric: product.fabric || '',
-        color: product.color || '',
-        customerName: delivery.name,
-        customerPhone: delivery.phone,
-        customerAddress: `${delivery.address}, ${delivery.city}, ${delivery.state} - ${delivery.pincode}`,
-      });
-      navigate('/order-confirmation', { state: { productName: product.name, total } });
+      if (fromCart) {
+        const promises = cart.map(item => placeOrder({
+          productId: item.id,
+          productName: item.name,
+          productImage: item.image || item.imageUrl || item.thumbnail || '',
+          shopId: item.shopId || item.ownerId || '',
+          shopName: item.shopName || '',
+          ownerId: item.ownerId || item.shopId || '',
+          price: item.offerPrice || item.price,
+          quantity: item.quantity,
+          fabric: item.fabric || '',
+          color: item.color || '',
+          customerName: delivery.name,
+          customerPhone: delivery.phone,
+          customerAddress: `${delivery.address}, ${delivery.city}, ${delivery.state} - ${delivery.pincode}`,
+        }));
+        await Promise.all(promises);
+        clearCart();
+        navigate('/order-confirmation', { state: { productName: 'Cart Items', total } });
+      } else {
+        await placeOrder({
+          productId: product.id,
+          productName: product.name,
+          productImage: product.image || product.imageUrl || product.thumbnail || '',
+          shopId: product.shopId || product.ownerId || '',
+          shopName: product.shopName || '',
+          shopLogo: shop?.logo || '',
+          ownerId: product.ownerId || product.shopId || '',
+          price: product.offerPrice || product.price,
+          quantity,
+          fabric: product.fabric || '',
+          color: product.color || '',
+          customerName: delivery.name,
+          customerPhone: delivery.phone,
+          customerAddress: `${delivery.address}, ${delivery.city}, ${delivery.state} - ${delivery.pincode}`,
+        });
+        navigate('/order-confirmation', { state: { productName: product.name, total } });
+      }
     } catch (err) {
       console.error('Failed to place order:', err);
       alert('Failed to place order. Please try again.');
@@ -74,26 +102,39 @@ export default function OrderSummaryPage() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="lg:col-span-3 space-y-6">
           <div className="card-base p-6 sm:p-7 md:p-8 bg-white border border-[#D4AF37]/20">
             <div className="flex gap-5">
-              <img src={product.image} alt={product.name} className="w-28 h-36 sm:w-32 sm:h-40 rounded-xl object-cover border border-[#D4AF37]/30 shadow-sm flex-shrink-0" />
-              <div className="flex-1 min-w-0">
-                <span className="text-[10px] uppercase font-bold tracking-wider text-[#D4AF37] block mb-1">✦ {product.shopName}</span>
-                <h3 className="text-lg font-bold text-[#7B1E3A] m-0 mb-2 leading-tight" style={{ fontFamily: 'Playfair Display' }}>{product.name}</h3>
-                <p className="text-xs text-[#6B4A48] m-0 mb-4">{product.fabric} · {product.color}</p>
-
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="text-xs font-bold text-[#7B1E3A] uppercase tracking-wider">Qty</span>
-                  <div className="flex items-center border border-[#D4AF37]/30 rounded-lg overflow-hidden">
-                    <button type="button" onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-8 h-8 flex items-center justify-center bg-[#FFF8F0] hover:bg-[#D4AF37]/20 text-[#7B1E3A] cursor-pointer border-none transition-colors"><FiMinus size={14} /></button>
-                    <span className="w-10 h-8 flex items-center justify-center text-sm font-bold text-[#7B1E3A] bg-white">{quantity}</span>
-                    <button type="button" onClick={() => setQuantity(quantity + 1)} className="w-8 h-8 flex items-center justify-center bg-[#FFF8F0] hover:bg-[#D4AF37]/20 text-[#7B1E3A] cursor-pointer border-none transition-colors"><FiPlus size={14} /></button>
+              {fromCart ? (
+                cart.map(item => (
+                  <div key={item.id} className="flex gap-4 p-4 border border-[#D4AF37]/20 rounded-xl mb-3">
+                    <img src={item.image || item.imageUrl} alt={item.name} className="w-16 h-20 object-cover rounded-lg" />
+                    <div>
+                      <h3 className="font-bold text-[#7B1E3A]">{item.name}</h3>
+                      <p className="text-xs text-[#6B4A48]">Qty: {item.quantity}</p>
+                      <p className="text-sm font-bold mt-1 text-[#4A2C2A]">₹{(item.offerPrice || item.price).toLocaleString()}</p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="flex gap-4 p-4 border border-[#D4AF37]/20 rounded-xl bg-white shadow-sm mb-6">
+                  <img src={product.image || product.imageUrl} alt={product.name} className="w-20 h-24 object-cover rounded-lg border border-[#D4AF37]/20" />
+                  <div className="flex-1">
+                    <h3 className="font-bold text-[#7B1E3A] text-lg mb-1">{product.name}</h3>
+                    <p className="text-sm text-[#6B4A48] mb-2">{product.shopName}</p>
+                    
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-3 bg-[#FFF8F0] border border-[#D4AF37]/30 rounded-lg px-2 py-1">
+                        <button type="button" onClick={() => setQuantity(Math.max(1, quantity - 1))} className="text-[#7B1E3A] hover:bg-[#D4AF37]/20 p-1 rounded">
+                          <FiMinus size={14} />
+                        </button>
+                        <span className="font-bold text-sm min-w-[20px] text-center">{quantity}</span>
+                        <button type="button" onClick={() => setQuantity(Math.min(10, quantity + 1))} className="text-[#7B1E3A] hover:bg-[#D4AF37]/20 p-1 rounded">
+                          <FiPlus size={14} />
+                        </button>
+                      </div>
+                      <span className="font-bold text-[#7B1E3A]">₹{(product.offerPrice || product.price).toLocaleString()}</span>
+                    </div>
                   </div>
                 </div>
-
-                <div className="flex items-baseline gap-3">
-                  <span className="text-2xl font-bold text-[#7B1E3A]">₹{product.offerPrice.toLocaleString()}</span>
-                  <span className="text-sm text-[#6B4A48] line-through">₹{product.price.toLocaleString()}</span>
-                </div>
-              </div>
+              )}
             </div>
           </div>
 

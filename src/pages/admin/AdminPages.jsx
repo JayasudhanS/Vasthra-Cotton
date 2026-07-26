@@ -78,12 +78,12 @@ export function AdminPendingProducts() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {pendingEdits.map(p => {
-              const { shopName, shopLogo, ownerName, phoneNumber } = resolveShopInfo(p, allShops, allUsers, pendingShops);
+              const { shopName, logo, ownerName, phoneNumber } = resolveShopInfo(p, allShops, allUsers, pendingShops);
               return (
                 <div key={p.id} className="card-base p-5 bg-white border border-amber-200 shadow-sm flex flex-col justify-between rounded-2xl">
                   <div>
                     <div className="flex items-start gap-3.5 mb-4 pb-4 border-b border-[#D4AF37]/15">
-                      <img src={p.thumbnail || p.image || p.imageUrl} alt={p.name} className="w-16 h-20 rounded-xl object-cover border border-[#D4AF37]/30 shadow-xs flex-shrink-0" />
+                      <img src={p.thumbnail || p.image || p.imageUrl} alt={p.name} onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.pexels.com/photos/5709661/pexels-photo-5709661.jpeg?auto=compress&cs=tinysrgb&w=150'; }} className="w-16 h-20 rounded-xl object-cover border border-[#D4AF37]/30 shadow-xs flex-shrink-0" />
                       <div className="flex-1 min-w-0">
                         <span className="inline-block text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border mb-1.5 bg-blue-600 text-white border-blue-600">
                           Pending Edit Review
@@ -95,7 +95,7 @@ export function AdminPendingProducts() {
 
                     <div className="bg-[#FFF8F0]/80 rounded-xl p-3.5 border border-[#D4AF37]/25 mb-4 space-y-2.5">
                       <div className="flex items-center gap-3">
-                        <img src={shopLogo} alt={shopName} className="w-10 h-10 rounded-full object-cover border-2 border-[#D4AF37] shadow-xs flex-shrink-0 bg-white" />
+                        <img src={logo} alt={shopName} onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.pexels.com/photos/5709661/pexels-photo-5709661.jpeg?auto=compress&cs=tinysrgb&w=150'; }} className="w-10 h-10 rounded-full object-cover border-2 border-[#D4AF37] shadow-xs flex-shrink-0 bg-white" />
                         <div className="min-w-0 flex-1">
                           <span className="text-sm sm:text-base font-bold text-[#7B1E3A] truncate block leading-tight">{shopName}</span>
                           <span className="text-xs text-[#6B4A48] font-medium truncate block mt-0.5">
@@ -244,12 +244,22 @@ export function AdminPendingShops() {
     setSelectedShop(null); // Close modal on action
   };
 
+  const counts = { all: 0, pending: 0, approved: 0, rejected: 0, disabled: 0 };
+
   const items = pendingShops.filter(s => {
     const sStatus = (s.status || 'pending').toLowerCase();
-    const isDisabled = sStatus === 'disabled' || s.isDisabled === true;
-    const isApproved = (sStatus === 'approved' || sStatus === 'active' || sStatus === 'verified' || s.approved === true || s.isApproved === true) && !isDisabled;
-    const isRejected = (sStatus === 'rejected' || s.approved === false) && !isDisabled;
-    const isPending = sStatus === 'pending' || (!isApproved && !isRejected && !isDisabled);
+    
+    const isDisabled = sStatus === 'disabled';
+    const isRejected = sStatus === 'rejected';
+    const isApproved = sStatus === 'approved';
+    const isPending = sStatus === 'pending' || (!isDisabled && !isRejected && !isApproved);
+
+    // Compute counts dynamically (only once per item)
+    counts.all++;
+    if (isDisabled) counts.disabled++;
+    else if (isRejected) counts.rejected++;
+    else if (isApproved) counts.approved++;
+    else if (isPending) counts.pending++;
 
     let matchesFilter = false;
     if (filter === 'all') matchesFilter = true;
@@ -268,7 +278,7 @@ export function AdminPendingShops() {
     }
     
     // Attach grouped status for UI consistency
-    s._computedStatus = isDisabled ? 'disabled' : isApproved ? 'approved' : isRejected ? 'rejected' : 'pending';
+    s._computedStatus = isDisabled ? 'disabled' : isRejected ? 'rejected' : isApproved ? 'approved' : 'pending';
     return true;
   });
 
@@ -297,7 +307,7 @@ export function AdminPendingShops() {
           {['pending', 'approved', 'rejected', 'disabled', 'all'].map(f => (
             <button key={f} onClick={() => setFilter(f)}
               className={`px-3.5 py-1.5 rounded-full text-xs font-bold cursor-pointer border transition-all capitalize ${filter === f ? 'bg-[#7B1E3A] text-white border-[#7B1E3A]' : 'bg-[#FFF8F0] text-[#6B4A48] border-[#D4AF37]/20 hover:border-[#D4AF37]'}`}>
-              {f}
+              {f} ({counts[f]})
             </button>
           ))}
         </div>
@@ -318,7 +328,8 @@ export function AdminPendingShops() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {items.map(s => {
-            const logo = s.shopLogo || s.logo || s.profileImage || 'https://images.pexels.com/photos/5709661/pexels-photo-5709661.jpeg?auto=compress&cs=tinysrgb&w=150';
+            const rawLogo = s.logo;
+            const logo = (!rawLogo || rawLogo === '/images/placeholder.png') ? 'https://images.pexels.com/photos/5709661/pexels-photo-5709661.jpeg?auto=compress&cs=tinysrgb&w=150' : rawLogo;
             const sStatus = s._computedStatus;
             return (
               <motion.div key={s.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
@@ -326,10 +337,10 @@ export function AdminPendingShops() {
                 <div className="p-5 sm:p-6">
                   {/* Header: Logo and Title */}
                   <div className="flex items-start gap-4 mb-4 pb-4 border-b border-[#D4AF37]/15">
-                    <img src={logo} alt={s.shopName} className="w-16 h-16 rounded-full object-cover border-2 border-[#D4AF37]/30 shadow-xs flex-shrink-0" />
+                    <img src={logo} alt={s.shopName} onError={(e) => { e.target.onerror = null; e.target.src = 'https://images.pexels.com/photos/5709661/pexels-photo-5709661.jpeg?auto=compress&cs=tinysrgb&w=150'; }} className="w-16 h-16 rounded-full object-cover border-2 border-[#D4AF37]/30 shadow-xs flex-shrink-0" />
                     <div className="flex-1 min-w-0">
                       <h3 className="font-bold text-[#7B1E3A] text-lg leading-tight m-0 truncate" style={{ fontFamily: 'Playfair Display' }}>{s.shopName || 'Weaver House'}</h3>
-                      <p className="text-xs font-semibold text-[#6B4A48] mt-1 m-0 truncate">{s.name || 'Master Artisan'}</p>
+                      <p className="text-xs font-semibold text-[#6B4A48] mt-1 m-0 truncate">{s.ownerName || 'Master Artisan'}</p>
                       <span className={`inline-block mt-2 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${statusColors[sStatus] || statusColors.pending}`}>
                         {sStatus}
                       </span>
@@ -418,8 +429,8 @@ export function AdminPendingShops() {
             <div className="p-0 overflow-y-auto max-h-[70vh]">
               {/* Shop Banner */}
               <div className="h-32 bg-gradient-to-r from-[#7B1E3A] via-[#9B2E4A] to-[#7B1E3A] relative">
-                {selectedShop.banner || selectedShop.shopBanner ? (
-                  <img src={selectedShop.banner || selectedShop.shopBanner} alt="Banner" className="w-full h-full object-cover opacity-80" />
+                {selectedShop.banner ? (
+                  <img src={selectedShop.banner} alt="Banner" className="w-full h-full object-cover opacity-80" />
                 ) : (
                   <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23D4AF37\' fill-opacity=\'0.3\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")' }} />
                 )}
@@ -427,10 +438,10 @@ export function AdminPendingShops() {
 
               <div className="px-6 pb-6 -mt-12 relative z-10 space-y-6">
                 <div className="flex flex-col sm:flex-row gap-5 items-start sm:items-end">
-                  <img src={selectedShop.shopLogo || selectedShop.logo || selectedShop.profileImage || 'https://images.pexels.com/photos/5709661/pexels-photo-5709661.jpeg?auto=compress&cs=tinysrgb&w=150'} alt="Logo" className="w-24 h-24 rounded-2xl object-cover border-4 border-white shadow-lg bg-[#FFF8F0] flex-shrink-0" />
+                  <img src={(!selectedShop.logo || selectedShop.logo === '/images/placeholder.png') ? 'https://images.pexels.com/photos/5709661/pexels-photo-5709661.jpeg?auto=compress&cs=tinysrgb&w=150' : selectedShop.logo} alt="Logo" className="w-24 h-24 rounded-2xl object-cover border-4 border-white shadow-lg bg-[#FFF8F0] flex-shrink-0" />
                   <div className="min-w-0 flex-1 pt-2 sm:pt-0">
                     <h3 className="font-bold text-[#7B1E3A] text-2xl m-0 truncate" style={{ fontFamily: 'Playfair Display' }}>{selectedShop.shopName || 'Weaver House'}</h3>
-                    <p className="text-sm font-semibold text-[#6B4A48] m-0 mb-2 truncate">Owner: {selectedShop.name || selectedShop.ownerName || 'Master Artisan'}</p>
+                    <p className="text-sm font-semibold text-[#6B4A48] m-0 mb-2 truncate">Owner: {selectedShop.ownerName || 'Master Artisan'}</p>
                     <span className={`inline-block text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${statusColors[selectedShop._computedStatus || 'pending'] || statusColors.pending}`}>
                       {(selectedShop._computedStatus || 'pending').toUpperCase()}
                     </span>
@@ -441,7 +452,7 @@ export function AdminPendingShops() {
                   <div>
                     <span className="text-[10px] uppercase font-bold tracking-widest text-[#D4AF37] block mb-1.5">Contact</span>
                     <div className="text-[#4A2C2A] font-medium space-y-1.5">
-                      <p className="m-0 flex items-center gap-1.5 font-mono"><FiPhone size={12} className="text-[#6B4A48]"/> {selectedShop.phone || selectedShop.phoneNumber || 'N/A'}</p>
+                      <p className="m-0 flex items-center gap-1.5 font-mono"><FiPhone size={12} className="text-[#6B4A48]"/> {selectedShop.phone || 'N/A'}</p>
                       <p className="m-0 flex items-center gap-1.5 break-all"><FiMail size={12} className="text-[#6B4A48]"/> {selectedShop.email || 'N/A'}</p>
                     </div>
                   </div>
@@ -454,7 +465,7 @@ export function AdminPendingShops() {
                 <div>
                   <span className="text-[10px] uppercase font-bold tracking-widest text-[#D4AF37] block mb-2"><FiMapPin className="inline mr-1" size={12}/> Complete Address</span>
                   <p className="text-[#4A2C2A] text-sm leading-relaxed m-0 bg-white p-3.5 rounded-lg border border-[#D4AF37]/20">
-                    {selectedShop.address || selectedShop.location || 'No address provided.'}
+                    {selectedShop.address || 'No address provided.'}
                   </p>
                 </div>
 

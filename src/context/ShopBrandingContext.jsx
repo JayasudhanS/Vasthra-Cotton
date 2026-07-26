@@ -2,7 +2,7 @@ import { createContext, useContext, useState, useCallback } from 'react';
 
 const ShopBrandingContext = createContext({
   shopName: '',
-  shopLogo: '',
+  logo: '',
   shopAddress: '',
   shopEmail: '',
   shopPhone: '',
@@ -14,7 +14,7 @@ const ShopBrandingContext = createContext({
 export function ShopBrandingProvider({ children }) {
   const [branding, setBranding] = useState({ 
     shopName: '', 
-    shopLogo: '',
+    logo: '',
     shopAddress: '',
     shopEmail: '',
     shopPhone: '',
@@ -24,7 +24,7 @@ export function ShopBrandingProvider({ children }) {
   const setShopBranding = useCallback((name, logo, address, email, phone, description) => {
     setBranding({ 
       shopName: name || '', 
-      shopLogo: logo || '',
+      logo: logo || '',
       shopAddress: address || '',
       shopEmail: email || '',
       shopPhone: phone || '',
@@ -35,7 +35,7 @@ export function ShopBrandingProvider({ children }) {
   const clearShopBranding = useCallback(() => {
     setBranding({ 
       shopName: '', 
-      shopLogo: '',
+      logo: '',
       shopAddress: '',
       shopEmail: '',
       shopPhone: '',
