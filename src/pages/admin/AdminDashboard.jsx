@@ -43,12 +43,12 @@ export default function AdminDashboard() {
 
   const stats = [
     { 
-      title: 'Pending Saree Weaves', 
-      value: pendingWeavesCount, 
+      title: 'Active Weaves', 
+      value: liveCatalogueCount, 
       icon: <FiClock size={24} />, 
       color: 'from-[#D4AF37] to-[#E8C94A]', 
-      badge: pendingWeavesCount === 1 ? '1 Pending Review' : `${pendingWeavesCount} Pending Reviews`,
-      action: pendingWeavesCount > 0 ? 'Inspect Queue →' : 'Review Queue →',
+      badge: liveCatalogueCount === 1 ? '1 Live Approved Saree' : `${liveCatalogueCount} Live Approved Sarees`,
+      action: 'View Live Weaves →',
       path: '/admin/pending-products'
     },
     { 

@@ -19,7 +19,9 @@ import {
   collection, 
   query, 
   where, 
-  onSnapshot 
+  onSnapshot,
+  getDocs,
+  writeBatch
 } from 'firebase/firestore';
 import { auth, db, COLLECTIONS } from '../firebase/config';
 
@@ -235,6 +237,11 @@ export function AuthProvider({ children }) {
       if (isShop && (docData.status === 'Rejected' || docData.status === 'rejected')) {
         await signOut(auth);
         return { success: false, message: 'Your shop owner account application was not approved.' };
+      }
+
+      if (isShop && (docData.status === 'disabled' || docData.isDisabled === true)) {
+        await signOut(auth);
+        return { success: false, message: 'Your shop account has been disabled by the Administrator. Please contact support.' };
       }
 
       setUser({ ...docData, id: firebaseUser.uid, uid: firebaseUser.uid });
@@ -580,10 +587,69 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const disableShop = async (id) => {
+    try {
+      const userRef = doc(db, COLLECTIONS.USERS, id);
+      const disabledAt = new Date().toISOString();
+      await updateDoc(userRef, { status: 'disabled', approved: false, isDisabled: true, disabledAt }).catch(() => {});
+      const shopRef = doc(db, COLLECTIONS.SHOPS, id);
+      await setDoc(shopRef, { status: 'disabled', approved: false, isDisabled: true, fromShopsCol: true, disabledAt }, { merge: true }).catch(() => {});
+
+      // Automatically hide all products belonging to this shop
+      const q1 = query(collection(db, COLLECTIONS.PRODUCTS), where('shopId', '==', id));
+      const snapshot1 = await getDocs(q1);
+      
+      const q2 = query(collection(db, COLLECTIONS.PRODUCTS), where('ownerId', '==', id));
+      const snapshot2 = await getDocs(q2);
+      
+      const batch = writeBatch(db);
+      const disabledProductsMap = new Map();
+      
+      snapshot1.docs.forEach(d => disabledProductsMap.set(d.id, d));
+      snapshot2.docs.forEach(d => disabledProductsMap.set(d.id, d));
+      
+      disabledProductsMap.forEach((docSnap, docId) => {
+        batch.update(doc(db, COLLECTIONS.PRODUCTS, docId), { 
+          status: 'disabled', 
+          isApproved: false, 
+          approved: false,
+          publishStatus: 'disabled',
+          isDisabled: true 
+        });
+      });
+      
+      if (disabledProductsMap.size > 0) {
+        await batch.commit().catch(() => {});
+      }
+    } catch (error) {
+      console.error('Error disabling shop:', error);
+    }
+  };
+
   const deleteShop = async (id) => {
     try {
       await deleteDoc(doc(db, COLLECTIONS.USERS, id)).catch(() => {});
       await deleteDoc(doc(db, COLLECTIONS.SHOPS, id)).catch(() => {});
+
+      const q1 = query(collection(db, COLLECTIONS.PRODUCTS), where('shopId', '==', id));
+      const snapshot1 = await getDocs(q1);
+      
+      const q2 = query(collection(db, COLLECTIONS.PRODUCTS), where('ownerId', '==', id));
+      const snapshot2 = await getDocs(q2);
+      
+      const batch = writeBatch(db);
+      const deletedProductsMap = new Map();
+      
+      snapshot1.docs.forEach(d => deletedProductsMap.set(d.id, d));
+      snapshot2.docs.forEach(d => deletedProductsMap.set(d.id, d));
+      
+      deletedProductsMap.forEach((docSnap, docId) => {
+        batch.delete(doc(db, COLLECTIONS.PRODUCTS, docId));
+      });
+      
+      if (deletedProductsMap.size > 0) {
+        await batch.commit().catch(() => {});
+      }
     } catch (error) {
       console.error('Error deleting shop:', error);
     }
@@ -601,6 +667,7 @@ export function AuthProvider({ children }) {
       registerShopkeeper,
       approveShop,
       rejectShop,
+      disableShop,
       deleteShop,
       login,
       signInWithGoogle,

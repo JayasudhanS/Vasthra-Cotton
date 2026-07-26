@@ -211,7 +211,7 @@ export function AdminApprovedProducts() {
 }
 
 export function AdminPendingShops() {
-  const { pendingShops, approveShop, rejectShop } = useAuth();
+  const { pendingShops, approveShop, rejectShop, disableShop, deleteShop } = useAuth();
   const { products = [] } = useProducts();
   const [filter, setFilter] = useState('pending');
   const [search, setSearch] = useState('');
@@ -228,24 +228,34 @@ export function AdminPendingShops() {
   };
 
   const act = (id, decision) => {
-    const isConfirm = window.confirm(`Are you sure you want to ${decision.toLowerCase()} this shop?`);
+    let msg = `Are you sure you want to ${decision.toLowerCase()} this shop?`;
+    if (decision === 'Disabled') {
+      msg = "Are you sure you want to disable this Shop Owner?\n\nThis action will:\n• Hide the shop from customers.\n• Hide all products belonging to this shop.\n• Prevent the Shop Owner from logging into the marketplace.";
+    } else if (decision === 'Deleted') {
+      msg = "WARNING: PERMANENT DELETION\n\nAre you sure you want to permanently delete this Shop Owner?\n\nThis action will:\n• Permanently delete the shop document.\n• Permanently delete ALL products from this shop.\n• This action CANNOT be undone.\n\nProceed with deletion?";
+    }
+    const isConfirm = window.confirm(msg);
     if (!isConfirm) return;
 
     if (decision === 'Approved') approveShop(id);
+    else if (decision === 'Disabled') disableShop(id);
+    else if (decision === 'Deleted') deleteShop(id);
     else rejectShop(id);
     setSelectedShop(null); // Close modal on action
   };
 
   const items = pendingShops.filter(s => {
     const sStatus = (s.status || 'pending').toLowerCase();
-    const isApproved = sStatus === 'approved' || sStatus === 'active' || sStatus === 'verified' || s.approved === true || s.isApproved === true;
-    const isRejected = sStatus === 'rejected' || s.approved === false;
-    const isPending = sStatus === 'pending' || (!isApproved && !isRejected);
+    const isDisabled = sStatus === 'disabled' || s.isDisabled === true;
+    const isApproved = (sStatus === 'approved' || sStatus === 'active' || sStatus === 'verified' || s.approved === true || s.isApproved === true) && !isDisabled;
+    const isRejected = (sStatus === 'rejected' || s.approved === false) && !isDisabled;
+    const isPending = sStatus === 'pending' || (!isApproved && !isRejected && !isDisabled);
 
     let matchesFilter = false;
     if (filter === 'all') matchesFilter = true;
     else if (filter === 'approved' && isApproved) matchesFilter = true;
     else if (filter === 'rejected' && isRejected) matchesFilter = true;
+    else if (filter === 'disabled' && isDisabled) matchesFilter = true;
     else if (filter === 'pending' && isPending) matchesFilter = true;
 
     if (!matchesFilter) return false;
@@ -258,7 +268,7 @@ export function AdminPendingShops() {
     }
     
     // Attach grouped status for UI consistency
-    s._computedStatus = isApproved ? 'approved' : isRejected ? 'rejected' : 'pending';
+    s._computedStatus = isDisabled ? 'disabled' : isApproved ? 'approved' : isRejected ? 'rejected' : 'pending';
     return true;
   });
 
@@ -266,6 +276,7 @@ export function AdminPendingShops() {
     pending: 'bg-yellow-100 text-yellow-800 border-yellow-300',
     approved: 'bg-green-100 text-green-800 border-green-300',
     rejected: 'bg-red-100 text-red-800 border-red-300',
+    disabled: 'bg-red-600 text-white border-red-700',
   };
 
   return (
@@ -283,7 +294,7 @@ export function AdminPendingShops() {
       {/* Filters and Search */}
       <div className="card-base p-5 sm:p-6 bg-white border border-[#D4AF37]/20 space-y-4">
         <div className="flex flex-wrap gap-2 mb-4">
-          {['pending', 'approved', 'rejected', 'all'].map(f => (
+          {['pending', 'approved', 'rejected', 'disabled', 'all'].map(f => (
             <button key={f} onClick={() => setFilter(f)}
               className={`px-3.5 py-1.5 rounded-full text-xs font-bold cursor-pointer border transition-all capitalize ${filter === f ? 'bg-[#7B1E3A] text-white border-[#7B1E3A]' : 'bg-[#FFF8F0] text-[#6B4A48] border-[#D4AF37]/20 hover:border-[#D4AF37]'}`}>
               {f}
@@ -374,6 +385,18 @@ export function AdminPendingShops() {
                         <FiX size={14} /> Reject
                       </button>
                     </>
+                  )}
+                  {sStatus === 'approved' && (
+                    <button onClick={() => act(s.id, 'Disabled')}
+                      className="flex-1 min-w-[100px] flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold text-red-700 bg-red-100 border border-red-300 hover:bg-red-200 transition-colors">
+                      <FiX size={14} /> Disable Weaver
+                    </button>
+                  )}
+                  {(sStatus === 'disabled' || sStatus === 'rejected') && (
+                    <button onClick={() => act(s.id, 'Deleted')}
+                      className="flex-1 min-w-[100px] flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold text-red-800 bg-red-200 border border-red-400 hover:bg-red-300 transition-colors">
+                      <FiTrash2 size={14} /> Delete Weaver
+                    </button>
                   )}
                 </div>
               </motion.div>
