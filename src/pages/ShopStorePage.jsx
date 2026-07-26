@@ -102,10 +102,26 @@ export default function ShopStorePage() {
   // Set navbar branding to this shop while the page is mounted
   useEffect(() => {
     if (shopInfo.name && shopInfo.name !== 'Master Weaving House') {
-      setShopBranding(shopInfo.name, shopInfo.logo);
+      setShopBranding(
+        shopInfo.name, 
+        shopInfo.logo,
+        shopInfo.location,
+        shopInfo.email,
+        shopInfo.phone,
+        shopInfo.description
+      );
     }
     return () => clearShopBranding();
-  }, [shopInfo.name, shopInfo.logo, setShopBranding, clearShopBranding]);
+  }, [
+    shopInfo.name, 
+    shopInfo.logo, 
+    shopInfo.location, 
+    shopInfo.email, 
+    shopInfo.phone, 
+    shopInfo.description, 
+    setShopBranding, 
+    clearShopBranding
+  ]);
 
   // Extract unique categories from this shop's products
   const shopCategories = useMemo(() => {

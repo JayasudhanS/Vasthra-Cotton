@@ -43,16 +43,36 @@ export default function ProductDetailPage() {
     location: product?.shopLocation || 'India',
     logo: product?.shopLogo || productImages[0] || '',
     rating: product?.shopRating || product?.rating || 4.9,
+    email: product?.shopEmail || '',
+    phone: product?.shopPhone || '',
+    description: product?.shopDescription || '',
   };
 
   // Set navbar branding to this product's shop while the page is mounted
   const { setShopBranding, clearShopBranding } = useShopBranding();
   useEffect(() => {
     if (shopInfo.name && shopInfo.name !== 'Artisan Weave House' && shopInfo.id) {
-      setShopBranding(shopInfo.name, shopInfo.logo);
+      setShopBranding(
+        shopInfo.name, 
+        shopInfo.logo,
+        shopInfo.location,
+        shopInfo.email,
+        shopInfo.phone,
+        shopInfo.description
+      );
     }
     return () => clearShopBranding();
-  }, [shopInfo.name, shopInfo.logo, shopInfo.id, setShopBranding, clearShopBranding]);
+  }, [
+    shopInfo.name, 
+    shopInfo.logo, 
+    shopInfo.id, 
+    shopInfo.location, 
+    shopInfo.email, 
+    shopInfo.phone, 
+    shopInfo.description, 
+    setShopBranding, 
+    clearShopBranding
+  ]);
 
   // Related products: same category or same fabric, excluding current product
   const related = approvedProducts

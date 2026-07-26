@@ -3,17 +3,50 @@ import { Link } from 'react-router-dom';
 import { FiInstagram, FiMail, FiPhone, FiMapPin, FiSend, FiCheckCircle } from 'react-icons/fi';
 import { FaFacebookF, FaWhatsapp, FaPinterestP } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
+import { useShopBranding } from '../../context/ShopBrandingContext';
+import { useLocation } from 'react-router-dom';
 
 export default function Footer() {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
   const { user, role } = useAuth();
+  const location = useLocation();
+  const { shopName: brandShopName, shopLogo: brandShopLogo, shopAddress: brandShopAddress, shopEmail: brandShopEmail, shopPhone: brandShopPhone, shopDescription: brandShopDesc } = useShopBranding();
 
   const getDashboardPath = () => {
     if (role === 'admin') return '/admin/dashboard';
     if (role === 'shopkeeper') return '/shopkeeper/dashboard';
     return '/user/dashboard';
   };
+
+  const isInShopkeeperPortal = location.pathname.toLowerCase().startsWith('/shopkeeper');
+  const isShopOwnerRole = role === 'shopkeeper' || role === 'shopOwner' || user?.role === 'shopkeeper' || user?.role === 'shopOwner';
+
+  let activeShopName = '';
+  let activeShopLogo = '';
+  let activeShopAddress = '';
+  let activeShopEmail = '';
+  let activeShopPhone = '';
+  let activeShopDesc = '';
+  let isActiveShopBranded = false;
+
+  if (isInShopkeeperPortal && isShopOwnerRole && user) {
+    activeShopName = user.shopName || user.name || 'My Shop';
+    activeShopLogo = user.shopLogo || user.logo || user.profileImage || 'https://images.pexels.com/photos/5709661/pexels-photo-5709661.jpeg?auto=compress&cs=tinysrgb&w=300';
+    activeShopAddress = user.shopAddress || user.location || user.address || user.city || 'Not Provided';
+    activeShopEmail = user.shopEmail || user.email || 'Not Provided';
+    activeShopPhone = user.shopPhone || user.phone || 'Not Provided';
+    activeShopDesc = user.shopDescription || user.description || 'Official Silk Mark Certified Weaving House offering authentic handcrafted sarees.';
+    isActiveShopBranded = true;
+  } else if (brandShopName && brandShopLogo) {
+    activeShopName = brandShopName;
+    activeShopLogo = brandShopLogo;
+    activeShopAddress = brandShopAddress || 'Not Provided';
+    activeShopEmail = brandShopEmail || 'Not Provided';
+    activeShopPhone = brandShopPhone || 'Not Provided';
+    activeShopDesc = brandShopDesc || 'Official Silk Mark Certified Weaving House offering authentic handcrafted sarees.';
+    isActiveShopBranded = true;
+  }
 
   const handleSubscribe = (e) => {
     e.preventDefault();
@@ -61,16 +94,16 @@ export default function Footer() {
           <div className="lg:col-span-2 pr-0 lg:pr-6">
             <Link to={user ? getDashboardPath() : '/'} className="flex items-center gap-3 no-underline mb-5 group w-fit">
               <img
-                src="/images/logo_vas.png"
-                alt="Vasthra Cotton Logo"
-                className="w-12 h-12 sm:w-14 sm:h-14 object-contain flex-shrink-0 group-hover:scale-105 transition-transform"
+                src={isActiveShopBranded ? activeShopLogo : "/images/logo_vas.png"}
+                alt={isActiveShopBranded ? activeShopName : "Vasthra Cotton Logo"}
+                className={`flex-shrink-0 group-hover:scale-105 transition-transform ${isActiveShopBranded ? 'w-12 h-12 sm:w-14 sm:h-14 rounded-full object-cover border-2 border-[#D4AF37]/40 shadow-sm' : 'w-12 h-12 sm:w-14 sm:h-14 object-contain'}`}
               />
-              <span className="text-xl sm:text-2xl font-bold text-white tracking-tight" style={{ fontFamily: 'Playfair Display' }}>
-                Vasthra <span className="text-[#D4AF37]">Cotton</span>
+              <span className="text-xl sm:text-2xl font-bold text-white tracking-tight truncate max-w-[200px] sm:max-w-none" style={{ fontFamily: 'Playfair Display' }}>
+                {isActiveShopBranded ? activeShopName : (<>Vasthra <span className="text-[#D4AF37]">Cotton</span></>)}
               </span>
             </Link>
             <p className="text-[13px] sm:text-sm leading-relaxed text-white/60 mb-5 max-w-sm">
-              India's premier multi-vendor saree marketplace. Celebrating our rich textile heritage by bringing authentic Kanjivaram, Banarasi, and handloom weaves directly from weavers to your doorstep.
+              {isActiveShopBranded ? activeShopDesc : "India's premier multi-vendor saree marketplace. Celebrating our rich textile heritage by bringing authentic Kanjivaram, Banarasi, and handloom weaves directly from weavers to your doorstep."}
             </p>
 
             <div className="flex gap-2.5">
@@ -132,9 +165,9 @@ export default function Footer() {
             <h4 className="text-[#D4AF37] font-semibold text-[13px] mb-4 sm:mb-5 tracking-wider uppercase">Contact Us</h4>
             <div className="space-y-3.5">
               {[
-                { icon: <FiMapPin size={15} className="text-[#D4AF37] flex-shrink-0 mt-0.5" />, text: '2nd Street, Kamaraj Nagar, Aundipatty - 625512, Tamil Nadu' },
-                { icon: <FiPhone size={15} className="text-[#D4AF37] flex-shrink-0" />, text: '+91 63821 34040 (Mon-Sat, 10am-7pm)' },
-                { icon: <FiMail size={15} className="text-[#D4AF37] flex-shrink-0" />, text: 'support@vasthracotton.com' },
+                { icon: <FiMapPin size={15} className="text-[#D4AF37] flex-shrink-0 mt-0.5" />, text: isActiveShopBranded ? activeShopAddress : '2nd Street, Kamaraj Nagar, Aundipatty - 625512, Tamil Nadu' },
+                { icon: <FiPhone size={15} className="text-[#D4AF37] flex-shrink-0" />, text: isActiveShopBranded ? activeShopPhone : '+91 63821 34040 (Mon-Sat, 10am-7pm)' },
+                { icon: <FiMail size={15} className="text-[#D4AF37] flex-shrink-0" />, text: isActiveShopBranded ? activeShopEmail : 'support@vasthracotton.com' },
               ].map((c, i) => (
                 <div key={i} className="flex items-start gap-2.5 text-[13px] sm:text-sm text-white/60 leading-snug">
                   {c.icon}
@@ -151,13 +184,23 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="border-t border-white/10 pt-6 sm:pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] sm:text-xs text-white/45">
-          <p className="m-0">© 2026 Vasthra Cotton Marketplace Pvt. Ltd. All rights reserved.</p>
+          {/* Mobile-only Branding */}
+          <p className="sm:hidden m-0 text-center text-[14px] font-medium text-white/90 my-1">
+            Powered by <a href="https://vaizai.com" target="_blank" rel="noopener noreferrer" className="text-[#D4AF37] hover:text-white transition-colors no-underline font-medium">Vaizai Solutions</a>
+          </p>
+
+          <p className="m-0 text-center sm:text-left">© 2026 Vasthra Cotton Marketplace Pvt. Ltd. All rights reserved.</p>
+          
           <div className="flex gap-5 sm:gap-6">
             <Link to="/about" className="text-white/45 hover:text-[#D4AF37] no-underline transition-colors">Privacy Policy</Link>
             <Link to="/about" className="text-white/45 hover:text-[#D4AF37] no-underline transition-colors">Terms of Service</Link>
             <Link to="/contact" className="text-white/45 hover:text-[#D4AF37] no-underline transition-colors">Support</Link>
           </div>
-          <p className="m-0 flex items-center gap-1">Crafted with ❤️ for Indian Traditions</p>
+
+          {/* Desktop-only Branding */}
+          <p className="hidden sm:flex m-0 items-center gap-1">
+            Powered by <a href="https://vaizai.com" target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-[#D4AF37] transition-colors no-underline font-medium">Vaizai Solutions</a>
+          </p>
         </div>
       </div>
     </footer>
