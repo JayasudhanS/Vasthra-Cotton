@@ -216,7 +216,7 @@ export default function Footer() {
         <div className="border-t border-white/10 pt-6 sm:pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] sm:text-xs text-white/45">
           {/* Mobile-only Branding */}
           <p className="sm:hidden m-0 text-center text-[14px] font-medium text-white/90 my-1">
-            Powered by <a href="https://vaizai.com" target="_blank" rel="noopener noreferrer" className="text-[#D4AF37] hover:text-white transition-colors no-underline font-medium">Vaizai Solutions</a>
+            Powered by <a href="https://www.vaizai.in/" target="_blank" rel="noopener noreferrer" className="text-[#D4AF37] hover:text-white transition-colors no-underline font-medium">Vaizai Solutions</a>
           </p>
 
           <p className="m-0 text-center sm:text-left">© 2026 Vasthra Cotton Marketplace Pvt. Ltd. All rights reserved.</p>
@@ -229,7 +229,7 @@ export default function Footer() {
 
           {/* Desktop-only Branding */}
           <p className="hidden sm:flex m-0 items-center gap-1">
-            Powered by <a href="https://vaizai.com" target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-[#D4AF37] transition-colors no-underline font-medium">Vaizai Solutions</a>
+            Powered by <a href="https://www.vaizai.in/" target="_blank" rel="noopener noreferrer" className="text-white/60 hover:text-[#D4AF37] transition-colors no-underline font-medium">Vaizai Solutions</a>
           </p>
         </div>
       </div>

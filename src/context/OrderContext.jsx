@@ -152,6 +152,10 @@ export function OrderProvider({ children }) {
           await logActivity('order', `Order Cancelled: Order #${orderId.slice(0,6)} was cancelled`, 'bg-red-500');
         } else if (newStatus === 'Delivered') {
           await logActivity('order', `Order Delivered: Order #${orderId.slice(0,6)} delivered to ${o.customerName}`, 'bg-green-600');
+        } else if (newStatus === 'Shipped') {
+          await logActivity('order', `Order Shipped: Order #${orderId.slice(0,6)} shipped to ${o.customerName}`, 'bg-blue-500');
+        } else if (newStatus === 'Confirmed' || newStatus === 'Processing') {
+          await logActivity('order', `Order Updated: Order #${orderId.slice(0,6)} is now ${newStatus.toLowerCase()}`, 'bg-blue-400');
         }
       }
     } catch (error) {

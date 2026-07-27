@@ -739,6 +739,32 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const disableUser = async (id) => {
+    try {
+      const userRef = doc(db, COLLECTIONS.USERS, id);
+      const userSnap = await getDoc(userRef).catch(() => null);
+      const userData = userSnap?.exists() ? userSnap.data() : {};
+      
+      await updateDoc(userRef, { status: 'disabled', disabledAt: new Date().toISOString() }).catch(() => {});
+      await logActivity('user', `Customer Disabled: "${userData.name || userData.email || 'User'}" account disabled`, 'bg-amber-500');
+    } catch (error) {
+      console.error('Error disabling user:', error);
+    }
+  };
+
+  const enableUser = async (id) => {
+    try {
+      const userRef = doc(db, COLLECTIONS.USERS, id);
+      const userSnap = await getDoc(userRef).catch(() => null);
+      const userData = userSnap?.exists() ? userSnap.data() : {};
+      
+      await updateDoc(userRef, { status: 'active', enabledAt: new Date().toISOString() }).catch(() => {});
+      await logActivity('user', `Customer Enabled: "${userData.name || userData.email || 'User'}" account enabled`, 'bg-[#2D8F5E]');
+    } catch (error) {
+      console.error('Error enabling user:', error);
+    }
+  };
+
   const deleteUser = async (id) => {
     try {
       const userRef = doc(db, COLLECTIONS.USERS, id);
@@ -771,6 +797,8 @@ export function AuthProvider({ children }) {
       disableShop,
       enableShop,
       deleteShop,
+      disableUser,
+      enableUser,
       deleteUser,
       login,
       signInWithGoogle,

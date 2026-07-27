@@ -225,7 +225,7 @@ export default function AdminDashboard() {
       }
     });
 
-    return unique.slice(0, 15);
+    return unique.slice(0, 50);
   }, [products, allUsers, dbActivities]);
 
   return (

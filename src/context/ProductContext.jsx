@@ -117,7 +117,13 @@ export function ProductProvider({ children }) {
     try {
       const p = products.find(prod => prod.id === id);
       await deleteDoc(doc(db, COLLECTIONS.PRODUCTS, id));
-      if (p) await logActivity('product', `Product Deleted: "${p.name || 'Saree Weave'}" permanently removed by ${deletedBy}`, 'bg-red-600');
+      if (p) {
+        if (deletedBy === 'Admin') {
+          await logActivity('product', `Product Permanently Deleted: "${p.name || 'Saree Weave'}" permanently deleted by Admin`, 'bg-red-700');
+        } else {
+          await logActivity('product', `Product Deleted: "${p.name || 'Saree Weave'}" removed by Shop Owner`, 'bg-red-500');
+        }
+      }
     } catch (error) {
       console.error('Error deleting product:', error);
       setProducts(prev => prev.filter(p => p.id !== id));
@@ -127,7 +133,23 @@ export function ProductProvider({ children }) {
   // Edit product fields in Firestore (generic, used by admin for immediate updates)
   const editProduct = async (id, updatedData) => {
     try {
+      const p = products.find(prod => prod.id === id);
       await updateDoc(doc(db, COLLECTIONS.PRODUCTS, id), updatedData);
+      if (p) {
+        if (updatedData.status === 'hidden') {
+          await logActivity('product', `Product Hidden: "${p.name || 'Saree Weave'}" hidden by Shop Owner`, 'bg-gray-500');
+        } else if (updatedData.status === 'disabled') {
+          await logActivity('product', `Product Disabled: "${p.name || 'Saree Weave'}" disabled by Shop Owner`, 'bg-amber-600');
+        } else if (updatedData.status === 'approved' || updatedData.status === 'active') {
+          await logActivity('product', `Product Enabled: "${p.name || 'Saree Weave'}" enabled by Shop Owner`, 'bg-[#2D8F5E]');
+        } else if (updatedData.offerPrice !== undefined || updatedData.price !== undefined) {
+          await logActivity('product', `Product Price Changed: "${p.name || 'Saree Weave'}" price updated`, 'bg-blue-500');
+        } else if (updatedData.stock !== undefined) {
+          await logActivity('product', `Product Stock Updated: "${p.name || 'Saree Weave'}" stock updated`, 'bg-blue-500');
+        } else {
+          await logActivity('product', `Product Updated: "${p.name || 'Saree Weave'}" details updated`, 'bg-blue-500');
+        }
+      }
     } catch (error) {
       console.error('Error editing product:', error);
       setProducts(prev => prev.map(p => p.id === id ? { ...p, ...updatedData } : p));
@@ -143,7 +165,21 @@ export function ProductProvider({ children }) {
         lastEditedBy: 'admin',
         lastEditedAt: new Date().toISOString(),
       });
-      if (p) await logActivity('product', `Product Updated: "${p.name || 'Saree Weave'}" edited by Admin`, 'bg-blue-500');
+      if (p) {
+        if (updatedData.status === 'hidden') {
+          await logActivity('product', `Product Hidden: "${p.name || 'Saree Weave'}" hidden by Admin`, 'bg-gray-500');
+        } else if (updatedData.status === 'disabled') {
+          await logActivity('product', `Product Disabled: "${p.name || 'Saree Weave'}" disabled by Admin`, 'bg-amber-600');
+        } else if (updatedData.status === 'approved' || updatedData.status === 'active') {
+          await logActivity('product', `Product Enabled: "${p.name || 'Saree Weave'}" enabled by Admin`, 'bg-[#2D8F5E]');
+        } else if (updatedData.offerPrice !== undefined || updatedData.price !== undefined) {
+          await logActivity('product', `Product Price Changed: "${p.name || 'Saree Weave'}" price updated`, 'bg-blue-500');
+        } else if (updatedData.stock !== undefined) {
+          await logActivity('product', `Product Stock Updated: "${p.name || 'Saree Weave'}" stock updated`, 'bg-blue-500');
+        } else {
+          await logActivity('product', `Product Updated: "${p.name || 'Saree Weave'}" details updated`, 'bg-blue-500');
+        }
+      }
     } catch (error) {
       console.error('Error in admin edit:', error);
       setProducts(prev => prev.map(p => p.id === id ? { ...p, ...updatedData } : p));
