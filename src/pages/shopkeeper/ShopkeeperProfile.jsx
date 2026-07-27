@@ -347,15 +347,9 @@ export default function ShopkeeperProfile() {
           <h1 className="text-2xl sm:text-3xl font-bold text-[#7B1E3A] m-0" style={{ fontFamily: 'Playfair Display' }}>Weaving House Profile</h1>
         </div>
         <div className="flex items-center gap-3">
-          <span className="hidden sm:flex badge badge-success !text-xs font-bold px-3.5 py-1.5 items-center gap-1.5 shadow-sm">
+          <span className="badge badge-success !text-xs font-bold px-3.5 py-1.5 flex items-center gap-1.5 shadow-sm">
             <FiCheckCircle /> Silk Mark Certified Seller
           </span>
-          <button 
-            onClick={() => setIsEditing(true)}
-            className="flex items-center gap-2 bg-[#7B1E3A] text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-[#5A1428] transition-colors shadow-sm cursor-pointer"
-          >
-            <FiEdit2 size={15} /> Edit Profile
-          </button>
         </div>
       </div>
 
@@ -420,8 +414,14 @@ export default function ShopkeeperProfile() {
           </div>
 
           <div className="pt-6 border-t border-[#D4AF37]/15 flex flex-col sm:flex-row gap-3">
+            <button 
+              onClick={() => setIsEditing(true)}
+              className="btn-golden flex-1 justify-center !py-3 !text-sm font-bold cursor-pointer transition-all hover:shadow-sm flex items-center gap-2"
+            >
+              <FiEdit2 size={16} /> Edit Shop Profile
+            </button>
             <button onClick={() => alert('Silk Mark certification documents downloaded.')} className="btn-outline-maroon flex-1 justify-center !py-3 !text-sm font-bold cursor-pointer transition-all hover:shadow-sm">
-              Download Silk Mark Certificate
+              Download Certificate
             </button>
             <button onClick={handleLogout} className="w-full sm:w-auto px-6 py-3 rounded-xl border border-red-300 text-red-600 font-bold bg-red-50/70 hover:bg-red-100 flex items-center justify-center gap-2 text-sm cursor-pointer transition-all shadow-sm">
               <FiLogOut size={16} /> Log Out
