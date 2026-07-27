@@ -18,25 +18,21 @@ export default function WaitingApproval() {
         </div>
 
         <h1 className="text-[26px] sm:text-[28px] lg:text-[32px] font-bold text-[#7B1E3A] m-0 mb-4 leading-tight" style={{ fontFamily: 'Playfair Display' }}>
-          Registration Successful
+          🎉 Registration Successful!
         </h1>
-
-        <div className="mb-6">
-          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-50 border border-amber-300 text-amber-800 font-semibold text-[15px] shadow-xs">
-            <span>⏳</span>
-            <span>Pending Admin Verification</span>
-          </span>
-        </div>
 
         <div className="text-[16px] sm:text-[17px] text-[#6B4A48] leading-relaxed space-y-3 mb-8">
           <p className="m-0">
-            Your shop registration has been submitted successfully.
+            Thank you for registering your weaving house with Vasthra Cotton.
           </p>
           <p className="m-0">
-            Your application is currently under review by our Admin team.
+            Your application has been submitted successfully and is currently under review by our Admin team.
           </p>
           <p className="m-0 text-[#7B1E3A] font-medium">
-            Please wait until your shop has been approved before accessing the Shop Dashboard.
+            Please wait until your shop has been approved.
+          </p>
+          <p className="m-0">
+            Once approved, you can log in and start managing your shop and products.
           </p>
         </div>
 
@@ -44,8 +40,7 @@ export default function WaitingApproval() {
           <h3 className="text-[#7B1E3A] font-bold text-[17px] m-0 mb-3">Current Status:</h3>
           <ul className="space-y-3 m-0 p-0 list-none text-[15px] sm:text-[16px] text-[#4A2C2A]">
             <li className="flex items-center gap-3">
-              <span className="w-5 h-5 rounded-full bg-amber-500 text-white flex items-center justify-center text-xs flex-shrink-0">⏳</span>
-              <span className="font-semibold text-amber-800">Pending Approval</span>
+              <span className="font-semibold text-amber-800">🟡 Pending Admin Approval</span>
             </li>
           </ul>
         </div>
@@ -53,7 +48,7 @@ export default function WaitingApproval() {
         <div className="space-y-3 pt-2">
           <button
             type="button"
-            onClick={() => navigate('/login/shopkeeper', { state: { fromSuccess: true } })}
+            onClick={() => navigate('/login/shopkeeper')}
             style={{ height: '54px' }}
             className="w-full rounded-[12px] bg-gradient-to-r from-[#D4AF37] to-[#E8C94A] hover:from-[#E8C94A] hover:to-[#D4AF37] text-[#4A2C2A] text-[18px] font-bold cursor-pointer shadow-md hover:shadow-lg transition-all flex items-center justify-center"
           >

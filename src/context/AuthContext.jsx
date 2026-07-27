@@ -104,19 +104,29 @@ export function AuthProvider({ children }) {
           setRole('admin');
         } else {
           // Fallback if user registered outside or social login without doc yet
-          const newUserData = {
-            uid: firebaseUser.uid,
-            name: firebaseUser.displayName || 'User',
-            email: firebaseUser.email || '',
-            phone: firebaseUser.phoneNumber || '',
-            role: 'user',
-            status: 'Active',
-            createdAt: new Date().toISOString(),
-            profileImage: firebaseUser.photoURL || '/images/placeholder.png'
-          };
-          await setDoc(userRef, newUserData);
-          setUser({ ...newUserData, id: firebaseUser.uid });
-          setRole('user');
+          // Do NOT create fallback doc if they just registered via email/password,
+          // because the register() function handles that explicitly.
+          const isPasswordUser = firebaseUser.providerData?.some(p => p.providerId === 'password');
+          
+          if (!isPasswordUser) {
+            const newUserData = {
+              uid: firebaseUser.uid,
+              name: firebaseUser.displayName || 'User',
+              email: firebaseUser.email || '',
+              phone: firebaseUser.phoneNumber || '',
+              role: 'user',
+              status: 'Active',
+              createdAt: new Date().toISOString(),
+              profileImage: firebaseUser.photoURL || '/images/placeholder.png'
+            };
+            await setDoc(userRef, newUserData).catch(() => {});
+            setUser({ ...newUserData, id: firebaseUser.uid });
+            setRole('user');
+          } else {
+            // Document being created by register()
+            setUser(null);
+            setRole(null);
+          }
         }
       } catch (error) {
         console.error('Error fetching user data from Firestore:', error);
