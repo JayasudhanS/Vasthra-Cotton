@@ -6,6 +6,7 @@ import { db, COLLECTIONS } from '../../firebase/config';
 import { useProducts } from '../../context/ProductContext';
 import { useAuth } from '../../context/AuthContext';
 import { uploadToCloudinary, validateImageFile, getCloudinaryThumbnail } from '../../utils/cloudinaryUpload';
+import { logActivity } from '../../utils/activityLogger';
 import { DESCRIPTION_TEMPLATES } from '../../utils/descriptionTemplates';
 import NativeSelectField from '../../components/shared/NativeSelectField';
 
@@ -281,6 +282,8 @@ export default function AddProduct() {
         ...productData,
         id: productRef.id,
       });
+
+      await logActivity('product', `New Product Submitted: "${productData.name}" by ${productData.shopName || productData.ownerName || 'Weaver Studio'}`, 'bg-[#D4AF37]');
 
       setSubmitted(true);
     } catch (error) {

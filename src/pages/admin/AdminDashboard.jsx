@@ -2,6 +2,8 @@ import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { FiPackage, FiClock, FiShoppingBag, FiUsers, FiTrendingUp, FiCheckCircle, FiCheck, FiX, FiFilter, FiLayers } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
+import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
+import { db, COLLECTIONS } from '../../firebase/config';
 import { useAuth } from '../../context/AuthContext';
 import { useProducts } from '../../context/ProductContext';
 import { AdminProductDisplayCard } from './AdminProductCardHelper';
@@ -10,6 +12,27 @@ export default function AdminDashboard() {
   const { user, pendingShops = [], allUsers = [], allShops = [] } = useAuth();
   const { products = [], approvedProducts = [], approveProduct, rejectProduct, approvePendingEdit, rejectPendingEdit } = useProducts();
   const [activeTab, setActiveTab] = useState('pending');
+  const [dbActivities, setDbActivities] = useState([]);
+
+  // Fetch real-time activities from the dedicated collection
+  useMemo(() => {
+    try {
+      const q = query(
+        collection(db, COLLECTIONS.ACTIVITIES || 'activities'),
+        orderBy('timestamp', 'desc'),
+        limit(50)
+      );
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const acts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setDbActivities(acts);
+      }, (err) => {
+        console.error('Error fetching activities:', err);
+      });
+      return () => unsubscribe();
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
 
   const pendingWeavesCount = useMemo(() => 
     products.filter(p => (p.status || '').toString().trim().toLowerCase() === 'pending').length, 
@@ -177,8 +200,33 @@ export default function AdminDashboard() {
       }
     });
 
-    return list.sort((a, b) => b.timestamp - a.timestamp).slice(0, 15);
-  }, [products, allUsers]);
+    // Merge legacy inferred activities with real dbActivities
+    const merged = [...dbActivities.map(a => ({
+      type: a.type || 'system',
+      text: a.text || 'System Activity',
+      time: formatRelativeTime(a.timestamp),
+      timestamp: new Date(a.timestamp).getTime(),
+      badgeColor: a.badgeColor || 'bg-gray-500'
+    })), ...list];
+
+    // Deduplicate closely named activities to avoid showing both legacy and new DB logs for the same event
+    const unique = [];
+    const seenTexts = new Set();
+    
+    // Sort combined list
+    merged.sort((a, b) => b.timestamp - a.timestamp);
+    
+    merged.forEach(item => {
+      // Create a simplified text key for deduplication
+      const key = item.text.toLowerCase().replace(/[^a-z0-9]/g, '');
+      if (!seenTexts.has(key)) {
+        seenTexts.add(key);
+        unique.push(item);
+      }
+    });
+
+    return unique.slice(0, 15);
+  }, [products, allUsers, dbActivities]);
 
   return (
     <div className="space-y-8 sm:space-y-10 w-full min-w-0 max-w-full flex flex-col overflow-hidden">

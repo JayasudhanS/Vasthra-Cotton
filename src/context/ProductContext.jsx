@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { collection, onSnapshot, doc, updateDoc, deleteDoc, setDoc, getDoc } from 'firebase/firestore';
 import { db, COLLECTIONS } from '../firebase/config';
+import { logActivity } from '../utils/activityLogger';
 
 const ProductContext = createContext();
 
@@ -89,7 +90,9 @@ export function ProductProvider({ children }) {
   // Approve product: update Firestore status
   const approveProduct = async (id) => {
     try {
+      const p = products.find(prod => prod.id === id);
       await updateDoc(doc(db, COLLECTIONS.PRODUCTS, id), { status: 'approved', isApproved: true, approvedAt: new Date().toISOString() });
+      if (p) await logActivity('product', `Product Approved: "${p.name || 'Saree Weave'}" (${p.shopName || p.ownerName || 'Weaver Studio'})`, 'bg-[#2D8F5E]');
     } catch (error) {
       console.error('Error approving product:', error);
       // Fallback to local state update
@@ -100,7 +103,9 @@ export function ProductProvider({ children }) {
   // Reject product: update Firestore status
   const rejectProduct = async (id) => {
     try {
+      const p = products.find(prod => prod.id === id);
       await updateDoc(doc(db, COLLECTIONS.PRODUCTS, id), { status: 'rejected', isApproved: false, rejectedAt: new Date().toISOString() });
+      if (p) await logActivity('product', `Product Rejected: "${p.name || 'Saree Weave'}"`, 'bg-red-500');
     } catch (error) {
       console.error('Error rejecting product:', error);
       setProducts(prev => prev.map(p => p.id === id ? { ...p, status: 'rejected', isApproved: false } : p));
@@ -108,9 +113,11 @@ export function ProductProvider({ children }) {
   };
 
   // Delete product from Firestore
-  const deleteProduct = async (id) => {
+  const deleteProduct = async (id, deletedBy = 'Shop Owner') => {
     try {
+      const p = products.find(prod => prod.id === id);
       await deleteDoc(doc(db, COLLECTIONS.PRODUCTS, id));
+      if (p) await logActivity('product', `Product Deleted: "${p.name || 'Saree Weave'}" permanently removed by ${deletedBy}`, 'bg-red-600');
     } catch (error) {
       console.error('Error deleting product:', error);
       setProducts(prev => prev.filter(p => p.id !== id));
@@ -130,11 +137,13 @@ export function ProductProvider({ children }) {
   // Admin direct edit: immediately updates the live product (no approval required)
   const adminEditProduct = async (id, updatedData) => {
     try {
+      const p = products.find(prod => prod.id === id);
       await updateDoc(doc(db, COLLECTIONS.PRODUCTS, id), {
         ...updatedData,
         lastEditedBy: 'admin',
         lastEditedAt: new Date().toISOString(),
       });
+      if (p) await logActivity('product', `Product Updated: "${p.name || 'Saree Weave'}" edited by Admin`, 'bg-blue-500');
     } catch (error) {
       console.error('Error in admin edit:', error);
       setProducts(prev => prev.map(p => p.id === id ? { ...p, ...updatedData } : p));

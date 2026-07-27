@@ -9,6 +9,7 @@ import { useAuth } from '../../context/AuthContext';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db, COLLECTIONS } from '../../firebase/config';
 import { uploadToCloudinary, validateImageFile } from '../../utils/cloudinaryUpload';
+import { logActivity } from '../../utils/activityLogger';
 import { useShopBranding } from '../../context/ShopBrandingContext';
 
 export default function ShopkeeperProfile() {
@@ -110,6 +111,15 @@ export default function ShopkeeperProfile() {
 
       await updateDoc(shopRef, updateData);
       
+      // Determine what was updated for the activity log
+      if (form.logo && form.logo !== user.logo && form.logo !== '/images/placeholder.png') {
+        await logActivity('shop', `Shop Logo Changed: "${form.shopName}" updated their logo`, 'bg-blue-500');
+      } else if (form.banner && form.banner !== user.banner && form.banner !== '/images/placeholder.png') {
+        await logActivity('shop', `Shop Banner Changed: "${form.shopName}" updated their banner`, 'bg-blue-500');
+      } else {
+        await logActivity('shop', `Shop Updated: "${form.shopName}" details updated`, 'bg-blue-500');
+      }
+
       // Update local AuthContext user state
       updateLocalUser(updateData);
       

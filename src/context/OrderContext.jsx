@@ -9,6 +9,7 @@ import {
 } from 'firebase/firestore';
 import { db, COLLECTIONS } from '../firebase/config';
 import { useAuth } from './AuthContext';
+import { logActivity } from '../utils/activityLogger';
 
 const OrderContext = createContext();
 
@@ -129,6 +130,7 @@ export function OrderProvider({ children }) {
       };
 
       const docRef = await addDoc(collection(db, COLLECTIONS.ORDERS), orderDoc);
+      await logActivity('order', `New Order: Order #${docRef.id.slice(0,6)} placed by ${orderDoc.customerName}`, 'bg-blue-600');
       return { id: docRef.id, ...orderDoc };
     } catch (error) {
       console.error('Error placing order:', error);
@@ -140,10 +142,18 @@ export function OrderProvider({ children }) {
   const updateOrderStatus = async (orderId, newStatus) => {
     try {
       const orderRef = doc(db, COLLECTIONS.ORDERS, orderId);
+      const o = orders.find(ord => ord.id === orderId);
       await updateDoc(orderRef, {
         status: newStatus,
         updatedAt: serverTimestamp(),
       });
+      if (o) {
+        if (newStatus === 'Cancelled') {
+          await logActivity('order', `Order Cancelled: Order #${orderId.slice(0,6)} was cancelled`, 'bg-red-500');
+        } else if (newStatus === 'Delivered') {
+          await logActivity('order', `Order Delivered: Order #${orderId.slice(0,6)} delivered to ${o.customerName}`, 'bg-green-600');
+        }
+      }
     } catch (error) {
       console.error('Error updating order status:', error);
     }

@@ -35,7 +35,8 @@ export const COLLECTIONS = {
   WISHLIST: 'wishlist',
   CATEGORIES: 'categories',
   REVIEWS: 'reviews',
-  NOTIFICATIONS: 'notifications'
+  NOTIFICATIONS: 'notifications',
+  ACTIVITIES: 'activities'
 };
 
 // Typed helper to get collection reference easily

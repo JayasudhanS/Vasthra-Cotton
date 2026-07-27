@@ -56,7 +56,7 @@ export function AdminPendingProducts() {
                 onApprove={() => act(p.id, 'approved')}
                 onReject={() => act(p.id, 'rejected')}
                 onEdit={() => handleEdit(p)}
-                onDelete={() => deleteProduct(p.id)}
+                onDelete={() => deleteProduct(p.id, 'Admin')}
               />
             ))}
           </div>
@@ -196,7 +196,7 @@ export function AdminApprovedProducts() {
                     className="px-3 py-1.5 rounded-xl bg-yellow-100 text-yellow-800 text-xs font-bold flex items-center justify-center cursor-pointer border border-yellow-300 hover:bg-yellow-600 hover:text-white transition-all shadow-xs">
                     <FiX size={14} className="mr-1" /> Revoke Live
                   </button>
-                  <button onClick={() => { if (window.confirm('Completely delete this saree?')) deleteProduct(p.id); }} title="Delete Saree"
+                  <button onClick={() => { if (window.confirm('Completely delete this saree?')) deleteProduct(p.id, 'Admin'); }} title="Delete Saree"
                     className="w-8 h-8 rounded-xl bg-red-100 text-red-700 flex items-center justify-center cursor-pointer border border-red-300 hover:bg-red-600 hover:text-white transition-all shadow-xs">
                     <FiTrash2 size={14} />
                   </button>
@@ -211,7 +211,7 @@ export function AdminApprovedProducts() {
 }
 
 export function AdminPendingShops() {
-  const { pendingShops, approveShop, rejectShop, disableShop, deleteShop } = useAuth();
+  const { pendingShops, approveShop, rejectShop, disableShop, enableShop, deleteShop } = useAuth();
   const { products = [] } = useProducts();
   const [filter, setFilter] = useState('pending');
   const [search, setSearch] = useState('');
@@ -233,12 +233,15 @@ export function AdminPendingShops() {
       msg = "Are you sure you want to disable this Shop Owner?\n\nThis action will:\n• Hide the shop from customers.\n• Hide all products belonging to this shop.\n• Prevent the Shop Owner from logging into the marketplace.";
     } else if (decision === 'Deleted') {
       msg = "WARNING: PERMANENT DELETION\n\nAre you sure you want to permanently delete this Shop Owner?\n\nThis action will:\n• Permanently delete the shop document.\n• Permanently delete ALL products from this shop.\n• This action CANNOT be undone.\n\nProceed with deletion?";
+    } else if (decision === 'Enabled') {
+      msg = "Are you sure you want to re-enable this Shop Owner?\n\nThis action will:\n• Restore the shop on customer-facing pages.\n• Restore all products previously belonging to this shop.\n• Allow the Shop Owner to log in again.";
     }
     const isConfirm = window.confirm(msg);
     if (!isConfirm) return;
 
     if (decision === 'Approved') approveShop(id);
     else if (decision === 'Disabled') disableShop(id);
+    else if (decision === 'Enabled') enableShop(id);
     else if (decision === 'Deleted') deleteShop(id);
     else rejectShop(id);
     setSelectedShop(null); // Close modal on action
@@ -407,6 +410,12 @@ export function AdminPendingShops() {
                     <button onClick={() => act(s.id, 'Deleted')}
                       className="flex-1 min-w-[100px] flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold text-red-800 bg-red-200 border border-red-400 hover:bg-red-300 transition-colors">
                       <FiTrash2 size={14} /> Delete Weaver
+                    </button>
+                  )}
+                  {sStatus === 'disabled' && (
+                    <button onClick={() => act(s.id, 'Enabled')}
+                      className="flex-1 min-w-[100px] flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold text-green-700 bg-green-100 border border-green-300 hover:bg-green-200 transition-colors">
+                      <FiCheck size={14} /> Enable Weaver
                     </button>
                   )}
                 </div>

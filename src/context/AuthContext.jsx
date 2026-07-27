@@ -24,6 +24,7 @@ import {
   writeBatch
 } from 'firebase/firestore';
 import { auth, db, COLLECTIONS } from '../firebase/config';
+import { logActivity } from '../utils/activityLogger';
 
 const AuthContext = createContext();
 
@@ -319,6 +320,7 @@ export function AuthProvider({ children }) {
           createdAt: new Date().toISOString(),
         };
         await setDoc(doc(db, COLLECTIONS.SHOPS, firebaseUser.uid), shopData);
+        await logActivity('shop', `New Shop Registered: "${shopData.shopName}" awaiting verification`, 'bg-amber-500');
         await signOut(auth);
         return {
           success: true,
@@ -329,6 +331,7 @@ export function AuthProvider({ children }) {
 
       setUser({ ...baseUserData, id: firebaseUser.uid });
       setRole('user');
+      await logActivity('user', `New Customer Registered: "${baseUserData.name}" joined Vasthra Cotton`, 'bg-[#7B1E3A]');
       return { success: true, pending: false };
     } catch (error) {
       console.error('Firebase registration error:', error);
@@ -601,6 +604,7 @@ export function AuthProvider({ children }) {
       await updateDoc(userRef, { status: 'approved', approvedAt }).catch(() => {});
       const shopRef = doc(db, COLLECTIONS.SHOPS, id);
       await setDoc(shopRef, { ...userData, id, uid: id, status: 'approved', fromShopsCol: true, approvedAt }, { merge: true }).catch(() => {});
+      await logActivity('shop', `Shop Approved: "${userData.shopName || userData.name || 'Weaver Partner'}" verified & onboarded`, 'bg-[#2D8F5E]');
     } catch (error) {
       console.error('Error approving shop:', error);
     }
@@ -609,10 +613,13 @@ export function AuthProvider({ children }) {
   const rejectShop = async (id) => {
     try {
       const userRef = doc(db, COLLECTIONS.USERS, id);
+      const userSnap = await getDoc(userRef).catch(() => null);
+      const userData = userSnap?.exists() ? userSnap.data() : {};
       const rejectedAt = new Date().toISOString();
       await updateDoc(userRef, { status: 'rejected', rejectedAt }).catch(() => {});
       const shopRef = doc(db, COLLECTIONS.SHOPS, id);
       await setDoc(shopRef, { status: 'rejected', fromShopsCol: true, rejectedAt }, { merge: true }).catch(() => {});
+      await logActivity('shop', `Shop Rejected: "${userData.shopName || userData.name || 'Weaver Partner'}" application denied`, 'bg-red-500');
     } catch (error) {
       console.error('Error rejecting shop:', error);
     }
@@ -620,9 +627,11 @@ export function AuthProvider({ children }) {
 
   const disableShop = async (id) => {
     try {
+      const userRef = doc(db, COLLECTIONS.USERS, id);
+      const userSnap = await getDoc(userRef).catch(() => null);
+      const userData = userSnap?.exists() ? userSnap.data() : {};
       const disableFields = { status: 'disabled', disabledAt: new Date().toISOString() };
       
-      const userRef = doc(db, COLLECTIONS.USERS, id);
       await updateDoc(userRef, disableFields).catch(() => {});
 
       const shopRef = doc(db, COLLECTIONS.SHOPS, id);
@@ -650,14 +659,59 @@ export function AuthProvider({ children }) {
       if (disabledProductsMap.size > 0) {
         await batch.commit().catch(() => {});
       }
+      await logActivity('shop', `Shop Disabled: "${userData.shopName || userData.name || 'Weaver Partner'}" access suspended`, 'bg-amber-600');
     } catch (error) {
       console.error('Error disabling shop:', error);
     }
   };
 
+  const enableShop = async (id) => {
+    try {
+      const userRef = doc(db, COLLECTIONS.USERS, id);
+      const userSnap = await getDoc(userRef).catch(() => null);
+      const userData = userSnap?.exists() ? userSnap.data() : {};
+      const enableFields = { status: 'approved', enabledAt: new Date().toISOString() };
+      
+      await updateDoc(userRef, enableFields).catch(() => {});
+
+      const shopRef = doc(db, COLLECTIONS.SHOPS, id);
+      await setDoc(shopRef, { ...enableFields, fromShopsCol: true }, { merge: true }).catch(() => {});
+
+      // Automatically restore all products belonging to this shop
+      const q1 = query(collection(db, COLLECTIONS.PRODUCTS), where('shopId', '==', id));
+      const snapshot1 = await getDocs(q1);
+      
+      const q2 = query(collection(db, COLLECTIONS.PRODUCTS), where('ownerId', '==', id));
+      const snapshot2 = await getDocs(q2);
+      
+      const batch = writeBatch(db);
+      const enabledProductsMap = new Map();
+      
+      snapshot1.docs.forEach(d => enabledProductsMap.set(d.id, d));
+      snapshot2.docs.forEach(d => enabledProductsMap.set(d.id, d));
+      
+      enabledProductsMap.forEach((docSnap, docId) => {
+        batch.update(doc(db, COLLECTIONS.PRODUCTS, docId), { 
+          status: 'approved'
+        });
+      });
+      
+      if (enabledProductsMap.size > 0) {
+        await batch.commit().catch(() => {});
+      }
+      await logActivity('shop', `Shop Enabled: "${userData.shopName || userData.name || 'Weaver Partner'}" re-enabled by Admin`, 'bg-[#2D8F5E]');
+    } catch (error) {
+      console.error('Error enabling shop:', error);
+    }
+  };
+
   const deleteShop = async (id) => {
     try {
-      await deleteDoc(doc(db, COLLECTIONS.USERS, id)).catch(() => {});
+      const userRef = doc(db, COLLECTIONS.USERS, id);
+      const userSnap = await getDoc(userRef).catch(() => null);
+      const userData = userSnap?.exists() ? userSnap.data() : {};
+
+      await deleteDoc(userRef).catch(() => {});
       await deleteDoc(doc(db, COLLECTIONS.SHOPS, id)).catch(() => {});
 
       const q1 = query(collection(db, COLLECTIONS.PRODUCTS), where('shopId', '==', id));
@@ -679,8 +733,22 @@ export function AuthProvider({ children }) {
       if (deletedProductsMap.size > 0) {
         await batch.commit().catch(() => {});
       }
+      await logActivity('shop', `Shop Deleted: "${userData.shopName || userData.name || 'Weaver Partner'}" permanently removed`, 'bg-red-600');
     } catch (error) {
       console.error('Error deleting shop:', error);
+    }
+  };
+
+  const deleteUser = async (id) => {
+    try {
+      const userRef = doc(db, COLLECTIONS.USERS, id);
+      const userSnap = await getDoc(userRef).catch(() => null);
+      const userData = userSnap?.exists() ? userSnap.data() : {};
+      
+      await deleteDoc(userRef).catch(() => {});
+      await logActivity('user', `Customer Deleted: "${userData.name || userData.email || 'User'}" account removed`, 'bg-red-600');
+    } catch (error) {
+      console.error('Error deleting user:', error);
     }
   };
 
@@ -701,7 +769,9 @@ export function AuthProvider({ children }) {
       approveShop,
       rejectShop,
       disableShop,
+      enableShop,
       deleteShop,
+      deleteUser,
       login,
       signInWithGoogle,
       forgotPassword,
