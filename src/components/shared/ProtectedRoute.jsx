@@ -11,7 +11,8 @@ export default function ProtectedRoute({ children, allowedRoles }) {
   const { user, role, loading } = useAuth();
   const location = useLocation();
 
-  // While Firebase auth state is resolving, show nothing (AuthProvider already blocks via {!loading && children})
+  // While Firebase auth state is resolving, show nothing to avoid premature redirects.
+  // Public routes render normally; only protected routes wait here.
   if (loading) return null;
 
   // Not authenticated → redirect to portal

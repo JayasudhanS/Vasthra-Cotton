@@ -44,28 +44,29 @@ export default function ShopStorePage() {
       return;
     }
 
-    let unsubUsers = () => {};
     let unsubShops = () => {};
+    let unsubAllShops = () => {};
 
-    // First try subscribing to exact doc id in USERS collection
-    const userRef = doc(db, COLLECTIONS.USERS, ownerId);
-    unsubUsers = onSnapshot(userRef, (docSnap) => {
-      if (docSnap.exists() && (docSnap.data().role === 'shopOwner' || docSnap.data().role === 'shopkeeper' || docSnap.data().shopName)) {
-        setShopDoc({ ...docSnap.data(), id: docSnap.id });
-      }
-    }, (err) => console.error('Error fetching user shop doc:', err));
-
-    // Also try subscribing to exact doc id in SHOPS collection
+    // First try subscribing to exact doc id in SHOPS collection
     const shopRef = doc(db, COLLECTIONS.SHOPS, ownerId);
     unsubShops = onSnapshot(shopRef, (docSnap) => {
       if (docSnap.exists()) {
-        setShopDoc(prev => ({ ...(prev || {}), ...docSnap.data(), id: docSnap.id }));
+        const data = docSnap.data();
+        // Only show approved shops (schema uses status field, not boolean flags)
+        if (data.status === 'approved') {
+          setShopDoc(prev => ({ ...(prev || {}), ...data, id: docSnap.id }));
+        }
       }
     }, (err) => console.error('Error fetching shop doc:', err));
 
     // Fallback: query if ownerId is a string matching shopName or uid
-    const shopsQuery = query(collection(db, COLLECTIONS.SHOPS));
-    const unsubAllShops = onSnapshot(shopsQuery, (snap) => {
+    // Fallback query: find by uid or shopName match within approved shops
+    const shopsQuery = query(
+      collection(db, COLLECTIONS.SHOPS),
+      where('status', '==', 'approved')
+    );
+    
+    unsubAllShops = onSnapshot(shopsQuery, (snap) => {
       const match = snap.docs.find(d => 
         String(d.id) === String(ownerId) || 
         String(d.data().uid) === String(ownerId) || 
@@ -75,10 +76,12 @@ export default function ShopStorePage() {
         setShopDoc(prev => ({ ...(prev || {}), ...match.data(), id: match.id }));
       }
       setLoadingShop(false);
-    }, () => setLoadingShop(false));
+    }, (err) => {
+      console.error('Error fetching shop via query:', err);
+      setLoadingShop(false);
+    });
 
     return () => {
-      unsubUsers();
       unsubShops();
       unsubAllShops();
     };

@@ -818,7 +818,7 @@ export function AuthProvider({ children }) {
       updateLocalUser,
       isAuthenticated: !!user
     }}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 }

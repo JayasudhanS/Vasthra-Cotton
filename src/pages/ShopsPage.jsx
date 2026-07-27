@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate, Link } from 'react-router-dom';
 import { FiCheckCircle, FiMapPin, FiPackage, FiCalendar, FiArrowRight } from 'react-icons/fi';
-import { collection, onSnapshot } from 'firebase/firestore';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { db, COLLECTIONS } from '../firebase/config';
 import { useProducts } from '../context/ProductContext';
 
@@ -13,63 +13,29 @@ export default function ShopsPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    let usersList = [];
-    let shopsList = [];
+    // Query only approved shops from the public SHOPS collection.
+    // The schema uses status: 'approved' | 'pending' | 'rejected' | 'disabled'
+    // isDeleted/isDisabled boolean fields do not exist — filtering by status is sufficient.
+    const shopsQuery = query(
+      collection(db, COLLECTIONS.SHOPS),
+      where('status', '==', 'approved')
+    );
 
-    const updateCombined = (uList, sList) => {
-      const shopMap = new Map();
-
-      // Add shops from SHOPS collection
-      sList.forEach(s => {
-        if (s.id || s.uid) {
-          shopMap.set(s.id || s.uid, { ...s, id: s.id || s.uid });
-        }
-      });
-
-      // Add or merge shopkeepers from USERS collection
-      uList.forEach(u => {
-        if (u.id || u.uid) {
-          const existing = shopMap.get(u.id || u.uid) || {};
-          // Merge 'u' first, then 'existing' so that the SHOPS collection 
-          // (which holds the true public approval status) takes precedence.
-          shopMap.set(u.id || u.uid, { ...u, ...existing, id: u.id || u.uid });
-        }
-      });
-
-      // Filter strictly for approved shops
-      const approvedOnly = Array.from(shopMap.values()).filter(shop => {
-        const statusStr = (shop.status || '').toString().trim().toLowerCase();
-        if (statusStr !== 'approved') return false;
-        // Must be a shop entity
-        return shop.role === 'shopOwner' || shop.role === 'shopkeeper' || shop.shopName || shop.fromShopsCol === true || typeof shop.publishedProductsCount === 'number';
-      });
-
-      setLiveShops(approvedOnly);
+    const unsubShops = onSnapshot(shopsQuery, (snapshot) => {
+      const shopsList = snapshot.docs.map(docSnap => ({
+        ...docSnap.data(),
+        id: docSnap.id,
+        uid: docSnap.data().uid || docSnap.id,
+        fromShopsCol: true
+      }));
+      setLiveShops(shopsList);
       setLoading(false);
-    };
-
-    const unsubUsers = onSnapshot(collection(db, COLLECTIONS.USERS), (snapshot) => {
-      usersList = snapshot.docs
-        .map(docSnap => ({ ...docSnap.data(), id: docSnap.id, uid: docSnap.data().uid || docSnap.id }))
-        .filter(u => u.role === 'shopOwner' || u.role === 'shopkeeper');
-      updateCombined(usersList, shopsList);
-    }, () => {
-      // If USERS collection requires authentication or permission is denied, fall back to public SHOPS collection cleanly
-      updateCombined(usersList, shopsList);
-    });
-
-    const unsubShops = onSnapshot(collection(db, COLLECTIONS.SHOPS), (snapshot) => {
-      shopsList = snapshot.docs.map(docSnap => ({ ...docSnap.data(), id: docSnap.id, uid: docSnap.data().uid || docSnap.id, fromShopsCol: true }));
-      updateCombined(usersList, shopsList);
     }, (err) => {
       console.error('Error fetching shops collection for shops page:', err);
-      updateCombined(usersList, shopsList);
+      setLoading(false);
     });
 
-    return () => {
-      unsubUsers();
-      unsubShops();
-    };
+    return () => unsubShops();
   }, []);
 
   const getPublishedSareesCount = (shop) => {
