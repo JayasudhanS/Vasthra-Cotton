@@ -49,6 +49,9 @@ export default function ShopkeeperDashboard() {
           </h1>
         </div>
         <div className="flex items-center gap-3">
+          <Link to="/shopkeeper/profile" className="px-5 py-2.5 rounded-xl border border-[#D4AF37] text-[#7B1E3A] font-bold text-xs hover:bg-[#FFF8F0] transition-colors inline-flex items-center gap-1.5 shadow-sm no-underline">
+            <FiEdit2 size={16} /> Edit Profile
+          </Link>
           <Link to="/shopkeeper/add-product" className="btn-golden !py-2.5 !px-5 !text-xs no-underline shadow-md inline-flex items-center gap-1.5">
             <FiPlus size={16} /> Add New Saree
           </Link>

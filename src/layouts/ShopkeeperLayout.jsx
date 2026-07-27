@@ -45,7 +45,7 @@ export default function ShopkeeperLayout() {
 
       {/* Mobile top bar */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-[#D4AF37]/15 z-40 flex justify-around items-center px-4 py-3 gap-2 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] overflow-x-auto">
-        {links.slice(0, 4).map(l => (
+        {links.map(l => (
           <Link key={l.name} to={l.path}
             className={`flex flex-col items-center px-3 py-2 rounded-xl text-[10px] font-semibold transition-all no-underline flex-shrink-0 ${pathname === l.path ? 'text-[#7B1E3A] bg-[#FFF8F0]' : 'text-[#6B4A48]'}`}>
             {l.icon}
