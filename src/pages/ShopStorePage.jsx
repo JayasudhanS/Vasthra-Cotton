@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router-dom';
-import { useMemo, useEffect, useState } from 'react';
+import { useMemo, useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { FiCheckCircle, FiMapPin, FiStar, FiPackage, FiArrowLeft, FiShield, FiMail, FiPhone, FiCalendar, FiShare2 } from 'react-icons/fi';
 import { doc, getDoc, collection, onSnapshot, query, where } from 'firebase/firestore';
@@ -17,8 +17,25 @@ export default function ShopStorePage() {
   const [shopDoc, setShopDoc] = useState(null);
   const [loadingShop, setLoadingShop] = useState(true);
   const [showToast, setShowToast] = useState(false);
+  const [showShareMenu, setShowShareMenu] = useState(false);
+  const shareMenuRef = useRef(null);
 
   const isAdminOrOwner = role === 'admin' || (user && String(user.uid) === String(ownerId));
+
+  // Close share menu on outside click
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (shareMenuRef.current && !shareMenuRef.current.contains(event.target)) {
+        setShowShareMenu(false);
+      }
+    };
+    if (showShareMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showShareMenu]);
 
   // Listen to live shop information from Firestore collections (SHOPS and USERS)
   useEffect(() => {
@@ -129,21 +146,28 @@ export default function ShopStorePage() {
     return Array.from(cats);
   }, [shopProducts]);
 
-  const handleShareShop = () => {
+  const handleShareShop = (e) => {
+    if (e) e.stopPropagation();
     const url = window.location.href;
-    const shareData = {
-      title: shopInfo.name,
-      text: `Explore authentic Silk Mark Certified sarees from ${shopInfo.name} on Vasthra Cotton.`,
-      url: url,
-    };
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth < 768;
 
-    if (navigator.share) {
+    if (isMobile && navigator.share) {
+      const shareData = {
+        title: shopInfo.name,
+        text: `Explore authentic Silk Mark Certified sarees from ${shopInfo.name} on Vasthra Cotton.`,
+        url: url,
+      };
       navigator.share(shareData).catch(err => console.log('Error sharing:', err));
     } else {
-      navigator.clipboard.writeText(url);
-      setShowToast(true);
-      setTimeout(() => setShowToast(false), 3000);
+      setShowShareMenu(prev => !prev);
     }
+  };
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setShowToast(true);
+    setShowShareMenu(false);
+    setTimeout(() => setShowToast(false), 3000);
   };
 
   return (
@@ -197,13 +221,43 @@ export default function ShopStorePage() {
                       </span>
                     </div>
                     
-                    {/* Share Button */}
-                    <button
-                      onClick={handleShareShop}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white text-[#7B1E3A] text-xs font-bold shadow-xs hover:bg-[#FFF8F0] border border-[#D4AF37]/30 transition-colors flex-shrink-0 cursor-pointer"
-                    >
-                      <FiShare2 size={14} /> <span className="hidden sm:inline">Share</span>
-                    </button>
+                    {/* Share Button & Popup Menu */}
+                    <div className="relative" ref={shareMenuRef}>
+                      <button
+                        onClick={handleShareShop}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white text-[#7B1E3A] text-xs font-bold shadow-xs hover:bg-[#FFF8F0] border border-[#D4AF37]/30 transition-colors flex-shrink-0 cursor-pointer"
+                      >
+                        <FiShare2 size={14} /> <span className="hidden sm:inline">Share</span>
+                      </button>
+
+                      {/* Desktop Share Menu */}
+                      {showShareMenu && (
+                        <div className="absolute top-full right-0 mt-2 w-44 bg-white rounded-xl shadow-xl border border-[#D4AF37]/30 z-50 py-1.5 flex flex-col">
+                          <button
+                            onClick={handleCopyLink}
+                            className="w-full text-left px-4 py-2.5 text-xs text-[#4A2C2A] hover:bg-[#FFF8F0] hover:text-[#7B1E3A] transition-colors font-medium flex items-center gap-2 border-none bg-transparent cursor-pointer"
+                          >
+                            <FiCheckCircle size={14} /> Copy Link
+                          </button>
+                          <a
+                            href={`https://wa.me/?text=${encodeURIComponent(`Explore authentic Silk Mark Certified sarees from ${shopInfo.name} on Vasthra Cotton: ${window.location.href}`)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-full text-left px-4 py-2.5 text-xs text-[#4A2C2A] hover:bg-[#FFF8F0] hover:text-[#7B1E3A] transition-colors font-medium flex items-center gap-2 no-underline"
+                            onClick={() => setShowShareMenu(false)}
+                          >
+                            <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 0C5.385 0 0 5.386 0 12.031c0 2.124.551 4.195 1.6 6.02L.055 24l6.104-1.603c1.764.954 3.757 1.458 5.872 1.458 6.646 0 12.03-5.386 12.03-12.03S18.677 0 12.031 0zm0 21.84c-1.802 0-3.567-.485-5.114-1.404l-.366-.217-3.799.997 1.015-3.705-.238-.378a9.98 9.98 0 0 1-1.528-5.263c0-5.523 4.494-10.017 10.03-10.017 2.678 0 5.195 1.042 7.086 2.935 1.892 1.893 2.936 4.41 2.936 7.082 0 5.522-4.494 10.016-10.03 10.016zm5.503-7.514c-.302-.15-1.791-.885-2.068-.986-.277-.101-.479-.151-.681.151-.202.302-.781.986-.958 1.188-.177.201-.353.226-.656.075-1.921-.96-3.32-1.922-4.63-4.148-.202-.34-.055-.494.095-.644.135-.135.302-.353.454-.529.151-.177.202-.302.302-.504.101-.202.05-.378-.025-.529-.076-.151-.681-1.641-.933-2.247-.246-.591-.497-.512-.681-.52-.177-.008-.378-.01-.579-.01-.202 0-.529.076-.806.378-.277.302-1.058 1.034-1.058 2.52s1.084 2.923 1.235 3.125c.151.202 2.13 3.253 5.161 4.56.721.311 1.284.496 1.724.634.723.23 1.382.197 1.9.12.583-.087 1.791-.73 2.043-1.436.252-.705.252-1.311.177-1.437-.076-.126-.278-.201-.58-.352z"/></svg> WhatsApp
+                          </a>
+                          <a
+                            href={`mailto:?subject=${encodeURIComponent(shopInfo.name)}&body=${encodeURIComponent(`Explore authentic Silk Mark Certified sarees from ${shopInfo.name} on Vasthra Cotton: ${window.location.href}`)}`}
+                            className="w-full text-left px-4 py-2.5 text-xs text-[#4A2C2A] hover:bg-[#FFF8F0] hover:text-[#7B1E3A] transition-colors font-medium flex items-center gap-2 no-underline"
+                            onClick={() => setShowShareMenu(false)}
+                          >
+                            <FiMail size={14} /> Email
+                          </a>
+                        </div>
+                      )}
+                    </div>
                   </div>
                   
                   <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#7B1E3A] m-0 mb-1 leading-tight break-words" style={{ fontFamily: 'Playfair Display' }}>
