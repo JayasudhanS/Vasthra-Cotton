@@ -40,11 +40,16 @@ export default function Navbar() {
   const isInShopkeeperPortal = location.pathname.toLowerCase().startsWith('/shopkeeper');
   const isShopOwnerRole = role === 'shopkeeper' || role === 'shopOwner' || user?.role === 'shopkeeper' || user?.role === 'shopOwner';
 
+  const isAdminPortal = location.pathname.toLowerCase().startsWith('/admin');
+
   let activeShopName = '';
   let activeShopLogo = '';
   let isActiveShopBranded = false;
 
-  if (isInShopkeeperPortal && isShopOwnerRole && user) {
+  if (isAdminPortal) {
+    // Admin Portal always uses marketplace branding
+    isActiveShopBranded = false;
+  } else if (isInShopkeeperPortal && isShopOwnerRole && user) {
     // Shop Owner Portal Branding
     activeShopName = user.shopName || 'My Shop';
     const rawActiveLogo = user.logo;

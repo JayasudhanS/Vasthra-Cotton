@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db, COLLECTIONS } from '../../firebase/config';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { FiInstagram, FiMail, FiPhone, FiMapPin, FiSend, FiCheckCircle } from 'react-icons/fi';
 import { FaFacebookF, FaWhatsapp, FaPinterestP } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
 import { useShopBranding } from '../../context/ShopBrandingContext';
-import { useLocation } from 'react-router-dom';
 
 export default function Footer() {
   const [email, setEmail] = useState('');
@@ -55,7 +54,12 @@ export default function Footer() {
     }
   }, [isInShopkeeperPortal, isShopOwnerRole, user?.uid]);
 
-  if (isInShopkeeperPortal && isShopOwnerRole && user) {
+  const isAdminPortal = location.pathname.toLowerCase().startsWith('/admin');
+
+  if (isAdminPortal) {
+    // Admin Portal always uses marketplace branding
+    isActiveShopBranded = false;
+  } else if (isInShopkeeperPortal && isShopOwnerRole && user) {
     activeShopName = shopData?.shopName || user.shopName || (loadingShop ? 'Loading...' : 'Shop Name');
     const rawActiveLogo = shopData?.logo || user.logo;
     activeShopLogo = (!rawActiveLogo || rawActiveLogo === '/images/placeholder.png') ? 'https://images.pexels.com/photos/5709661/pexels-photo-5709661.jpeg?auto=compress&cs=tinysrgb&w=300' : rawActiveLogo;
